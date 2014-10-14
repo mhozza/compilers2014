@@ -86,28 +86,29 @@ Arrays can be interpreted as strings. This happens when
 - `"string"` (a string bounded by quotation marks) is assigned to an array
 ```
 x << "hello"
-x <+ " world"   # concatenation
-x <- "orl"      # x="hello wd"
-x <- [5]        # x="hellowd"
-x <- [1..2]     # x="hlowd"
-x ? "low"       # returns 1 (true) - low is a substring of x
-x ?! "wd"		# returns 3 - the position of the substring within the string
-?x 				# returns 5 - the length of x
+x << "hell" + "o" # same effect as the previous statement
+x <+ " world"     # concatenation
+x <- "orl"        # x="hello wd", using - on strings in expressions has the same effect
+x <- [5]          # x="hellowd"
+x <- [1..2]       # x="hlowd"
+x ? "low"         # returns 1 (true) - low is a substring of x
+x ?! "wd"	  # returns 3 - the position of the substring within the string
+?x 		  # returns 5 - the length of x
 ```
 The use of various assignment operators and python-like range allows us to treat arrays in a similar way as vectors in other languages (but slower :) )
 ```
 x[10]           #0 filled
 x<<47           #fills the array with 47
 x <- [2..3]     #deletes some of the 47s
-?x 			      	#returns 8 - length of the array
-x[20] << 42		  #creates 12 new elements, all but the last one with values 0
+?x 	 	#returns 8 - length of the array
+x[20] << 42     #creates 12 new elements, all but the last one with values 0
 x[8..20] << 47  #the array is again full of 47s
 ```
 Except for `!`, all of the logic operators can be used on arrays.
 ```
 x << "hello"
 y << "hello"
-x=y:					#this is true
+x=y:				#this is true
 	<< "hello world"
 ```
 Input/Output
