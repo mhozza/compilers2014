@@ -30,6 +30,8 @@ Reserved Words
 * _ret_
 * _pass_
 * _null_
+* _def_
+* _void_
 
 Operators
 --------------------------------
@@ -67,7 +69,7 @@ There is just a single data type of "inflatable" integer - int. Each one starts 
 
 Variable names characters, numbers and underscores and must nost start with a number.
 
-Arrays,strings and range
+Arrays,strings and range (optional parts)
 --------------------------------
 Arrays are also inflatible - if you try to assign to an element that wasn't used before, the array will be extended up to the given point. New elements are pre-filled with 0. 
 ```
@@ -86,14 +88,20 @@ Arrays can be interpreted as strings. This happens when
 - `"string"` (a string bounded by quotation marks) is assigned to an array
 ```
 x << "hello"
+?x 		  		  # returns 5 - the length of x
+```
+
+####Optional part (except for basic array manipulation)
+
+```
 x << "hell" + "o" # same effect as the previous statement
 x <+ " world"     # concatenation
 x <- "orl"        # x="hello wd", using - on strings in expressions has the same effect
 x <- [5]          # x="hellowd"
 x <- [1..2]       # x="hlowd"
 x ? "low"         # returns 1 (true) - low is a substring of x
-x ?! "wd"	  # returns 3 - the position of the substring within the string
-?x 		  # returns 5 - the length of x
+x ?! "wd"	      # returns 3 - the position of the substring within the string
+
 ```
 The use of various assignment operators and python-like range allows us to treat arrays in a similar way as vectors in other languages (but slower :) )
 ```
@@ -111,7 +119,7 @@ y << "hello"
 x=y:				#this is true
 	<< "hello world"
 ```
-Input/Output
+Input/Output (optional parts)
 --------------------------------
 There are various operators for both input and output, all of which can be chained on a single line (input with input, output with output). Input operators require at least one argument on the left side, output doesn't need any.
 * `>>` interprets numbers as integers, can be set tu read multiple integers into a single array, skips over text, reads up to a single line
@@ -124,22 +132,34 @@ There are various operators for both input and output, all of which can be chain
 
 Syntax shown in the following example.
 
+Input
+```
+a[] << "foobar"
+<< a            #prints some random numbers, corresponding to the ascii values of characters of "foobar"
+<@ a            #prints "foobar"
+<$ a            #prints "foobar\n"
+<@ a <<         #since once the line starts with output, all of the operators are interpreted as I/O, prints "foobar\n"
+```
+Output
 ```
 >> x,y,z        #can write into multiple ints
 a[]
 >> a            #or an array
->> a[10..15]    #or a given part of an array
 @> a            #similar with strings (this overwrites)
-@> a[?a+]       #this concatenates
-@> a[10..15]    #this limits
-$> a            #same with the whole line
 ```
-
 ```
 10 >> x >> y >> z
 << x,y,z:" ",":","..."  #for every variable/constant used, we can specify a string behind a colon that is concatenated to it,
                         #by default it is an empty string. the previous statement prints "10 10:10..."
 ```
+####Optional part 
+```
+>> a[10..15]    #or a given part of an array
+@> a[?a+]       #this concatenates
+@> a[10..15]    #this limits
+$> a            #same with the whole line
+```
+
 ```
 a[1][2][2] << 0
 a << 47                 #fills every non-array dimension with 47
@@ -153,15 +173,10 @@ a << 47                 #fills every non-array dimension with 47
 47 47 47
 47 47 47
 ```
-```
-a[] << "foobar"
-<< a            #prints some random numbers, corresponding to the ascii values of characters of "foobar"
-<@ a            #prints "foobar"
-<$ a            #prints "foobar\n"
-<@ a <<         #since once the line starts with output, all of the operators are interpreted as I/O, prints "foobar\n"
-```
 
-If and switch
+
+If and switch (optional parts)
+------------------------------
 Boolean statement followed by a colon is considered an if statement.
 ```
 x>y:
@@ -169,6 +184,8 @@ x>y:
 !^:
 	<< "y is greater"
 ```
+
+####Optional part 
 A single variable followed by colon is considered a switch statement. This variable can be both and int or an array, and different "cases" are allowed for both of these (in general - with int you can ask about the value, with array about the length or the string it contains).
 ```
 x << 8
@@ -212,11 +229,23 @@ To further control the flow, you can use the `break` or the `skip` statement, wh
 
 Functions
 --------------------------------
-Finally, something that writes and works (almost) like something from a normal programming language (expect that we steal the ability to return multiple variables from python).
+Finally, something that writes and works like something from a normal programming language. By default, arrays are passed by reference and integers by values. To pass an integer by reference, add `&` operator in declaration. 
 
 ```
-my_function():
-	ret 10,11
+my_function(&x,y):
+	x << 10 	# changes the original value
+	y << 8  	# effectively does nothing
+	ret 10
 
-my_function() >> x,y
+x << 47 >> y
+my_function(x,y) >> z
+<< x,y:" "		# prints '10 47'
+```
+
+External functions
+--------------------------------
+Syntax is `def @<name>(<arg types>...): <return type>`, where types can be either integers of different sizes (i8,i32..) or pointers to integers, which will be interpreted as pointers to arrays of given type.
+
+```
+def @printf(i8*, ...): i32
 ```

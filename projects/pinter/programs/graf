@@ -1,0 +1,31 @@
+@set[1000],@n,@m,@rank[1000]
+
+find(x):
+    set[x]=x:
+        ret x
+    !^:
+        set[x] << find(set[x])
+        ret set[x]
+
+union(x,y):
+    fy << find(y)
+    fx << find(x)
+    rank[fx] < rank[fy]:
+        set[fx]=fy
+    !^:
+        set[fy]=fx
+
+>> n,m
+rank << 1
+for i >> [1..m]:
+    >> x,y
+    union(x,y)
+ret << "ANO"
+test << set[0]
+n=0:
+    ret  << "NIE"
+!^:    
+    for i >> [1..n]:
+        find(i)!=test:
+            ret << "NIE"
+<< ret
