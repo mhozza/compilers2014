@@ -58,7 +58,7 @@ x +> y <- z                 # y=y+x-z
 x*y /> a >> z >> v <* 1/a   # z=a/(x*y), v=1/(x*y)
 y<&x
 y<<42                       # y=x=42
-z=42
+@z=42						# defines a global variable
 x=z                         # true - returns 1
 x==z                        # false - returns 0
 x==y                        # true
@@ -67,7 +67,7 @@ Basic data types and variables
 --------------------------------
 There is just a single data type of "inflatable" integer - int. Each one starts as an 8 bit and doubles it's size every time it would overflow otherwise. If an overflowing int is a part of an array, the whole array adjusts its size. Ints can be assigned a null value, which trows an error if it is being manipulated with (except for printing and `!`,`=` and `==` operators). All of the assignment, arithmetic and logic operators can be used with a int as an argument, where `!x` is interpreted as true if `x=0` or `x=null` and false otherwise.
 
-Variable names characters, numbers and underscores and must nost start with a number.
+Variable names characters, numbers and underscores and must nost start with a number. Variables preceded by `@` sign are considered global.
 
 Arrays,strings and range (optional parts)
 --------------------------------
