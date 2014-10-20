@@ -5,14 +5,14 @@ Arrows is designed to make you write less code, while sacrificing speed but keep
 
 Syntax,preprocessor and comments
 --------------------------------
-Commands are separated by newline characters and by default, a new block is recognized by indenting by 4 spaces or a single tab. This can be changed in a way similar to C preprocessor directives, by adding `#tabsize=x` where x is the number of spaces defining a new block. This still equalls a single tab character (the size of which you should set in your editor). The second such directive is `#bytes=y` where y is the maximum number of bytes a variable or an array element can grow to before it overflows (more on this in the data types section). By default, this should be (theoretically) infinite. These are the only two directives of the language, and should preceed the rest of the code.
+Commands are separated by newline characters and by default, a new block is recognized by indenting by 4 spaces or a single tab. This can be changed in a way similar to C preprocessor directives, by adding `$tabsize=x` where x is the number of spaces defining a new block. This still equalls a single tab character (the size of which you should set in your editor). The second such directive is `$bytes=y` where y is the maximum number of bytes a variable or an array element can grow to before it overflows (more on this in the data types section). By default, this should be (theoretically) infinite. These are the only two directives of the language, and should preceed the rest of the code.
 
 ```
-#tabsize=4
-#bytesize=16
+$tabsize=4
+$bytesize=16
 ```
 
-All other lines beggining with # are treated like single line comments and are ignored, multiline comments are bounded by ~
+All lines beggining with # are treated like single line comments and are ignored, multiline comments are bounded by ~
 
 ```
 #this is a comment
