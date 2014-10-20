@@ -31,7 +31,6 @@ Reserved Words
 * _pass_
 * _null_
 * _def_
-* _void_
 
 Operators
 --------------------------------
