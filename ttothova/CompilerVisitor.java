@@ -13,6 +13,8 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         private int registerIndex = 0;
         private CodeFragment functionCode = new CodeFragment();
         private int currentFunctionType = Type.INT;
+        private String currentContinueLabel = "";
+        private String currentBreakLabel = "";
         // type: 0..int, 1..float, 2..void, 3..bool, 4..string 
 
         public CompilerVisitor() {
@@ -531,6 +533,18 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         }
 
         @Override
+        public CodeFragment visitChar(teeteeParser.CharContext ctx) {
+        		String value = ctx.CHAR().getText();
+        		CodeFragment code = new CodeFragment();
+        		String register = generateNewRegister();
+        		code.setRegister(register);
+        		code.addCode(String.format("%s = add i8 0, %d\n", register, value.charAt(0)));
+        		System.err.println(String.format("char value %d\n", value.charAt(0)));
+        		code.setType("char");
+        		return code;
+        }
+
+        @Override
         public CodeFragment visitDeclaration(teeteeParser.DeclarationContext ctx) {
                 String identifier = ctx.id().getText();
                 String type = ctx.type().getText();
@@ -681,14 +695,14 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         "<end_label>:\n" + 
                         "<ret> = add i32 0, 0\n"
                 );
-                template.add("cmp_label", generateNewLabel());
+                template.add("cmp_label", currentContinueLabel);
                 template.add("condition_code", condition);
                 String cmp_register = generateNewRegister();
                 template.add("cmp_register", cmp_register);
                 template.add("cmp_instruction",
                 	genereateComparingInstruction(condition.getType(), cmp_register, condition.getRegister()));
                 template.add("body_label", generateNewLabel());
-                template.add("end_label", generateNewLabel());
+                template.add("end_label", currentBreakLabel);
                 template.add("body_code", body);
                 String end_register = generateNewRegister();
                 template.add("ret", end_register);
@@ -702,24 +716,49 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 
         @Override
         public CodeFragment visitWhile(teeteeParser.WhileContext ctx) {
+        		String oldContinueLabel = currentContinueLabel;
+        		currentContinueLabel = generateNewLabel();
+        		String oldBreakLabel = currentBreakLabel;
+        		currentBreakLabel = generateNewLabel();
+
                 CodeFragment condition = visit(ctx.expression());
                 CodeFragment body = visit(ctx.block());
                 String jump_instruction = "br label %<cmp_label>\n";
 
-                return WhileDoStatement(condition, body, jump_instruction);                
+                CodeFragment code = WhileDoStatement(condition, body, jump_instruction);                
+
+                currentContinueLabel = oldContinueLabel;
+                currentBreakLabel = oldBreakLabel;
+
+                return code;
         }
 
         @Override
         public CodeFragment visitDoWhile(teeteeParser.DoWhileContext ctx) {
-        	CodeFragment condition = visit(ctx.expression());
-        	CodeFragment body = visit(ctx.block());
-        	String jump_instruction = "br label %<body_label>\n";
+        		String oldContinueLabel = currentContinueLabel;
+        		currentContinueLabel = generateNewLabel();
+        		String oldBreakLabel = currentBreakLabel;
+        		currentBreakLabel = generateNewLabel();
 
-        	return WhileDoStatement(condition, body, jump_instruction);
+	        	CodeFragment condition = visit(ctx.expression());
+    	    	CodeFragment body = visit(ctx.block());
+        		String jump_instruction = "br label %<body_label>\n";
+
+        		CodeFragment code = WhileDoStatement(condition, body, jump_instruction);
+
+                currentContinueLabel = oldContinueLabel;
+                currentBreakLabel = oldBreakLabel;
+
+                return code;
         }
 
         @Override
         public CodeFragment visitFor_statement(teeteeParser.For_statementContext ctx) {
+        		String oldContinueLabel = currentContinueLabel;
+        		currentContinueLabel = generateNewLabel();
+        		String oldBreakLabel = currentBreakLabel;
+        		currentBreakLabel = generateNewLabel();
+
 	        	String identifier = ctx.id().getText();
 	        	String register = generateNewRegister();
 	        	mem.put(identifier, register, "int");
@@ -728,22 +767,21 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 	        	CodeFragment body = visit(ctx.block());
 	        	CodeFragment operation;
 
-
 	        	if (ctx.expression().size() > 2) {
-	        		operation = visit(ctx.expression(2));
+		        		operation = visit(ctx.expression(2));
 	        	} else {
-	        		ST template = new ST(
-	        				"<operation_i> = load i32* <iterator>\n" +
-	        				"<ret_i> = add i32 <operation_i>, 1\n"
-	        		);
-	        		template.add("operation_i", generateNewRegister());
-	        		template.add("iterator", register);
-	        		String ret_i = generateNewRegister();
-	        		template.add("ret_i", ret_i);
+		        		ST template = new ST(
+		        				"<operation_i> = load i32* <iterator>\n" +
+		        				"<ret_i> = add i32 <operation_i>, 1\n"
+		        		);
+		        		template.add("operation_i", generateNewRegister());
+		        		template.add("iterator", register);
+		        		String ret_i = generateNewRegister();
+		        		template.add("ret_i", ret_i);
 
-	        		operation = new CodeFragment();
-	        		operation.addCode(template.render());
-	        		operation.setRegister(ret_i);
+		        		operation = new CodeFragment();
+		        		operation.addCode(template.render());
+		        		operation.setRegister(ret_i);
 	        	}
 
 	        	ST template = new ST(
@@ -776,19 +814,42 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 	        	template.add("cmp_register", generateNewRegister());
 	        	template.add("end_exp_register", end.getRegister());
 	        	template.add("body_label", generateNewLabel());
-	        	template.add("end_label", generateNewLabel());
+	        	template.add("end_label", currentBreakLabel);
 	        	template.add("body_code", body);
-	        	template.add("iterate_label", generateNewLabel());
+	        	template.add("iterate_label", currentContinueLabel);
 	        	template.add("operation_code", operation);
 	        	template.add("new_i", generateNewRegister());
 	        	template.add("operation_register", operation.getRegister());
 	        	String ret = generateNewRegister();
 	        	template.add("ret", ret);
 
+                currentContinueLabel = oldContinueLabel;
+                currentBreakLabel = oldBreakLabel;
+
 	        	CodeFragment code = new CodeFragment();
 	        	code.addCode(template.render());
 	        	code.setRegister(ret);
 	        	return code;
+        }
+
+        @Override
+        public CodeFragment visitBreak(teeteeParser.BreakContext ctx) {
+        		CodeFragment code = new CodeFragment();
+        		if (currentBreakLabel.equals("")) {
+        				System.err.println("Error: invalid use of break\n");
+        		}
+        		code.addCode(String.format("br label %%%s\n", currentBreakLabel));
+        		return code;
+        }
+
+        @Override
+        public CodeFragment visitContinue(teeteeParser.ContinueContext ctx) {
+        		CodeFragment code = new CodeFragment();
+        		if (currentContinueLabel.equals("")) {
+        				System.err.println("Error: invalid use of continue\n");
+        		}
+        		code.addCode(String.format("br label %%%s\n", currentContinueLabel));
+        		return code;
         }
 
         @Override
