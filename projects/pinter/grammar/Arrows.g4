@@ -102,7 +102,8 @@ block: INDENT statements DEDENT;
  
 statement:
      expression arrow expression (arrow expression)*    # Arw
-     | arrow expression(',' expression) (arrow expression(',' expression)*)*             # Io
+     | (input_arrow expression (',' expression))+       # Input
+     | (output_arrow expression (',' expression) (COLON quotedstring))+   #Output
      | block                 							# Blck
      | expression COLON NEWLINE tr=block (ELSE NEWLINE fa=block)?  		# If
      | WHILE expression COLON NEWLINE block                       # While
@@ -121,39 +122,45 @@ expression:
      | expression op=AND expression                      # And
      | expression op=OR expression                       # Or
      | expression op=EQ expression						 # Eq
-     | expression op=PEQ expression						 # Eq
      | PAREN_OPEN expression PAREN_CLOSE                 # Par
      | lvalue '('params')'                               # Call
-     | lvalue(range)*									 # Var
-     | INT 												 # Int
-     
-     | QUOT content=(STRING | ANYSTRING)* QUOT			 # String									 
+     | lvalue(range)*							   # Var
+     | INT 									   # Int
+     | quotedstring			                            # Qstr								 
      ;
 
+quotedstring: QUOT content=(STRING | ANYSTRING)* QUOT;
 lvalue: STRING;
 args: (lvalue (',' lvalue)*)?;
 params: (expression (',' expression)*)?;
 
-arrow:
+arrow: input_arrow | output_arrow | other_arrow;
+
+input_arrow: 
 	LA
-	| LPA
-	| LSA
-	| LDA
-	| LMA 
-	| LRA
-	| RA
-	| RPA
-	| RSA
-	| RDA
-	| RMA
-	| RRA
-	| SWAP
 	| IS
 	| ISL
-	| OS
-	| OL
-	| OSL
 	;
+
+output_arrow:
+     RA
+     | OS
+     | OL
+     | OSL
+     ;
+
+other_arrow:
+     LPA
+     | LSA
+     | LDA
+     | LMA 
+     | LRA
+     | RPA
+     | RSA
+     | RDA
+     | RMA
+     | RRA
+     | SWAP
 
 range: LR INT RR;
 
@@ -212,6 +219,8 @@ OSL: '<$';
 RET: 'ret';
 INT: DIGIT+;
 INT32: DIGIT+'i32';
+INC: '++';
+DEC: '--';
 MUL: '*';
 DIV: '/';
 ADD: '+';

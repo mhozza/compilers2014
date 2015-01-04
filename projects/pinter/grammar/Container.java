@@ -3,12 +3,23 @@ import org.stringtemplate.v4.*;
 
 public class Container {
 	
+	//LLVM code fragment
 	private StringBuilder code;
+	//variable info
 	private String register;
 	private String identifier;
+	private Map<String,String> memory_map;
+	//operator info
 	private boolean swap;
-	private int dimensionShift;
+	//array info
+	private Integer dimensionShift;
+	private Integer arrayMemSize;
 	private ArrayList<Integer> arraySizes;
+	//range info
+	private Integer lowerRange=-2147483648; //we're working with 32bit signed integers
+	private Integer upperRange=2147483648;
+	private Integer exactRange=null; //when not null, upper and lower range are ignored
+	//container type info
 	private ArrowsExtendedVisitor.Openum opType;
 	private ArrowsExtendedVisitor.Typeenum type;
 
@@ -16,6 +27,7 @@ public class Container {
 		code=new StringBuilder();
 		register=null;
 		identifier=null;
+		memory_map=null;
 		swap=false;
 		dimensionShift=0;
 		opType=NONE;
@@ -64,7 +76,21 @@ public class Container {
 		register=_r;
 	}
 
-	public String getIdentifier
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String _id) {
+		identifier=_id;
+	}
+
+	public Map<String,String> getMemoryMap() {
+		return memory_map;
+	}
+
+	public void setMemoryMap(Map<String,String> _m) {
+		memory_map=_m;
+	}
 
 	public void swap() {
 		swap=!swap;
@@ -102,19 +128,38 @@ public class Container {
 		return arraySizes.size()-dimensionShift;
 	}
 
-	public ArrayList<Integer> getArray() {
+	public ArrayList<Integer> getArraySizes() {
 		return arraySizes;
 	}
 
-	public void setArray(ArrayList<Integer> arr) {
+	public void setArraySizes(ArrayList<Integer> arr) {
 		//arrayDimensions=arr.size();
 		arraySizes=arr;
 	}
 
-	public 
+	public Integer getArrayMemSize() {
+		return arrayMemSize;
+	}
+
+	public void setArrayMemSize(int _s) {
+		arrayMemSize=_s;
+	}
 
 	public String toString() {
 		code.toString();
+	}
+
+	public void inheritFromContainer(Container c) {
+		//sets everything except for the code
+		register=c.getRegister();
+		identifier=c.getIdentifier();
+		memory_map=c.getMemoryMap();
+		swap=c.getSwap();
+		dimensionShift=c.getDimensionShift();
+		arrayMemSize=c.getArrayMemSize();
+		arraySizes=c.getArrySizes();
+		opType=c.getOpType();
+		type=c.getType();
 	}
 
 	public Container operateBinary(Container left,Container right) throws {

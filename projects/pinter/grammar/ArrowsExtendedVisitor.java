@@ -14,7 +14,7 @@ import org.stringtemplate.v4.*;
  */
 public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 
-	private LinkedList< LinkedList< Map<String, String> > > mem = new LinkedList<>();
+	private LinkedList< LinkedList< Map<String, MemoryRecord> > > mem = new LinkedList<>();
     private Map<String, Function> func = new HashMap<String, Function>();
     private int labelIndex = 0;
     private int registerIndex = 0;
@@ -27,7 +27,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 		INT,STRING,ARRAY,NONE
 	}
 
-    private Map<String,String> stackContainsKey(String identifier) {
+    private Map<String,MemoryRecord> stackContainsKey(String identifier) {
             int i=mem.getLast().size()-1;
             while ((i>=0)&&(!mem.getLast().get(i).containsKey(identifier))) i--;
             if (i>=0) return mem.getLast().get(i);
@@ -46,8 +46,8 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 
 
 	@Override public Container visitInit(ArrowsParser.InitContext ctx) { 
-		mem.addLast(new LinkedList<Map<String,String> >());
-        mem.getLast().addLast(new HashMap<String,String>());
+		mem.addLast(new LinkedList<Map<String,MemoryRecord> >());
+        mem.getLast().addLast(new HashMap<String,MemoryRecord>());
         Container body=new Container(); 
         for (int i = 0; i< ctx.statements().size(); i++) {
         	body.append(visit(ctx.statements()[i]));
@@ -87,14 +87,14 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 			}
 
 			//check validity of left & right
-			if (left.getIdentifier()==null)||(((op.opType==Openum.SWAP)||(op.opType==Openum.POSIGN))&&(right.getIdentifier()==null)) {
+			if (left.getIdentifier()==null)||(((op.opType==Openum.SWAP)||(op.opType==Openum.POSIGN))&&(right.getMemoryMap()==null)) {
 				//swap back to get nice error message
 				if (op.getSwap()) {
 					Container halp=left;
 					left=right;
 					right=halp;
 				}				
-				throw new CompilerException("Assignment to expression which does not return variable: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
+				throw new CompilerException("Assignment to/from nonexisting variable: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
 			}
 			if (left.type==Typeenum.NONE) {
 				if ((op.opType!=Openum.ASSIGN)||(right.type==Typeenum.NONE)) {
@@ -119,7 +119,25 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 				}
 			}
 			if ((left.type==Typeenum.ARRAY)&&(right.type==Typeenum.ARRAY)) {
-				//TODO check when assigning partial array for existence				
+				//for now, lets forbid all the weird stuff with array addition and multiplication
+				if (!((op.opType==Openum.POSIGN)||(op.opType==Openum.SWAP)||(op.opType==Openum.ASSIGN))) {
+					//swap back to get nice error message
+					if (op.getSwap()) {
+						Container halp=left;
+						left=right;
+						right=halp;
+					}				
+					throw new CompilerException("Arithmetic between arrays forbidenn : "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
+				}
+				if (right.getMemoryMap()==null) {
+					//swap back to get nice error message
+					if (op.getSwap()) {
+						Container halp=left;
+						left=right;
+						right=halp;
+					}				
+					throw new CompilerException("Assignment from an nonexisting array: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
+				}			
 				if (left.getActiveDimensions()!=right.getActiveDimensions()) {
 					//swap back to get nice error message
 					if (op.getSwap()) {
@@ -129,7 +147,8 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 					}	
 					throw new CompilerException("Array dimensions does not match: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());			
 				}
-				if (((op.opType==Openum.POSIGN)||(op.opType==Openum.SWAP))&&((left.getDimensionShift()!=0)||(right.getDimensionShift()!=0))) {
+				//this could theoretically work with standard assign, but for now lets forbid it too
+				if (((op.opType==Openum.POSIGN)||(op.opType==Openum.SWAP)||(op.opType==Openum.ASSIGN))&&((left.getDimensionShift()!=0)||(right.getDimensionShift()!=0))) {
 					//swap back to get nice error message
 					if (op.getSwap()) {
 						Container halp=left;
@@ -141,12 +160,14 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 			}
 
 			//execute left & right code, assign value from right to left
-			Container temp = generateBinaryOperatorContainer(left,right,op.opType);
+			Container opRes = generateBinaryOperatorContainer(left,right,op.opType);
+			String code_stup="";
+			String mem_register="";
 			switch(op.opType) {
 				case Openum.SWAP:
-					//swap the registers in memory
-					Map<String,String> left_map=stackContainsKey(left.getIdentifier());
-					Map<String,String> right_map=stackContainsKey(right.getIdentifier());
+					//swap pointers
+					Map<String,MemoryRecord> left_map=stackContainsKey(left.getIdentifier());
+					Map<String,MemoryRecord> right_map=stackContainsKey(right.getIdentifier());
 					if ((left_map==null)||(right_map==null)) {
 						//swap back to get nice error message
 						if (op.getSwap()) {
@@ -156,69 +177,52 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 						}
 						throw new CompilerException("Swap into an uninitialized variable: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());		
 					}
-					break;
-				case Openum.POSIGN:
-					Map<String,String> left_map=stackContainsKey(left.getIdentifier());
-					Map<String,String> right_map=stackContainsKey(right.getIdentifier());
-					if (right_map==null) {
-						//swap back to get nice error message
-						if (op.getSwap()) {
-							Container halp=left;
-							left=right;
-							right=halp;
-						}
-						throw new CompilerException("Assignment of a pointer to an unknown variable: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());		
-					}
-					if (left_map==null) {
-						//create new entry
-					} else {
-						//assing to existing entry
-					}
+					String code_stub="TODO SEM DAT CALL NA FUNKCIU CO SWAPUJE";
+					ret.appendCode(opRes);
+					ret.appendCode(code_stub);
 					break;
 				case Openum.ASSIGN:
-					Map<String,String> left_map=stackContainsKey(left.getIdentifier());
-					//check arrays!!
+				case Openum.ADDSIGN:
+				case Openum.SUBSIGN:
+				case Openum.MULSIGN:
+				case Openum.DIVSIGN:
+					Map<String,MemoryRecord> left_map=stackContainsKey(left.getIdentifier());
 					if (left_map==null) {
 						//create new entry
+						mem_register = this.generateNewRegister();
+						if (right.getType()==Typeenum.INT) {
+			                code_stub = "<mem_register> = alloca i32\n";
+			                mem.getLast().getLast().put(left.getIdentifier(), new MemoryRecord(left.getIdentifier, mem_register, Typeenum.INT));
+						} else {
+							code_stub = "<mem_register> = alloca i32, i32 "+right.getArrayMemSize()+"\n";
+							mem.getLast().getLast().put(left.getIdentifier(), new MemoryRecord(left.getIdentifier, mem_register, Typeenum.INT, right.getArrayMemSize(), right.getArraySizes())); 
+						}
 					} else {
-						//assing to existing entry
+						//assigning to existing entry
+						mem_register = left_map.get(getIdentifier();
 					}
+					ST template = new ST(
+		                code_stub + 
+		                "store i32 <value_register>, i32* <mem_register>\n"
+			        );
+			        template.add("value_register", opRes.getRegister());
+			        template.add("mem_register", mem_register);
+			        ret.appendCode(opRes);
+			        ret.appendCode(template.render());
+			        ret.inheritFromContainer(left);
 					break;
-				case TODOFROMHERE:
+				default:
+					//swap back to get nice error message
+					if (op.getSwap()) {
+						Container halp=left;
+						left=right;
+						right=halp;
+					}	
+					throw new CompilerException("Unexpected operator: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
 					break;
 			}
-
 		}
-//GET RID OF TRASH CODE FROM HERE
-		Container value = visit(ctx.expression());
-        String mem_register;
-        String code_stub = "";
-
-        String identifier = ctx.lvalue().getText();
-        Map<String,String> m=stackContainsKey(identifier);
-        if (m==null) {
-                mem_register = this.generateNewRegister();
-                code_stub = "<mem_register> = alloca i32\n";
-                mem.getLast().put(identifier, mem_register);
-        } else {
-                mem_register = m.get(identifier);
-        }
-        ST template = new ST(
-                "<value_code>" + 
-                code_stub + 
-                "store i32 <value_register>, i32* <mem_register>\n"
-        );
-        template.add("value_code", value);
-        template.add("value_register", value.getRegister());
-        template.add("mem_register", mem_register);
-        Container ret = new Container();
-        ret.addCode(template.render());
-        ret.setRegister(value.getRegister());
         return ret;
-	}
-
-	private Container generateAssignCode() {
-
 	}
 
 	private Container generateFunctionCode() {
@@ -264,28 +268,42 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
             Container ret = new Container();
             switch (operator) {
             		case Openum.ASSIGN:
-					case Openum.POSIGN:
 					case Openum.SWAP:
 						code_stub="";
 						break;
 						//throw new CompilerException("Swap was processed as a standard binary operation, which shouldn't have happened - something went horribly wrong...");		
                     case Openum.ADD:
                     case Openum.ADDSIGN:
+                    		if ((left.type==Typeenum.ARRAY)||(right.type==Typeenum.ARRAY)) {
+                    			throw new CompilerException("Invalid operation on arrays");
+                    		}
                             instruction = "add";
                             break;
-                    case Openum.SUBSIGN:
                     case Openum.SUB:
+                    case Openum.SUBSIGN:
+                    		if ((left.type==Typeenum.ARRAY)||(right.type==Typeenum.ARRAY)) {
+                    			throw new CompilerException("Invalid operation on arrays");
+                    		}
                             instruction = "sub";
                             break;
-                    case Openum.MULSIGN:
                     case Openum.MUL:
+                    case Openum.MULSIGN:
+                    		if ((left.type==Typeenum.ARRAY)||(right.type==Typeenum.ARRAY)) {
+                    			throw new CompilerException("Invalid operation on arrays");
+                    		}
                             instruction = "mul";
                             break;
-                    case Openum.DIVSIGN:
                     case Openum.DIV:
+                    case Openum.DIVSIGN:
+                    		if ((left.type==Typeenum.ARRAY)||(right.type==Typeenum.ARRAY)) {
+                    			throw new CompilerException("Invalid operation on arrays");
+                    		}
                             instruction = "sdiv";
                             break;
                     case Openum.AND:
+                    		if ((left.type==Typeenum.ARRAY)||(right.type==Typeenum.ARRAY)) {
+                    			throw new CompilerException("Invalid operation on arrays");
+                    		}
                             instruction = "and";
                     case Openum.OR:
                             ST temp = new ST(
@@ -299,6 +317,9 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
                             temp.add("r3", this.generateNewRegister());
                             code_stub = temp.render();
                             break;
+                    default:
+                    	throw new CompilerException("Invalid binary operator (wrong use of I/O arrows?)");
+                    	break;
             }
             ST template = new ST(
                     "<left_code>" + 
@@ -314,11 +335,12 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 	            template.add("right_val", right.getRegister());
 	            ret.setRegister(this.generateNewRegister());
 	            template.add("ret", ret_register);
+	            ret.setRegister(ret_register);
 	        } else {
-	        	ret.setRegister(right.getRegister());
+	        	//after swap is performed , we can no longer continue in "chaining" the arrows - therefore don't return register
+	        	if (operator!=Openum.SWAP) ret.setRegister(right.getRegister());
 	        }
             
-            ret.setRegister(ret_register);
             ret.appendCode(template.render());
             return ret;
     
@@ -364,21 +386,6 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
             return generateIntContainer(value);
     }
 
-    private Container generateIntContainer(String value) {
-			int size=Math.ceil(Math.log(value.size())/Math.log(2))+1;
-            if ((size<0)||(size>8388607)||(value.size()>888888)) { 
-            	
-            	//should cover overflows, the last 'or' is just in case it would overflow back to positive numbers,
-            	//the number is arbitrary but should be both large and small enough to do the job
-            	
-            	throw new CompilerException("The value "+value+" is too large");
-            }
-            CodeFragment code = new CodeFragment();
-            String register = generateNewRegister();
-            code.setRegister(register);
-            code.addCode(String.format("%s = add i%s 0, %s\n", register, size, value));
-            return code;
-    }
 	/*
 
 	@Override public Container visitIo(ArrowsParser.IoContext ctx) 
@@ -471,6 +478,33 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 	@Override public T visitAnd(@NotNull ArrowsParser.AndContext ctx) { return visitChildren(ctx); }
 	*/
 
+}
+
+//STANDARTNA KOPA BORDELU, keby sa nieco z neho chcelo revivnut
+
+/*case Openum.POSIGN:
+					Map<String,String> left_map=stackContainsKey(left.getIdentifier());
+					Map<String,String> right_map=stackContainsKey(right.getIdentifier());
+					if (right_map==null) {
+						//swap back to get nice error message
+						if (op.getSwap()) {
+							Container halp=left;
+							left=right;
+							right=halp;
+						}
+						throw new CompilerException("Assignment of a pointer to an unknown variable: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());		
+					}
+					if (left_map==null) {
+						//create new entry
+						mem.getLast().getLast().put(left.getIdentifier(), right_map.get(right.getIdentifier()));
+					} else {
+						//assing to existing entry
+						left_map.get(left.getIdentifier())=right_map.get(right.getIdentifier());
+					}
+					break;
+*/
+
+/*
 	public static boolean willAdditionOverflow(int left, int right) {
 	    if (right < 0 && right != Integer.MIN_VALUE) {
 	        return willSubtractionOverflow(left, -right);
@@ -486,4 +520,27 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 	        return ((left ^ right) & (left ^ (left - right))) < 0;
 	    }
 	}
-}
+*/
+
+	/*
+    private Container generateIntContainer(String value) {
+			int size=Math.ceil(Math.log(value.size())/Math.log(2))+1;
+            if ((size<0)||(size>8388607)||(value.size()>888888)) { 
+            	
+            	//should cover overflows, the last 'or' is just in case it would overflow back to positive numbers,
+            	//the number is arbitrary but should be both large and small enough to do the job
+            	
+            	throw new CompilerException("The value "+value+" is too large");
+            }
+            CodeFragment code = new CodeFragment();
+            String register = generateNewRegister();
+            code.setRegister(register);
+            code.addCode(String.format("%s = add i%s 0, %s\n", register, size, value));
+            return code;
+    }*/
+
+    //(CONSIDER, but prob. is wrong)and now switch the references on our memory stac
+					/*
+					String halp=left_map.get(left.getIdentifier());
+					left_map.get(left.getIdentifier())=right_map.get(right.getIdentifier());
+					right_map.get(right.getIdentifier())=halp;*/
