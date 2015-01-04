@@ -525,7 +525,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         		CodeFragment code = new CodeFragment();
         		String register = generateNewRegister();
         		code.setRegister(register);
-        		code.addCode(String.format("%s = add i1 0, %s", register, value));
+        		code.addCode(String.format("%s = add i1 0, %s\n", register, value));
         		code.setType("bool");
         		return code;
         }
@@ -654,6 +654,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 				}
 
 				ST template = new ST(
+						"br label %<end_label>\n" +
 						"<end_label>:\n" +
 						"<ret> = add i32 0, 0\n"
 				);
