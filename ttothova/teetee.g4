@@ -1,0 +1,132 @@
+grammar teetee;
+
+init
+	: functions				# initFunctions
+	| statements 			# initStatements
+	;
+
+block: LBRACE statements RBRACE;
+
+statements: statement (NEWLINE statement)*;
+
+functions: function (NEWLINE+ function)* ;
+
+function: ftype fname OPEN_PAR fparameters CLOSE_PAR block;
+
+ftype
+	: VOID
+	| type (LBRACK RBRACK)*
+	;
+
+fname: ID;
+
+fparameters: ( type id ( COMMA type id )* )? ;
+
+statement
+	: assignment 										# Assign
+	| array_resize										# Resize
+	| declaration 										# Declare
+	| expression										# Print
+	| return_statement 									# Ret
+	| op=(BREAK | CONTINUE) 							# Cycle_flow
+	| block 											# Block_stmt
+	| if_statement 										# If
+	| for_statement 									# For
+	| while_statement 									# While_stmt
+	| 													# Empty
+	;
+
+assignment: id ASSIGN expression;
+
+array_resize: id (LBRACK expression? RBRACK)+ ;
+
+declaration: VAR type id (LBRACK expression RBRACK)* ( ASSIGN expression )? ;
+
+return_statement: RETURN expression?;
+
+if_statement : IF expression if_form ( ELIF expression if_form )* (ELSE if_form )? ;
+
+if_form
+	: SEMICOLON statement 								# ShortIf
+	| block 											# LongIf
+	;
+
+for_statement: FOR id IN OPEN_PAR expression COMMA expression CLOSE_PAR (DO expression)? block;
+
+while_statement
+	: WHILE expression block 		 					# While
+	| DO block WHILE expression							# DoWhile
+	;
+
+var
+	: id LBRACK expression ( COMMA expression )* RBRACK
+	| id
+	;
+
+expression
+    : op=('-'|'+') expression                           # Una
+    | OPEN_PAR expression CLOSE_PAR						# Par
+    | expression op=EXP<assoc=right> expression         # Exp
+    | expression op=(DIV|MUL|MOD) expression            # Mul
+    | expression op=(ADD|SUB) expression                # Add
+    | op=NOT expression                                 # Not
+    | expression op=AND expression                      # And
+    | expression op=OR expression                       # Or
+	| callfunction										# FunctionCall
+	| INT 												# Int
+	| FLOAT 											# Float
+	| ID												# Variable
+	;
+
+callfunction: fname OPEN_PAR ( expression (COMMA expression)* )? CLOSE_PAR;
+
+type: ( 'int' | 'float' | 'bool' | 'string') ;
+
+id: ID;
+
+VAR: 'var';
+IF: 'if';
+ELIF: 'elif';
+ELSE: 'else';
+FOR: 'for';
+IN: 'in';
+DO: 'do';
+WHILE: 'while';
+RETURN: 'return';
+BREAK: 'break';
+CONTINUE: 'continue';
+
+OPEN_PAR: '(';
+CLOSE_PAR: ')';
+LBRACK: '[';
+RBRACK: ']';
+LBRACE: '{';
+RBRACE: '}';
+COMMA: ',';
+SEMICOLON: ';';
+
+ASSIGN: '=';
+ADD: '+';
+SUB: '-';
+MUL: '*';
+DIV: '/';
+MOD: '%';
+EXP: '^';
+AND: 'and' | '&&';
+OR: 'or' | '||';
+NOT: 'not' | '!';
+
+VOID: 'void';
+INT: NUMBER;
+FLOAT: NUMBER '.' DIGIT+;
+BOOL: 'true' | 'false';
+STRING: '"' (~'"' | NEWLINE)* '"';
+
+NEWLINE: '\r'? '\n' | '\r';
+WHITESPACE: [ \t] -> skip;
+
+ID: [a-zA-Z] [a-zA-Z0-9]*;
+
+fragment
+NUMBER: '0' | [1-9]DIGIT*;
+DIGIT: [0-9];
