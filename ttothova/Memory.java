@@ -30,8 +30,12 @@ public class Memory {
 		this.parent = parent;
 	}
 
-	public void put(String key, String var, String type) {
+	public void put(String key, String var, Integer type) {
 		this.variable_mem.put(key, new idInfo(var,type));
+	}
+
+	public void put(String key, String var, String type) {
+		this.variable_mem.put(key, new idInfo(var,Type.getType(type)));
 	}
 
 	public String get(String key) {
@@ -55,19 +59,11 @@ public class Memory {
 	}
 
 	public Boolean isInt(String key) {
-		Integer type = getType(key);
-		if (type == 0) {
-			return true;
-		}
-		return false;
+		return Type.isInt(getType(key));
 	}
 
 	public Boolean isFloat(String key) {
-		Integer type = getType(key);
-		if (type == 1) {
-			return true;
-		}
-		return false;
+		return Type.isFloat(getType(key));
 	}	
 
 	public Boolean containsKey(String key) {

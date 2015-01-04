@@ -2,13 +2,9 @@ public class idInfo {
 	private String register;
 	private Integer type;
 
-	public idInfo(String register, String type) {
+	public idInfo(String register, Integer type) {
 		this.register = register;
-		if (type.equals("float")) {
-			this.type = 1;
-		} else {
-			this.type = 0;
-		}
+		this.type = type;
 	}
 
 	public String getRegister() {

@@ -75,6 +75,7 @@ expression
 	| callfunction										# FunctionCall
 	| INT 												# Int
 	| FLOAT 											# Float
+	| BOOL 												# Bool
 	| ID												# Variable
 	;
 

@@ -15,7 +15,8 @@ public class Type {
 	}
 
 	public static String getLLVMtype(String type) {
-			if (type.equals("int")) {return "i32";}
+			if (type.equals("int" )) {return "i32";}
+			if (type.equals("bool")) {return "i1"; }
 			return type;
 	}
 
@@ -58,6 +59,26 @@ public class Type {
 
 	public static boolean isFloat(int type) {
 			if (type == FLOAT) { return true; }
+			return false;
+	}
+
+	public static boolean isInt(String type) {
+			if (type.equals("int") || type.equals("i32")) { return true; }
+			return false;
+	}
+
+	public static boolean isInt(int type) {
+			if (type == INT) { return true; }
+			return false;
+	}
+
+	public static boolean isBool(String type) {
+			if (type.equals("bool")) { return true; }
+			return false;
+	}
+
+	public static boolean isBool(int type) {
+			if (type == BOOL) { return true; }
 			return false;
 	}
 

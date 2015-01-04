@@ -131,8 +131,9 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         String reference_register = generateNewRegister();
                         String llvm_type = Type.getLLVMtype(type);
                         code.addParameter(llvm_type + " " + register);
-                        code.addInitParametersCode( reference_register + " = alloca " + llvm_type + "\n" +
-                            	"store " + llvm_type +" " + register + ", " + llvm_type + "* " + reference_register + "\n");
+                        code.addInitParametersCode( String.format("%s = alloca %s\n store %s %s, %s* %s\n",
+                        											reference_register, llvm_type,
+                            										llvm_type, register, llvm_type, reference_register));
                         mem.put(identifier, reference_register, type);
                 }
 
@@ -226,7 +227,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         @Override
         public CodeFragment visitPrint(teeteeParser.PrintContext ctx) {
                 CodeFragment code = visit(ctx.expression());
-        		if (Type.isVoid(code.getType())) {
+        		if (Type.isVoid(code.getType()) || Type.isBool(code.getType())) {
         				return code;
         		}
                 ST template = new ST(
@@ -237,10 +238,9 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 template.add("value", code.getRegister());
                 template.add("type", code.getTypeString());
                 String instruction = "";
-                if (code.getType() == 0) {
-                        instruction = "printInt";
-                } else {
-                        instruction = "printFloat";
+                switch (code.getType()) {
+                	case 0: instruction = "printInt"; break;
+                	case 1: instruction = "printFloat"; break;
                 }
                 template.add("instruction", instruction);
                 
@@ -260,42 +260,45 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 String instruction = "or";
                 switch (operator) {
                         case teeteeParser.ADD:
-                                if (type == 0) {
+                                if (type == Type.INT || type == Type.BOOL) {
                                         instruction = "add";
                                 } else {
                                         instruction = "fadd";
                                 }
                                 break;
                         case teeteeParser.SUB:
-                                if (type == 0) {
+                                if (type == Type.INT || type == Type.BOOL) {
                                         instruction = "sub";
                                 } else {
                                         instruction = "fsub";
                                 }
                                 break;
                         case teeteeParser.MUL:
-                                if (type == 0) {
+                                if (type == Type.INT || type == Type.BOOL) {
                                         instruction = "mul";
                                 } else {
                                         instruction = "fmul";
                                 }
                                 break;
                         case teeteeParser.DIV:
-                                if (type == 0) {
+                                if (type == Type.INT || type == Type.BOOL) {
                                         instruction = "sdiv";
                                 } else {
                                         instruction = "fdiv";
                                 }
                                 break;
                         case teeteeParser.MOD:
-                        		if (type == 0) {
+                        		if (type == Type.INT || type == Type.BOOL) {
                         				instruction = "srem";
                         		} else {
                         				instruction = "frem";
                         		}
                         		break;
                         case teeteeParser.EXP:
-                                if (type == 0) {
+                        		if (type == Type.BOOL) {
+                                        System.err.println(String.format("Error: type mismatch: EXP bool"));
+                        		}
+                                if (type == Type.INT) {
                                         instruction = "@iexp";
                                 } else {
                                         instruction = "@fexp";
@@ -303,24 +306,32 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                                 code_stub = "<ret> = call <type> <instruction>(<type> <left_val>, <type> <right_val>)\n";
                                 break;
                         case teeteeParser.AND:
-                                if (type == 1) {
+                                if (type == Type.FLOAT) {
                                         System.err.println(String.format("Error: type mismatch: AND float"));
                                 }
                                 instruction = "and";
                         case teeteeParser.OR:
-                                if (type == 1) {
+                                if (type == Type.FLOAT) {
                                         System.err.println(String.format("Error: type mismatch: OR float"));
                                 }
-                                ST temp = new ST(
-                                        "<r1> = icmp ne i32 \\<left_val>, 0\n" +
-                                        "<r2> = icmp ne i32 \\<right_val>, 0\n" +
-                                        "<r3> = \\<instruction> i1 <r1>, <r2>\n" +
-                                        "\\<ret> = zext i1 <r3> to i32\n"
-                                );
-                                temp.add("r1", this.generateNewRegister());
-                                temp.add("r2", this.generateNewRegister());
-                                temp.add("r3", this.generateNewRegister());
-                                code_stub = temp.render();
+                                if (type == Type.BOOL) {
+                                		ST template = new ST(
+                                				"<r1> = \\<instruction> i1 \\<left_val>, \\<right_val>\n" +
+		                                        "\\<ret> = zext i1 <r1> to i32\n"
+                                		);
+                                		template.add("r1", generateNewRegister());
+                                } else {
+		                                ST template = new ST(
+		                                        "<r1> = icmp ne i32 \\<left_val>, 0\n" +
+		                                        "<r2> = icmp ne i32 \\<right_val>, 0\n" +
+		                                        "<r3> = \\<instruction> i1 <r1>, <r2>\n" +
+		                                        "\\<ret> = zext i1 <r3> to i32\n"
+		                                );
+		                                template.add("r1", generateNewRegister());
+		                                template.add("r2", generateNewRegister());
+		                                template.add("r3", generateNewRegister());
+		                                code_stub = template.render();                                	
+                                }
                                 break;
                 }
                 ST template = new ST(
@@ -355,22 +366,27 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 String code_stub = "";
                 switch(operator) {
                         case teeteeParser.SUB:
-                                if (type == 0) {
-                                        code_stub = "<ret> = sub i32 0, <input>\n";
-                                } else {
-                                        code_stub = "<ret> = fsub float 0.0, <input>";
-                                }
+                        		switch (type) {
+                        				case Type.INT:   code_stub = "<ret> = sub i32 0, <input>\n"; break;
+                        				case Type.BOOL:  code_stub = "<ret> = sub i1  0, <input>\n"; break;
+                        				case Type.FLOAT: code_stub = "<ret> = fsub float 0.0, <input>\n"; break;
+                        		}
                                 break;
                         case teeteeParser.NOT:
-                                if (type == 1) {
+                                if (type == Type.FLOAT) {
                                         System.err.println(String.format("Error: type mismatch: NOT float"));
                                 }
-                                ST temp = new ST(
-                                        "<r> = icmp eq i32 \\<input>, 0\n" + 
-                                        "\\<ret> = zext i1 <r> to i32\n"
-                                );
-                                temp.add("r", this.generateNewRegister());
-                                code_stub = temp.render();
+                                if (type == Type.BOOL) {
+                                		code_stub = "<ret> = icmp eq i1 <input>, 0\n";
+                                }
+                                if (type == Type.INT) {
+		                                ST temp = new ST(
+		                                        "<r> = icmp eq i32 \\<input>, 0\n" + 
+		                                        "\\<ret> = zext i1 <r> to i32\n"
+		                                );
+		                                temp.add("r", this.generateNewRegister());
+		                                code_stub = temp.render();                                	
+                                }
                                 break;
                 }
                 ST template = new ST("<code>" + code_stub);
@@ -415,6 +431,32 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         }
 
         @Override
+        public CodeFragment visitOr(teeteeParser.OrContext ctx) {
+                return generateBinaryOperatorCodeFragment(
+                        visit(ctx.expression(0)),
+                        visit(ctx.expression(1)),
+                        ctx.op.getType()
+                );
+        }
+
+        @Override 
+        public CodeFragment visitNot(teeteeParser.NotContext ctx) {
+                return generateUnaryOperatorCodeFragment(
+                        visit(ctx.expression()),
+                        ctx.op.getType()
+                );
+        }
+
+        @Override
+        public CodeFragment visitAnd(teeteeParser.AndContext ctx) {
+                return generateBinaryOperatorCodeFragment(
+                        visit(ctx.expression(0)),
+                        visit(ctx.expression(1)),
+                        ctx.op.getType()
+                );
+        }
+
+        @Override
         public CodeFragment visitPar(teeteeParser.ParContext ctx) {
                 return visit(ctx.expression());
         }
@@ -441,11 +483,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 } else {
                         pointer = mem.get(id);
                         type = mem.getType(id);
-                        if (type == 0) {
-                            typeString = "i32";
-                        } else {
-                            typeString = "float";
-                        }
+                        typeString = Type.getLLVMtype(type);
                 }
                 code.addCode(String.format("%s = load %s* %s\n", register, typeString, pointer));
                 code.setRegister(register);
@@ -466,14 +504,30 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 
         @Override
         public CodeFragment visitFloat(teeteeParser.FloatContext ctx) {
-            String value = ctx.FLOAT().getText();
-            float f = Float.parseFloat(value);
-            CodeFragment code = new CodeFragment();
-            String register = generateNewRegister();
-            code.setRegister(register);
-            code.addCode(String.format("%s = fadd float 0.0, %s\n", register, Float.toString(f)));
-            code.setType("float");
-            return code;
+	            String value = ctx.FLOAT().getText();
+	            float f = Float.parseFloat(value);
+	            CodeFragment code = new CodeFragment();
+	            String register = generateNewRegister();
+	            code.setRegister(register);
+	            code.addCode(String.format("%s = fadd float 0.0, %s\n", register, Float.toString(f)));
+	            code.setType("float");
+	            return code;
+        }
+
+        @Override
+        public CodeFragment visitBool(teeteeParser.BoolContext ctx) {
+        		String value = ctx.BOOL().getText();
+        		if (value.equals("true")) {
+	        			value = "1";
+        		} else {
+    	    			value = "0";
+        		}
+        		CodeFragment code = new CodeFragment();
+        		String register = generateNewRegister();
+        		code.setRegister(register);
+        		code.addCode(String.format("%s = add i1 0, %s", register, value));
+        		code.setType("bool");
+        		return code;
         }
 
         @Override
@@ -486,21 +540,15 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 }
                 
                 String register = generateNewRegister();
-                mem.put(identifier, register, type);
-
-                Integer typeInt = 1;
-                if (type.equals("int")) {
-                    type = "i32";
-                    typeInt = 0;
-                }
+                mem.put(identifier, register, Type.getType(type));
                 
                 CodeFragment code = new CodeFragment();
-                code.addCode(String.format("%s = alloca %s\n", register, type));
-                code.setType(typeInt);
+                code.addCode(String.format("%s = alloca %s\n", register, Type.getLLVMtype(type)));
+                code.setType(type);
 
                 if (ctx.expression().size() > 0) {
                 		CodeFragment expression = visit(ctx.expression(0));
-                		if (expression.getType() != typeInt) {
+                		if (expression.getType() != Type.getType(type)) {
                 			System.err.println(String.format("Error: type mismatch in declaration %s", identifier));
                 		}
 						ST template = new ST(
@@ -509,7 +557,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 						);               		
 						template.add("expression_code", expression);
 						template.add("expression_register", expression.getRegister());
-						template.add("type", type);
+						template.add("type", Type.getLLVMtype(type));
 						template.add("variable_register", register);
 
 						code.addCode(template.render());
@@ -576,9 +624,14 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 						);
 						template.add("condition_code", condition);
 						String cmp_register = generateNewRegister();
-						template.add("cmp_register", cmp_register);
-						template.add("cmp_instruction", 
-							genereateComparingInstruction(condition.getType(), cmp_register, condition.getRegister()));
+						if (Type.isBool(condition.getType())) {
+								template.add("cmp_register", condition.getRegister());
+								template.add("cmp_instruction", "");
+						} else {
+								template.add("cmp_register", cmp_register);
+								template.add("cmp_instruction", 
+									genereateComparingInstruction(condition.getType(), cmp_register, condition.getRegister()));							
+						}
 						template.add("true_label", generateNewLabel());
 						template.add("false_label", generateNewLabel());
 						template.add("statement_true_code", statement_true);
