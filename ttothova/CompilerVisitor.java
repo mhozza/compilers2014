@@ -226,6 +226,9 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         @Override
         public CodeFragment visitPrint(teeteeParser.PrintContext ctx) {
                 CodeFragment code = visit(ctx.expression());
+        		if (Type.isVoid(code.getType())) {
+        				return code;
+        		}
                 ST template = new ST(
                         "<value_code>" + 
                         "call i32 @<instruction> (<type> <value>)\n"
@@ -778,9 +781,14 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         }
                 }
 
-                String ret = generateNewRegister();
-                code.addCode(String.format("%s = call %s @%s(%s)\n", ret, Type.getLLVMtype(type), identifier, parameters));
-                code.setRegister(ret);
+                if (Type.isVoid(type)) {
+	            	    code.addCode(String.format("call %s @%s(%s)\n", Type.getLLVMtype(type), identifier, parameters));
+                } else {
+	    	            String ret = generateNewRegister();
+    	    	        code.addCode(String.format("%s = call %s @%s(%s)\n", 
+    	    	        							ret, Type.getLLVMtype(type), identifier, parameters));
+                		code.setRegister(ret);
+    	    	}
                 code.setType(type);
 
                 return code;
