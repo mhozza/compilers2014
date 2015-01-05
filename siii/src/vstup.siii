@@ -1,0 +1,9 @@
+char[] pole = [0:7]
+pole[0] = 'A'
+pole[1] = 'N'
+pole[2] = 'O'
+pole[3] = ' '
+pole[4] = 'N'
+pole[5] = 'I'
+pole[6] = 'E'
+vypis pole

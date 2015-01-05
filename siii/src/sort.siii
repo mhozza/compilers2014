@@ -1,0 +1,70 @@
+def MergeSort int[] (int[] array, int n)
+<
+    int[] result = [0:n]
+    ak (n <= 1)
+    <
+        vrat array
+    > inak 
+    <
+        int middle = n / 2
+        int[] left = [0:middle]
+        int[] right = [middle:n]
+        int i
+        pre i v [0:middle]
+        <
+            left[i] = array{i}
+        >
+        pre i v [middle:n]
+        <
+            right[i-middle] = array{i}
+        >
+        left = MergeSort(left, middle)
+        right = MergeSort(right, n - middle)
+        int x = 0
+        int y = 0
+        int z = 0
+        pokial (x << middle a y << n-middle)
+        <
+            int t1 = left{x}
+            int t2 = right{y}
+            ak (t1 >> t2)
+            <
+                result[z] = t2
+                y ++ 1
+                z ++ 1
+            > inak
+            <
+                result[z] = t1
+                x ++ 1
+                z ++ 1
+            >
+        >
+        pre i v [x:middle]
+        <
+            result[z] = left{i}
+            z ++ 1
+        >
+        pre i v [y:n-middle]
+        <
+            result[z] = right{i}
+            z ++ 1
+        >
+    >
+    vrat result
+>
+
+int n
+nacitaj n
+int i
+int[] pole = [0:n]
+pre i v [0:n]
+<
+    int x
+    nacitaj x
+    pole[i] = x
+>
+pole = MergeSort(pole, n)
+pre i v [0:n]
+<
+    vypis pole{i}
+>
