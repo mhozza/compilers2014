@@ -30,24 +30,24 @@ def MergeSort int[] (int[] array, int n)
             ak (t1 >> t2)
             <
                 result[z] = t2
-                y = y + 1
-                z = z + 1
+                y ++ 1
+                z ++ 1
             > inak
             <
                 result[z] = t1
-                x = x + 1
-                z = z + 1
+                x ++ 1
+                z ++ 1
             >
         >
         pre i v [x:middle]
         <
             result[z] = left{i}
-            z = z + 1
+            z ++ 1
         >
         pre i v [y:n-middle]
         <
             result[z] = right{i}
-            z = z + 1
+            z ++ 1
         >
     >
     vrat result
