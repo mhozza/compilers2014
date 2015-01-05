@@ -11,13 +11,6 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface ArrowsVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link ArrowsParser#Io}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIo(@NotNull ArrowsParser.IoContext ctx);
-
-	/**
 	 * Visit a parse tree produced by {@link ArrowsParser#range}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -51,6 +44,20 @@ public interface ArrowsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBlock(@NotNull ArrowsParser.BlockContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link ArrowsParser#Output}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOutput(@NotNull ArrowsParser.OutputContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link ArrowsParser#inputArrow}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitInputArrow(@NotNull ArrowsParser.InputArrowContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link ArrowsParser#function}.
@@ -95,6 +102,13 @@ public interface ArrowsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitStatements(@NotNull ArrowsParser.StatementsContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link ArrowsParser#otherArrow}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOtherArrow(@NotNull ArrowsParser.OtherArrowContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link ArrowsParser#Add}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -123,11 +137,11 @@ public interface ArrowsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitPreInc(@NotNull ArrowsParser.PreIncContext ctx);
 
 	/**
-	 * Visit a parse tree produced by {@link ArrowsParser#functions}.
+	 * Visit a parse tree produced by {@link ArrowsParser#Input}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFunctions(@NotNull ArrowsParser.FunctionsContext ctx);
+	T visitInput(@NotNull ArrowsParser.InputContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link ArrowsParser#Call}.
@@ -158,6 +172,20 @@ public interface ArrowsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitParams(@NotNull ArrowsParser.ParamsContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link ArrowsParser#outputArrow}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitOutputArrow(@NotNull ArrowsParser.OutputArrowContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link ArrowsParser#Qstr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitQstr(@NotNull ArrowsParser.QstrContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link ArrowsParser#PostInc}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -172,18 +200,18 @@ public interface ArrowsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitNot(@NotNull ArrowsParser.NotContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link ArrowsParser#singleInput}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSingleInput(@NotNull ArrowsParser.SingleInputContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link ArrowsParser#lvalue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitLvalue(@NotNull ArrowsParser.LvalueContext ctx);
-
-	/**
-	 * Visit a parse tree produced by {@link ArrowsParser#String}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitString(@NotNull ArrowsParser.StringContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link ArrowsParser#Or}.
@@ -207,6 +235,13 @@ public interface ArrowsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitReturn(@NotNull ArrowsParser.ReturnContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link ArrowsParser#quotedString}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitQuotedString(@NotNull ArrowsParser.QuotedStringContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link ArrowsParser#If}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -226,6 +261,13 @@ public interface ArrowsVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitVar(@NotNull ArrowsParser.VarContext ctx);
+
+	/**
+	 * Visit a parse tree produced by {@link ArrowsParser#singleOutput}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSingleOutput(@NotNull ArrowsParser.SingleOutputContext ctx);
 
 	/**
 	 * Visit a parse tree produced by {@link ArrowsParser#And}.

@@ -8,17 +8,6 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface ArrowsListener extends ParseTreeListener {
 	/**
-	 * Enter a parse tree produced by {@link ArrowsParser#Io}.
-	 * @param ctx the parse tree
-	 */
-	void enterIo(@NotNull ArrowsParser.IoContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ArrowsParser#Io}.
-	 * @param ctx the parse tree
-	 */
-	void exitIo(@NotNull ArrowsParser.IoContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link ArrowsParser#range}.
 	 * @param ctx the parse tree
 	 */
@@ -72,6 +61,28 @@ public interface ArrowsListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBlock(@NotNull ArrowsParser.BlockContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link ArrowsParser#Output}.
+	 * @param ctx the parse tree
+	 */
+	void enterOutput(@NotNull ArrowsParser.OutputContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArrowsParser#Output}.
+	 * @param ctx the parse tree
+	 */
+	void exitOutput(@NotNull ArrowsParser.OutputContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link ArrowsParser#inputArrow}.
+	 * @param ctx the parse tree
+	 */
+	void enterInputArrow(@NotNull ArrowsParser.InputArrowContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArrowsParser#inputArrow}.
+	 * @param ctx the parse tree
+	 */
+	void exitInputArrow(@NotNull ArrowsParser.InputArrowContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ArrowsParser#function}.
@@ -140,6 +151,17 @@ public interface ArrowsListener extends ParseTreeListener {
 	void exitStatements(@NotNull ArrowsParser.StatementsContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ArrowsParser#otherArrow}.
+	 * @param ctx the parse tree
+	 */
+	void enterOtherArrow(@NotNull ArrowsParser.OtherArrowContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArrowsParser#otherArrow}.
+	 * @param ctx the parse tree
+	 */
+	void exitOtherArrow(@NotNull ArrowsParser.OtherArrowContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ArrowsParser#Add}.
 	 * @param ctx the parse tree
 	 */
@@ -184,15 +206,15 @@ public interface ArrowsListener extends ParseTreeListener {
 	void exitPreInc(@NotNull ArrowsParser.PreIncContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link ArrowsParser#functions}.
+	 * Enter a parse tree produced by {@link ArrowsParser#Input}.
 	 * @param ctx the parse tree
 	 */
-	void enterFunctions(@NotNull ArrowsParser.FunctionsContext ctx);
+	void enterInput(@NotNull ArrowsParser.InputContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link ArrowsParser#functions}.
+	 * Exit a parse tree produced by {@link ArrowsParser#Input}.
 	 * @param ctx the parse tree
 	 */
-	void exitFunctions(@NotNull ArrowsParser.FunctionsContext ctx);
+	void exitInput(@NotNull ArrowsParser.InputContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ArrowsParser#Call}.
@@ -239,6 +261,28 @@ public interface ArrowsListener extends ParseTreeListener {
 	void exitParams(@NotNull ArrowsParser.ParamsContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ArrowsParser#outputArrow}.
+	 * @param ctx the parse tree
+	 */
+	void enterOutputArrow(@NotNull ArrowsParser.OutputArrowContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArrowsParser#outputArrow}.
+	 * @param ctx the parse tree
+	 */
+	void exitOutputArrow(@NotNull ArrowsParser.OutputArrowContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link ArrowsParser#Qstr}.
+	 * @param ctx the parse tree
+	 */
+	void enterQstr(@NotNull ArrowsParser.QstrContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArrowsParser#Qstr}.
+	 * @param ctx the parse tree
+	 */
+	void exitQstr(@NotNull ArrowsParser.QstrContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ArrowsParser#PostInc}.
 	 * @param ctx the parse tree
 	 */
@@ -261,6 +305,17 @@ public interface ArrowsListener extends ParseTreeListener {
 	void exitNot(@NotNull ArrowsParser.NotContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ArrowsParser#singleInput}.
+	 * @param ctx the parse tree
+	 */
+	void enterSingleInput(@NotNull ArrowsParser.SingleInputContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArrowsParser#singleInput}.
+	 * @param ctx the parse tree
+	 */
+	void exitSingleInput(@NotNull ArrowsParser.SingleInputContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ArrowsParser#lvalue}.
 	 * @param ctx the parse tree
 	 */
@@ -270,17 +325,6 @@ public interface ArrowsListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLvalue(@NotNull ArrowsParser.LvalueContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ArrowsParser#String}.
-	 * @param ctx the parse tree
-	 */
-	void enterString(@NotNull ArrowsParser.StringContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ArrowsParser#String}.
-	 * @param ctx the parse tree
-	 */
-	void exitString(@NotNull ArrowsParser.StringContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ArrowsParser#Or}.
@@ -316,6 +360,17 @@ public interface ArrowsListener extends ParseTreeListener {
 	void exitReturn(@NotNull ArrowsParser.ReturnContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ArrowsParser#quotedString}.
+	 * @param ctx the parse tree
+	 */
+	void enterQuotedString(@NotNull ArrowsParser.QuotedStringContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArrowsParser#quotedString}.
+	 * @param ctx the parse tree
+	 */
+	void exitQuotedString(@NotNull ArrowsParser.QuotedStringContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ArrowsParser#If}.
 	 * @param ctx the parse tree
 	 */
@@ -347,6 +402,17 @@ public interface ArrowsListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitVar(@NotNull ArrowsParser.VarContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link ArrowsParser#singleOutput}.
+	 * @param ctx the parse tree
+	 */
+	void enterSingleOutput(@NotNull ArrowsParser.SingleOutputContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArrowsParser#singleOutput}.
+	 * @param ctx the parse tree
+	 */
+	void exitSingleOutput(@NotNull ArrowsParser.SingleOutputContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ArrowsParser#And}.

@@ -102,19 +102,19 @@ block: INDENT statements DEDENT;
  
 statement:
      expression arrow expression (arrow expression)*    # Arw
-     | (input_arrow expression (',' expression))+       # Input
-     | (output_arrow expression (',' expression) (COLON quotedstring))+   #Output
+     | (singleInput)+       # Input
+     | (singleOutput)+   #Output
      | block                 							# Blck
      | expression COLON NEWLINE tr=block (ELSE NEWLINE fa=block)?  		# If
      | WHILE expression COLON NEWLINE block                       # While
-     | FOR lvalue range COLON NEWLINE block			    # For
+     | FOR lvalue op=(LA|RA) range COLON NEWLINE block			    # For
      | RET expression                                   # Return
      | PASS                                             # Pass
      ;
 
 expression:
-	 op=('++'|'--') expression							 # PreInc
-	 | expression op=('++'|'--')						 # PostInc
+	 op=(INC|DEC) expression							 # PreInc
+	| expression op=(INC|DEC)						 # PostInc
      | op=('-'|'+') expression                           # Una
      | expression op=(DIV|MUL) expression                # Mul
      | expression op=(ADD|SUB) expression                # Add
@@ -124,32 +124,37 @@ expression:
      | expression op=EQ expression						 # Eq
      | PAREN_OPEN expression PAREN_CLOSE                 # Par
      | lvalue '('params')'                               # Call
-     | lvalue(range)*							   # Var
+     | variable                                           # Var
      | INT 									   # Int
-     | quotedstring			                            # Qstr								 
+     | quotedString			                            # Qstr								 
      ;
 
-quotedstring: QUOT content=(STRING | ANYSTRING)* QUOT;
+variable: lvalue(range)*
+
+singleInput: inputArrow variable (',' variable)* ;
+singleOutput: outputArrow expression (',' expression)* (COLON quotedString) ;
+
+quotedString: QUOT content=(STRING | ANYSTRING)* QUOT;
 lvalue: STRING;
 args: (lvalue (',' lvalue)*)?;
 params: (expression (',' expression)*)?;
 
-arrow: input_arrow | output_arrow | other_arrow;
+arrow: inputArrow | outputArrow | otherArrow;
 
-input_arrow: 
+inputArrow: 
 	LA
 	| IS
 	| ISL
 	;
 
-output_arrow:
+outputArrow:
      RA
      | OS
      | OL
      | OSL
      ;
 
-other_arrow:
+otherArrow:
      LPA
      | LSA
      | LDA
@@ -161,8 +166,11 @@ other_arrow:
      | RMA
      | RRA
      | SWAP
+     ;
 
-range: LR INT RR;
+range: singleRange | boundedRange;
+dynamicRange: LR expression RR;
+boundedRange: LR expression DOTS expression RR; 
 
 COMMENT: '#' ~[\r\n]* -> skip;
 SPACES: [ \t]+ -> skip;

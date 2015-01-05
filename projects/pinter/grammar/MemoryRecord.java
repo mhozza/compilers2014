@@ -4,8 +4,9 @@ public class MemoryRecord {
 	public ArrowsExtendedVisitor.Typeenum type;
 
 	//info for array types
-	public Integer arrayMemSize;
-	public ArrayList<Integer> arraySizes;
+	public Integer numberOfDimensions;
+	public String arrayMemSizeRegister;
+	public String dimensionSizesRegister;
 
 	public MemoryRecord(String _id,String _reg, ArrowsExtendedVisitor.Typeenum _t) {
 		register=_reg;
@@ -13,12 +14,13 @@ public class MemoryRecord {
 		type=_t;
 	}
 
-	public MemoryRecord(String _id,String _reg, ArrowsExtendedVisitor.Typeenum _t, Integer _size, ArrayList<Integer> _arrSizes) {
+	public MemoryRecord(String _id,String _reg, ArrowsExtendedVisitor.Typeenum _t, String _size, String _arrSizes, Integer _dim) {
 		register=_reg;
 		identificator=_id;
 		type=_t;
-		arrayMemSize=_size;
-		arraySizes=_arrSizes;
+		arrayMemSizeRegister=_size;
+		dimensionSizesRegister=_arrSizes;
+		numberOfDimensions=_dim;
 	}
 
 }

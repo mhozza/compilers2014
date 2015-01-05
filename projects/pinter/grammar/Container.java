@@ -8,17 +8,16 @@ public class Container {
 	//variable info
 	private String register;
 	private String identifier;
-	private Map<String,String> memory_map;
+	private MemoreRecord record;
 	//operator info
 	private boolean swap;
 	//array info
 	private Integer dimensionShift;
-	private Integer arrayMemSize;
-	private ArrayList<Integer> arraySizes;
+	private String arrayMemSizeRegister;
+	private String arrayOffsetRegister;
+	//private ArrayList<Integer> arraySizes;
 	//range info
-	private Integer lowerRange=-2147483648; //we're working with 32bit signed integers
-	private Integer upperRange=2147483648;
-	private Integer exactRange=null; //when not null, upper and lower range are ignored
+	private String secondRegister; //for bounded range
 	//container type info
 	private ArrowsExtendedVisitor.Openum opType;
 	private ArrowsExtendedVisitor.Typeenum type;
@@ -30,17 +29,20 @@ public class Container {
 		memory_map=null;
 		swap=false;
 		dimensionShift=0;
-		opType=NONE;
+		arraySizes=new ArrayList<Integer>();
 	}
 
 	public Container(ArrowsExtendedVisitor.Typeenum _t) {
 		type=_t;
+		//if we're setting an unknown type, make both enums euqall
+		if (type==ArrowsExtendedVisitor.Typeenum.NONE) opType=ArrowsExtendedVisitor.Openum.NONE;
 		this();
 	}
 
 	public Container(Openum _opt) {
 		opType=_opt;
-		this.super();
+		if (opType==ArrowsExtendedVisitor.Openum.NONE) type=ArrowsExtendedVisitor.Typeenum.NONE;
+		this();
 	}
 
 	public String getCode() {

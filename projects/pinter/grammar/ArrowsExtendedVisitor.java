@@ -19,18 +19,20 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
     private int labelIndex = 0;
     private int registerIndex = 0;
 
+    CharsetEncoder charEncoder = Charset.forName("ISO-8859-1").newEncoder();
+
     public enum Openum {
-		ASSIGN,ADDSIGN,SUBSIGN,MULSIGN,DIVSIGN,POSIGN,SWAP,PRINTINT,PRINTCHAR,PRINTCHARLINE,PRINTINTLINE,READINT,READCHAR,READCHARLINE,READINTLINE,ADD,SUB,MUL,DIV,AND,OR,NOT,NONE
+		NONE,ASSIGN,ADDSIGN,SUBSIGN,MULSIGN,DIVSIGN,POSIGN,SWAP,STRING,PRINTINT,PRINTCHAR,PRINTCHARLINE,PRINTINTLINE,READINT,READCHAR,READCHARLINE,READINTLINE,ADD,SUB,MUL,DIV,AND,OR,NOT
 	}
 
 	public enum Typenum {
-		INT,STRING,ARRAY,NONE
+		NONE,INT,ARRAY,STRING,RANGE
 	}
 
-    private Map<String,MemoryRecord> stackContainsKey(String identifier) {
+    private MemoryRecord stackContainsKey(String identifier) {
             int i=mem.getLast().size()-1;
             while ((i>=0)&&(!mem.getLast().get(i).containsKey(identifier))) i--;
-            if (i>=0) return mem.getLast().get(i);
+            if (i>=0) return mem.getLast().get(i).get(identifier);
             return null;
     }
 
@@ -50,7 +52,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
         mem.getLast().addLast(new HashMap<String,MemoryRecord>());
         Container body=new Container(); 
         for (int i = 0; i< ctx.statements().size(); i++) {
-        	body.append(visit(ctx.statements()[i]));
+        	body.append(visit(ctx.statements(i)));
         }
 
         ST template = new ST(
@@ -69,203 +71,87 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 	}
 
 
-	@Override public Container visitArw(ArrowsParser.ArwContext ctx) {
+    @Override
+    public Container visitStatements(ArrowsParser.StatementsContext ctx) {
+            Container code = new Container();
+            for(ArrowsParser.StatementContext s: ctx.statement()) {
+                    Container statement = visit(s);
+                    code.appendCode(statement);
+                    code.setRegister(statement.getRegister());
+            }
+            return code;
+    }
 
-		Container left=visit(ctx.expression()[0]);
+
+	@Override public Container visitArw(ArrowsParser.ArwContext ctx) {
+		Container left=visit(ctx.expression(0));
 		Container ret = new Container();
 		Container right,op;
-
 		for (int i=0;i<ctx.arrow().size();i++) {		
-			
-			right=visit(ctx.expression()[i*2+1]);
-			op=visit(ctx.arrow()[i]);
-			
+			right=visit(ctx.expression(i*2+1));
+			op=visit(ctx.arrow(i));
+			if (left.getMemoryRecord()==null) {
+				throw new CompilerException("Assigning to expression which does not return variable");
+			}
+			//after this, left is the target, right is what is assigned to it
 			if (op.getSwap()) {
 				Container halp=left;
 				left=right;
 				right=halp;
 			}
-
-			//check validity of left & right
-			if (left.getIdentifier()==null)||(((op.opType==Openum.SWAP)||(op.opType==Openum.POSIGN))&&(right.getMemoryMap()==null)) {
-				//swap back to get nice error message
-				if (op.getSwap()) {
-					Container halp=left;
-					left=right;
-					right=halp;
-				}				
-				throw new CompilerException("Assignment to/from nonexisting variable: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
-			}
-			if (left.type==Typeenum.NONE) {
-				if ((op.opType!=Openum.ASSIGN)||(right.type==Typeenum.NONE)) {
-					//swap back to get nice error message
-					if (op.getSwap()) {
-						Container halp=left;
-						left=right;
-						right=halp;
-					}	
-					throw new CompilerException("Invalid operation on an uninitialized variable: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());		
-				}
-			}
-			if ((left.type!=Typeenum.INT)||(right.type!=Typeenum.INT)) {
-				if ((op.opType!=Openum.ASSIGN)||(op.opType!=Openum.POSIGN)||(op.opType!=Openum.SWAP)) {
-					//swap back to get nice error message
-					if (op.getSwap()) {
-						Container halp=left;
-						left=right;
-						right=halp;
-					}	
-					throw new CompilerException("Arithmetic operation between unsupported types: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());		
-				}
-			}
-			if ((left.type==Typeenum.ARRAY)&&(right.type==Typeenum.ARRAY)) {
-				//for now, lets forbid all the weird stuff with array addition and multiplication
-				if (!((op.opType==Openum.POSIGN)||(op.opType==Openum.SWAP)||(op.opType==Openum.ASSIGN))) {
-					//swap back to get nice error message
-					if (op.getSwap()) {
-						Container halp=left;
-						left=right;
-						right=halp;
-					}				
-					throw new CompilerException("Arithmetic between arrays forbidenn : "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
-				}
-				if (right.getMemoryMap()==null) {
-					//swap back to get nice error message
-					if (op.getSwap()) {
-						Container halp=left;
-						left=right;
-						right=halp;
-					}				
-					throw new CompilerException("Assignment from an nonexisting array: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
-				}			
-				if (left.getActiveDimensions()!=right.getActiveDimensions()) {
-					//swap back to get nice error message
-					if (op.getSwap()) {
-						Container halp=left;
-						left=right;
-						right=halp;
-					}	
-					throw new CompilerException("Array dimensions does not match: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());			
-				}
-				//this could theoretically work with standard assign, but for now lets forbid it too
-				if (((op.opType==Openum.POSIGN)||(op.opType==Openum.SWAP)||(op.opType==Openum.ASSIGN))&&((left.getDimensionShift()!=0)||(right.getDimensionShift()!=0))) {
-					//swap back to get nice error message
-					if (op.getSwap()) {
-						Container halp=left;
-						left=right;
-						right=halp;
-					}	
-					throw new CompilerException("Can't point to only a part of an array: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());				
-				}
-			}
-
+			//TODO error checks
 			//execute left & right code, assign value from right to left
 			Container opRes = generateBinaryOperatorContainer(left,right,op.opType);
-			String code_stup="";
-			String mem_register="";
-			switch(op.opType) {
-				case Openum.SWAP:
-					//swap pointers
-					Map<String,MemoryRecord> left_map=stackContainsKey(left.getIdentifier());
-					Map<String,MemoryRecord> right_map=stackContainsKey(right.getIdentifier());
-					if ((left_map==null)||(right_map==null)) {
-						//swap back to get nice error message
-						if (op.getSwap()) {
-							Container halp=left;
-							left=right;
-							right=halp;
-						}
-						throw new CompilerException("Swap into an uninitialized variable: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());		
-					}
-					String code_stub="TODO SEM DAT CALL NA FUNKCIU CO SWAPUJE";
-					ret.appendCode(opRes);
-					ret.appendCode(code_stub);
-					break;
-				case Openum.ASSIGN:
-				case Openum.ADDSIGN:
-				case Openum.SUBSIGN:
-				case Openum.MULSIGN:
-				case Openum.DIVSIGN:
-					Map<String,MemoryRecord> left_map=stackContainsKey(left.getIdentifier());
-					if (left_map==null) {
-						//create new entry
-						mem_register = this.generateNewRegister();
-						if (right.getType()==Typeenum.INT) {
-			                code_stub = "<mem_register> = alloca i32\n";
-			                mem.getLast().getLast().put(left.getIdentifier(), new MemoryRecord(left.getIdentifier, mem_register, Typeenum.INT));
-						} else {
-							code_stub = "<mem_register> = alloca i32, i32 "+right.getArrayMemSize()+"\n";
-							mem.getLast().getLast().put(left.getIdentifier(), new MemoryRecord(left.getIdentifier, mem_register, Typeenum.INT, right.getArrayMemSize(), right.getArraySizes())); 
-						}
-					} else {
-						//assigning to existing entry
-						mem_register = left_map.get(getIdentifier();
-					}
-					ST template = new ST(
-		                code_stub + 
-		                "store i32 <value_register>, i32* <mem_register>\n"
-			        );
-			        template.add("value_register", opRes.getRegister());
-			        template.add("mem_register", mem_register);
-			        ret.appendCode(opRes);
-			        ret.appendCode(template.render());
-			        ret.inheritFromContainer(left);
-					break;
-				default:
-					//swap back to get nice error message
-					if (op.getSwap()) {
-						Container halp=left;
-						left=right;
-						right=halp;
-					}	
-					throw new CompilerException("Unexpected operator: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
-					break;
+			ret.appendCode(opRes);
+			ret.inheritFromContainer(opRes);
+			String targetPointer;
+			if (left.getType==Typeenum.INT) {
+				targetPointer=left.getRegister();
+			} else {
+				targetPointer=generateNewRegister();
+				String offsetReg=generateNewRegister();
+				ret.appendCode(String.format("%s = load i32* %s\n",offsetReg,left.getArrayOffsetRegister()));
+				ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",targetPointer,left.getRegister(),offsetReg));
 			}
+			if (right.getType==Typeenum.INT) {
+				ret.appendCode(String.format("store i32 %s, i32* %s\n",right.getRegister(),targetPointer));
+			} else {
+				//TODO MEMCOPY
+			}
+			//TODO 3 riadky
 		}
         return ret;
 	}
-
-	private Container generateFunctionCode() {
-                Container code = new Container();
-                for(Map.Entry<String,Function> e : func.entrySet()) {
-                        Function f=e.getValue();
-                        ST template = new ST(
-                                "define i32 @<name>(<args>) {\n" +
-                                "start:\n" +
-                                "<body_code>" +
-                                "ret i32 0" + 
-                                "}\n"
-                        );
-                        template.add("name", f.name);
-                        template.add("body_code", f.code);
-                        template.add("args", paramsToString(f.args));
-
-                        code.addCode(template.render());
-                        code.setRegister(f.code.getRegister());
-                }
-                return code;
-        }
-
-
-    private String paramsToString(List<String> params) {
-            String s = "";
-            boolean begin = true;
-            for (String p : params) {
-                    if (!begin) {
-                            s += ", ";
-                    } else {
-                            begin = false;
-                    }
-                    s += "i32 " + p;
-            }
-            return s;
-    }
 
 
     public Container generateBinaryOperatorContainer(Container left, Container right, Openum operator) {
             String code_stub = "<ret> = <instruction> <type> <left_val>, <right_val>\n";
             String instruction = "or";
             Container ret = new Container();
+            if (left.type==Typeenum.ARRAY) {
+            	if (left.getDimensionShift()==0) {
+            		String reg=generateNewRegister();
+            		ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",reg,,left.getArrayOffsetRegister(),i));
+            		ret.appendCode(String.format("%s = load i32* %s\n",partial,memSizeRegister));
+            	} else {
+            		if (operator!=Openum.ASSIGN) {
+            			throw new CompilerException("Invalid operation on arrays");
+            		}
+            	}
+            }
+            if (right.type==Typeenum.ARRAY) {
+            	if (right.getDimensionShift()==0) {
+            		ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",reg,arrSizesRegister,i));
+            		ret.appendCode(String.format("%s = load i32* %s\n",partial,memSizeRegister));
+            	} else {
+            		if (operator!=Openum.ASSIGN) {
+            			throw new CompilerException("Invalid operation on arrays");
+            		}
+            	}
+            }
+            if ((left.type==STRING)||((right.type==STRING)&&(operator!=Openum.ASSIGN))) {
+            	throw new CompilerException("Invalid operation on strings");
+            }
             switch (operator) {
             		case Openum.ASSIGN:
 					case Openum.SWAP:
@@ -328,6 +214,8 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
             );
             template.add("left_code", left);
             template.add("right_code", right);
+	        //set types & everything to the same as were 
+	        ret.inheritFromContainer(right);
             String ret_register;
             if (!code_stub.isEmpty()) {
 	            template.add("instruction", instruction);
@@ -336,11 +224,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 	            ret.setRegister(this.generateNewRegister());
 	            template.add("ret", ret_register);
 	            ret.setRegister(ret_register);
-	        } else {
-	        	//after swap is performed , we can no longer continue in "chaining" the arrows - therefore don't return register
-	        	if (operator!=Openum.SWAP) ret.setRegister(right.getRegister());
-	        }
-            
+	        }             
             ret.appendCode(template.render());
             return ret;
     
@@ -348,10 +232,12 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
     
 
     public Container generateUnaryOperatorContainer(Container code, Integer operator) {
+            if (code.type!=Typeenum.INT) {
+            	throw new CompilerException("Invalid unary operation on a non-integer type.");
+            }
             if (operator == calculatorParser.ADD) {
                     return code;
             }
-
             String code_stub = "";
             switch(operator) {
                     case calculatorParser.SUB:
@@ -381,12 +267,376 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 
 
     @Override
-    public Container visitInt(calculatorParser.IntContext ctx) {
-            String value = ctx.INT().getText();
-            return generateIntContainer(value);
+    public Container visitInt(ArrowsParser.IntContext ctx) {
+        String value = ctx.INT().getText();
+        Container ret = new Container(Typeenum.INT);
+        ret.setRegister(generateNewRegister());
+        ret.appendCode(String.format("%s = add i32 0, %s\n", register, value));
+        return code;
     }
 
-	/*
+
+    @Override 
+    public Container visitVar(ArrowsParser.VarContext ctx) {
+    	Container ret;
+		MemoryRecord mr=stackContainsKey(ctx.lvalue().getText());
+		if (mr==null) {
+			if (ctx.range()==null) {
+				ret=new Container(Typeenum.INT);
+				ret.setRegister(generateNewRegister());
+				ret.setIdentifier(ctx.lvalue().getText());
+				ret.setMemoryRecord(new MemoryRecord(ret.getIdentifier(), generateNewRegister(), Typeenum.INT));
+				mem.getLast().getLast().put(ret.getMemoryRecord());
+				//allocate memory, store value in container register
+				ret.appendCode(String.format("%s = alloca i32\n",ret.getMemoryRecord.register));
+				ret.appendCode(String.format("store i32 0, i32* %s\n",ret.getMemoryRecord.register)); //init to 0, which is nice for 'for' syntax
+				ret.appendCode(String.format("%s = load i32* %s\n", ret.getRegister(), ret.getMemoryRecord.register));
+			} else {
+				//allocation , creates array in memory and returns it whole
+				ret=new Container(Typeenum.ARRAY);
+				ret.setRegister(generateNewRegister());
+				ret.setIdentifier(ctx.lvalue().getText());
+				ret.setDimensionShift(0);
+				//a register for array dimension sizes
+				String arrSizesRegister=generateNewRegister();
+				ret.appendCode(String.format("%s = alloca i32, i32 %d\n",arrSizesRegister,ctx.range().size()));
+				//offset register, set to 0 for new array
+				String offsetRegister=generateNewRegister();
+				ret.appendCode(String.format("%s = alloca i32",offsetRegister);
+				ret.appendCode(String.format("store i32 0, i32* %s\n",offsetRegister));
+				//and a register for total array size (will be multiplied by every dimension, therefore initial 1)
+				String memSizeRegister=generateNewRegister();
+				ret.appendCode(String.format("%s = alloca i32",memSizeRegister);
+				ret.appendCode(String.format("store i32 1, i32* %s\n",memSizeRegister));
+				for (int i=0;i<ctx.range().size();i++) {
+					Container range=visit(ctx.range(i));
+					if (range.getRegister()==null) {
+						throw new CompilerException("Expression between [] does not return value");
+					} else if (range.getSecondRegister()!=null) {
+						throw new CompilerException("Invalid indexing of an array - can't use bounded ([x..y]) ranges in this context.");
+					}
+					String reg=generateNewRegister();
+					//store current dimension size in an array with the rest
+					ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",reg,arrSizesRegister,i));
+					ret.appendCode(String.format("store i32 %d, i32* %s\n",range.getRegister(),reg));
+					//multiply size by current dimension size
+					String partial=generateNewRegister();
+					String partialMul=generateNewRegister();
+					ret.appendCode(String.format("%s = load i32* %s\n",partial,memSizeRegister));
+					ret.appendCode(String.format("%s = mul i32 %s, %s\n",partialMul,partial,range.getRegister()));
+					ret.appendCode(String.format("store i32 %s, i32* %s\n",partialMul,memSizeRegister));
+				}
+				ret.setArrayMemSizeRegister(memSizeRegister);
+				ret.setArrayOffsetRegister(offsetRegister);
+				ret.setMemoryRecord(new MemoryRecord(ret.getIdentifier(), ret.getRegister(), Typeenum.ARRAY, memSizeRegister, arrSizesRegister, numberOfDimensions));
+				mem.getLast().getLast().put(ret.getMemoryRecord());
+				ret.appendCode(String.format("%s = alloca i32, i32 %s \n",ret.getRegister(),memSizeRegister));
+			}
+		} else {
+			if (mr.type==Typeenum.INT) {
+				ret=new Container(Typeenum.INT);
+				ret.setRegister(generateNewRegister());
+				ret.setIdentifier(mr.identifier);
+				ret.setMemoryRecord(mr);
+				ret.appendCode(String.format("%s = load i32* %s\n", ret.getRegister(), mr.register));
+			} else {
+				//access, returns either an array or an integer at the position given by ranges
+				int dimensionShift=mr.arraySizes.size()-ctx.range().size();
+				if (dimensionShift<0) {
+					throw new CompilerException(String.format("Invalid number of dimensions - specified %d where %s has only %d",ctx.range().size(),mr.identifier,mr.arraySizes.size()));
+				}
+				ret=new Container(Typeenum.ARRAY);
+				//size of the offsetted array
+				String retSize=generateNewRegister();
+				String calc=generateNewRegister();
+				ret.appendCode(String.format("%s = alloca i32\n",retSize));
+				ret.appendCode(String.format("%s = load i32* %s\n", calc, mr.memSizeRegister));
+				ret.appendCode(String.format("store i32 %s, i32* %s\n",calc,retSize));
+				//offset in the whole array	
+				String offset=generateNewRegister();
+				ret.appendCode(String.format("%s = alloca i32\n",offset));
+				ret.appendCode(String.format("store i32 0, i32* %s\n",offset));
+				for (int i=0;i<ctx.range().size();i++) {
+					Container range=visit(ctx.range(i));
+					if (range.getRegister()==null) {
+						throw new CompilerException("Expression between [] does not return value");
+					} else if (range.getSecondRegister()!=null) {
+						throw new CompilerException("Invalid indexing of an array - can't use bounded ([x..y]) ranges in this context.");
+					}
+					//move accross the current dimension
+					String dimSize=generateNewRegister();
+					String currentOffset=generateNewRegister();
+					String partial=generateNewRegister();
+					String partialAdd=generateNewRegister();
+					//calculating dimension offset
+					ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",dimSize,mr.arrSizesRegister,i)); //get dimension size
+					ret.appendCode(String.format("%s = mul i32 %s, %s\n",currentOffset,dimSize,range.getRegister())); //calculate current dim. offset
+					ret.appendCode(String.format("%s = load i32* %s\n", partial, offset)); 
+					ret.appendCode(String.format("%s = add i32 %s, %s\n",partialAdd,partial,currentOffset)); //calculate new partial offset
+					ret.appendCode(String.format("store i32 %d, i32* %s\n",partialAdd,offset)); //useless in last iteration
+					//calculating return size
+					String getRet=generateNewRegister();
+					String divRet=generateNewRegister();
+					ret.appendCode(String.format("%s = load i32* %s\n", getRet, retSize)); 
+					ret.appendCode(String.format("%s = div i32 %s, %s\n",divRet,getRet,range.getRegister())); 
+					ret.appendCode(String.format("store i32 %d, i32* %s\n",divRet,retSize)); //useless in last iteration, but whatever
+				}
+				ret.setArrayMemSizeRegister(divRet);
+				ret.setArrayOffsetRegister(partialAdd);
+				ret.setMemoryRecord(mr);
+				ret.setRegister(mr.register);
+				ret.setIdentifier(mr.identifier);
+				ret.setDimensionShift(dimensionShift);
+			}
+		}
+		return ret;
+    }
+
+
+    @Override
+    public Container visitRange(ArrowsParser.RangeContext ctx) {
+    	Container ret=visit(ctx.expression(0));
+    	ret.setType(Typeenum.RANGE);
+    	if (ctx.expression().size()>1) {
+    		Container second=visit(ctx.expression(1));
+    		ret.appendCode(second.getCode());
+    		ret.setSecondRegister(second.getRegister());
+    	}
+    	return ret;
+    }
+
+
+    @Override 
+    public Container visitQuotedString(ArrowsParser.QuotedStringContext ctx) { 
+    	//TODO check and fix
+    	String str= ctx.content().getText();
+    	byte[] stringBytes=str.getBytes("ISO-8859-1");
+    	Container ret(Typeenum.STRING);		//string differs from ARRAY in that it has no 
+    	ret.setRegister(generateNewRegister());
+    	ret.setDimensionShift(1);
+    	//store 0 offset in register
+    	String offset=generateNewRegister();
+		ret.appendCode(String.format("%s = alloca i32\n",offset));
+		ret.appendCode(String.format("store i32 0, i32* %s\n",offset));
+		ret.setArrayOffsetRegister(offset);
+		//store length in register
+		String memSize=generateNewRegister();
+		ret.appendCode(String.format("%s = alloca i32\n",memSize));
+		ret.appendCode(String.format("store i32 %d, i32* %s\n",str.length,memSize));
+    	ret.setArrayMemSize(memSize);
+    	ret.appendCode(String.format("%d = alloca i32, i32 %s\n",ret.getRegister(),ret.getArrayMemSize()));
+		for (int i=0;i<ret.getArrayMemSize();i++) {
+			String reg=generateNewRegister();
+			ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",reg,ret.getRegister(),i));
+			ret.appendCode(String.format("store i32 %d, i32* %s\n",Integer(stringBytes[i]),reg));
+		}
+		return ret;
+    }
+
+
+    @Override
+    public Container visitInput(ArrowsParser.InputContext ctx) {
+    	Container ret=new Container(Typeenum.NONE);
+    	for (int i=0;i<ctx.singleInput().size();i++) {
+    		//TODO? inherit from container ?
+    		ret.appendCode(visit(ctx.singleInput(i)));
+    	}
+    	return ret;
+    }
+
+
+    @Override 
+    public Container visitSingleInput(ArrowsParser.SingleInputContext ctx) {
+    	Container arw=visit(ctx.inputArrow());
+    	Container ret=new Container(Typeenum.NONE);
+    	for (int i=0;i<ctx.variable.size();i++) {
+	    	Container var=visit(ctx.variable(i));
+	    	Container input;
+	    	switch (arw.Optype) {
+	    		case Optype.ASSIGN:
+	    			input = new Container(Typeenum.INT);
+			        input.setRegister(generateNewRegister());
+			        input.appendCode(String.format("%s = callTODO\n", register, value));
+			        Container assign=generateBinaryOperatorContainer(Container left, Container right, Openum arw.getOptype());
+			        ret.inheritFromContainer(assign);
+			        ret.appendCode(assign);
+	    			break;
+	    		case Optype.STRING:
+	    			arw.setOptype(Openum.ASSIGN); //for purposes of generateBinOp, we're just assigning
+	    			input = new Container(Typeenum.ARRAY);
+			        input.setRegister(generateNewRegister());
+			        input.appendCode(String.format("%s = callTODO\n", register, value));
+			        Container assign=generateBinaryOperatorContainer(Container left, Container right, Openum arw.getOptype());
+			        ret.inheritFromContainer(assign);
+			        ret.appendCode(assign);
+	    			break;
+	    	}
+    	}
+    	return ret;
+ 	}
+
+
+ 	@Override
+    public Container visitOutput(ArrowsParser.OutputContext ctx) {
+    	Container ret=new Container(Typeenum.NONE);
+    	for (int i=0;i<ctx.singleOutput().size();i++) {
+    		ret.appendCode(visit(ctx.singleOutput(i)));
+    	}
+    	//TODO newline
+    	return ret;
+    }
+
+
+	@Override 
+    public Container visitSingleOutput(ArrowsParser.SingleOutputContext ctx) {
+	    Container arw=visit(ctx.inputArrow());
+    	Container ret=new Container(Typeenum.NONE);
+    	String separator="";
+    	if (ctx.quotedString()!=null) {
+    		separator=ctx.quotedString().toText();
+    		separator=separator.replaceAll("\"","");
+    	}
+    	for (int i=0;i<ctx.expression.size();i++) {
+	    	Container exp=visit(ctx.expression(i));
+	    	ret.appendCode(var.getCode());
+	    	//TODO inherit ?
+	    	switch (arw.Optype) {
+	    		case Optype.ASSIGN:
+		    		if (exp.getType()!=Typeenum.INT) {
+		    			throw new CompilerException("Non-int expression supplied to int-printing statement");
+		    		}
+			        ret.appendCode(String.format("%s = callTODO\n", register, value));
+	    			break;
+	    		case Optype.STRING:
+	    			if (exp.getType()!=Typeenum.ARRAY) {
+		    			throw new CompilerException("Non-array expression supplied to string-printing statement");
+		    		}
+		    		ret.appendCode(String.format("%s = callTODO\n", register, value));
+	    			break;
+	    	}
+	    	//TODO call 
+    	}
+    	return ret;
+ 	}    
+
+
+    @Override
+    public Container visitAdd(ArrowsParser.AddContext ctx) {
+            return generateBinaryOperatorContainer(
+                    visit(ctx.expression(0)),
+                    visit(ctx.expression(1)),
+                    ctx.op.getOptype()
+            );
+    }
+
+    @Override 
+    public Container visitMul(ArrowsParser.MulContext ctx) {
+            return generateBinaryOperatorContainer(
+                    visit(ctx.expression(0)),
+                    visit(ctx.expression(1)),
+                    ctx.op.getOptype()
+            );
+    }
+
+    @Override 
+    public Container visitExp(ArrowsParser.ExpContext ctx) {
+            return generateBinaryOperatorContainer(
+                    visit(ctx.expression(0)),
+                    visit(ctx.expression(1)),
+                    ctx.op.getOptype()
+            );
+    }
+
+    @Override
+    public Container visitPar(ArrowsParser.ParContext ctx) {
+            return visit(ctx.expression());
+    }
+
+
+    @Override
+    public Container visitUna(ArrowsParser.UnaContext ctx) {
+            return generateUnaryOperatorContainer(
+                    visit(ctx.expression()),
+                    ctx.op.getOptype()
+            );
+    }
+
+    @Override 
+    public Container visitNot(ArrowsParser.NotContext ctx) {
+            return generateUnaryOperatorContainer(
+                    visit(ctx.expression()),
+                    ctx.op.getOptype()
+            );
+    }
+
+    @Override
+    public Container visitAnd(ArrowsParser.AndContext ctx) {
+            return generateBinaryOperatorContainer(
+                    visit(ctx.expression(0)),
+                    visit(ctx.expression(1)),
+                    ctx.op.getOptype()
+            );
+    }
+
+    @Override
+    public Container visitOr(ArrowsParser.OrContext ctx) {
+            return generateBinaryOperatorCodeFragment(
+                    visit(ctx.expression(0)),
+                    visit(ctx.expression(1)),
+                    ctx.op.getOptype()
+            );
+    }
+
+
+    private String paramsToString(List<String> params) {
+            String s = "";
+            boolean begin = true;
+            for (String p : params) {
+                    if (!begin) {
+                            s += ", ";
+                    } else {
+                            begin = false;
+                    }
+                    s += "i32 " + p;
+            }
+            return s;
+    }
+
+
+    @Override
+    public CodeFragment visitEmp(calculatorParser.EmpContext ctx) {
+            return new CodeFragment();
+    }
+
+
+	private Container generateFunctionCode() {
+        Container code = new Container();
+        for(Map.Entry<String,Function> e : func.entrySet()) {
+                Function f=e.getValue();
+                ST template = new ST(
+                        "define i32 @<name>(<args>) {\n" +
+                        "start:\n" +
+                        "<body_code>" +
+                        "ret i32 0" + 
+                        "}\n"
+                );
+                template.add("name", f.name);
+                template.add("body_code", f.code);
+                template.add("args", paramsToString(f.args));
+
+                code.addCode(template.render());
+                code.setRegister(f.code.getRegister());
+        }
+        return code;
+	}
+
+
+	
+}
+
+//STANDARTNA KOPA BORDELU, keby sa nieco z neho chcelo revivnut
+
+/*
 
 	@Override public Container visitIo(ArrowsParser.IoContext ctx) 
 	{ return visitChildren(ctx); }
@@ -478,9 +728,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 	@Override public T visitAnd(@NotNull ArrowsParser.AndContext ctx) { return visitChildren(ctx); }
 	*/
 
-}
 
-//STANDARTNA KOPA BORDELU, keby sa nieco z neho chcelo revivnut
 
 /*case Openum.POSIGN:
 					Map<String,String> left_map=stackContainsKey(left.getIdentifier());
@@ -532,7 +780,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
             	
             	throw new CompilerException("The value "+value+" is too large");
             }
-            CodeFragment code = new CodeFragment();
+            Container code = new CodeFragment();
             String register = generateNewRegister();
             code.setRegister(register);
             code.addCode(String.format("%s = add i%s 0, %s\n", register, size, value));
@@ -544,3 +792,145 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 					String halp=left_map.get(left.getIdentifier());
 					left_map.get(left.getIdentifier())=right_map.get(right.getIdentifier());
 					right_map.get(right.getIdentifier())=halp;*/
+
+	/*
+			//check validity of left & right
+			if (left.getIdentifier()==null)||(((op.opType==Openum.SWAP)||(op.opType==Openum.POSIGN))&&(right.getMemoryMap()==null)) {
+				//swap back to get nice error message
+				if (op.getSwap()) {
+					Container halp=left;
+					left=right;
+					right=halp;
+				}				
+				throw new CompilerException("Assignment to/from nonexisting variable: "+ctx.expression(i*2).getText()+" "+ctx.op(i).getText()+" "+ctx.expression(i*2+1).getText());
+			}
+			if (left.type==Typeenum.NONE) {
+				if ((op.opType!=Openum.ASSIGN)||(right.type==Typeenum.NONE)) {
+					//swap back to get nice error message
+					if (op.getSwap()) {
+						Container halp=left;
+						left=right;
+						right=halp;
+					}	
+					throw new CompilerException("Invalid operation on an uninitialized variable: "+ctx.expression(i*2).getText()+" "+ctx.op(i).getText()+" "+ctx.expression(i*2+1).getText());		
+				}
+			}
+			if ((left.type!=Typeenum.INT)||(right.type!=Typeenum.INT)) {
+				if ((op.opType!=Openum.ASSIGN)||(op.opType!=Openum.POSIGN)||(op.opType!=Openum.SWAP)) {
+					//swap back to get nice error message
+					if (op.getSwap()) {
+						Container halp=left;
+						left=right;
+						right=halp;
+					}	
+					throw new CompilerException("Arithmetic operation between unsupported types: "+ctx.expression(i*2).getText()+" "+ctx.op(i).getText()+" "+ctx.expression(i*2+1).getText());		
+				}
+			}
+			if ((left.type==Typeenum.ARRAY)&&(right.type==Typeenum.ARRAY)) {
+				//for now, lets forbid all the weird stuff with array addition and multiplication
+				if (!((op.opType==Openum.POSIGN)||(op.opType==Openum.SWAP)||(op.opType==Openum.ASSIGN))) {
+					//swap back to get nice error message
+					if (op.getSwap()) {
+						Container halp=left;
+						left=right;
+						right=halp;
+					}				
+					throw new CompilerException("Arithmetic between arrays forbidenn : "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
+				}
+				if (right.getMemoryMap()==null) {
+					//swap back to get nice error message
+					if (op.getSwap()) {
+						Container halp=left;
+						left=right;
+						right=halp;
+					}				
+					throw new CompilerException("Assignment from an nonexisting array: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
+				}			
+				if (left.getActiveDimensions()!=right.getActiveDimensions()) {
+					//swap back to get nice error message
+					if (op.getSwap()) {
+						Container halp=left;
+						left=right;
+						right=halp;
+					}	
+					throw new CompilerException("Array dimensions does not match: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());			
+				}
+				//this could theoretically work with standard assign, but for now lets forbid it too
+				if (((op.opType==Openum.POSIGN)||(op.opType==Openum.SWAP)||(op.opType==Openum.ASSIGN))&&((left.getDimensionShift()!=0)||(right.getDimensionShift()!=0))) {
+					//swap back to get nice error message
+					if (op.getSwap()) {
+						Container halp=left;
+						left=right;
+						right=halp;
+					}	
+					throw new CompilerException("Can't point to only a part of an array: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());				
+				}
+			}
+			*/
+			/*
+			case Openum.SWAP:
+					//swap pointers
+					Map<String,MemoryRecord> left_map=stackContainsKey(left.getIdentifier());
+					Map<String,MemoryRecord> right_map=stackContainsKey(right.getIdentifier());
+					if ((left_map==null)||(right_map==null)) {
+						//swap back to get nice error message
+						if (op.getSwap()) {
+							Container halp=left;
+							left=right;
+							right=halp;
+						}
+						throw new CompilerException("Swap into an uninitialized variable: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());		
+					}
+					String code_stub="TODO SEM DAT CALL NA FUNKCIU CO SWAPUJE";
+					ret.appendCode(opRes);
+					ret.appendCode(code_stub);
+					break;
+					*/
+					/*
+
+			String mem_register="";
+			String code_stup="";
+			switch(op.opType) {
+				case Openum.ASSIGN:
+				case Openum.ADDSIGN:
+				case Openum.SUBSIGN:
+				case Openum.MULSIGN:
+				case Openum.DIVSIGN:
+				//REWORK TODO
+					Map<String,MemoryRecord> left_map=stackContainsKey(left.getIdentifier());
+					if (left.getMemoryRecord()==null) {
+						//create new entry
+						mem_register = this.generateNewRegister();
+						if (right.getType()==Typeenum.INT) {
+			                code_stub = "<mem_register> = alloca i32\n";
+			                left.setMemoryRecord(new MemoryRecord(left.getIdentifier, mem_register, Typeenum.INT));
+			                mem.getLast().getLast().put(left.getIdentifier(), left.getMemoryRecord());
+						} else {
+							code_stub = "<mem_register> = alloca i32, i32 "+right.getArrayMemSize()+"\n";
+							left.setMemoryRecord(new MemoryRecord(left.getIdentifier, mem_register, Typeenum.ARRAY, right.getArrayMemSize(), right.getArraySizes()));
+							mem.getLast().getLast().put(left.getIdentifier(), left.getMemoryRecord()); 
+						}
+					} else {
+						//assigning to existing entry
+						mem_register = left_map.get(getIdentifier());
+					}
+					ST template = new ST(
+		                code_stub + 
+		                "store i32 <value_register>, i32* <mem_register>\n"
+			        );
+			        template.add("value_register", opRes.getRegister());
+			        template.add("mem_register", mem_register);
+			        ret.appendCode(opRes);
+			        ret.appendCode(template.render());
+			        ret.inheritFromContainer(left);
+					break;
+				default:
+					//swap back to get nice error message
+					if (op.getSwap()) {
+						Container halp=left;
+						left=right;
+						right=halp;
+					}	
+					throw new CompilerException("Unexpected operator: "+ctx.expression()[i*2].getText()+" "+ctx.op()[i].getText()+" "+ctx.expression()[i*2+1].getText());
+					break;
+					*/
