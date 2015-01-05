@@ -30,7 +30,7 @@ public class Type {
 					case 1: return "float";
 					case 2: return "void";
 					case 3: return "i1";
-					case 4: return "string";	
+					case 4: return "i32*";	
 					case 5: return "i8";					
 			}
 			return "i32";

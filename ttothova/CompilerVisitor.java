@@ -17,16 +17,20 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         private String currentBreakLabel = "";
         private String initial_functions = "declare i32 @printInt(i32)\n" +
                         "declare i32 @printFloat(float)\n" +
+                        "declare i32 @printChar(i8)\n" +
+                        "declare i32 @readInt()\n" +
+                        "declare float @readFloat()\n" +
+                        "declare i8 @readChar()\n" +
                         "declare i32 @iexp(i32, i32)\n" + 
                         "declare float @fexp(float, float)\n" +
                         "declare i32 @floatToInt(float)\n" +
                         "declare float @intToFloat(i32)\n" +
                         "declare i32* @createIntArray(i32)\n" +
                         "declare void @setArrayItemInt(i32*, i32, i32)\n" +
-                        "declare i32 @getArrayItemInt(i32*, i32)\n"ˇ+
+                        "declare i32 @getArrayItemInt(i32*, i32)\n" +
                         "declare i32* @createFloatArray(i32)\n" +
                         "declare void @setArrayItemFloat(i32*, i32, float)\n" +
-                        "declare float @getArrayItemFloat(i32*, i32)\n";
+                        "declare float @getArrayItemFloat(i32*, i32)\n" +
                         "declare i32* @createCharArray(i32)\n" +
                         "declare void @setArrayItemChar(i32*, i32, i8)\n" +
                         "declare i8 @getArrayItemChar(i32*, i32)\n";
@@ -39,8 +43,12 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
             function_mem.put("floatToInt", Type.INT);
             function_mem.put("iexp", Type.INT);
             function_mem.put("fexp", Type.FLOAT);
-            function_mem.put("printInt", Type.VOID);
-            function_mem.put("printFloat", Type.VOID);
+            function_mem.put("printInt", Type.INT);
+            function_mem.put("printFloat", Type.INT);
+            function_mem.put("printChar", Type.INT);
+            function_mem.put("readInt", Type.INT);
+            function_mem.put("readFloat", Type.FLOAT);
+            function_mem.put("readChar", Type.CHAR);
             function_mem.put("createIntArray", Type.INT);
             function_mem.put("createFloatArray", Type.INT);
             function_mem.put("createCharArray", Type.INT);
@@ -302,6 +310,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 switch (code.getType()) {
                 	case 0: instruction = "printInt"; break;
                 	case 1: instruction = "printFloat"; break;
+                	case 5: instruction = "printChar"; break;
                 }
                 template.add("instruction", instruction);
                 
@@ -597,9 +606,49 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         		CodeFragment code = new CodeFragment();
         		String register = generateNewRegister();
         		code.setRegister(register);
-        		code.addCode(String.format("%s = add i8 0, %d\n", register, value.charAt(0)));
-        		System.err.println(String.format("char value %d\n", value.charAt(0)));
+        		code.addCode(String.format("%s = add i8 0, %d\n", register, (int) value.charAt(1)));
         		code.setType("char");
+        		return code;
+        }
+
+        @Override 
+        public CodeFragment visitString(teeteeParser.StringContext ctx) {
+        		String str = ctx.STRING().getText();
+
+        		ST template = new ST(
+        				"<string> = alloca i32*\n" +
+        				"<size> = add i32 0, <int>\n" +
+        				"<string> = call i32* @createCharArray(i32 <size>)\n"
+        		);
+        		String ret = generateNewRegister();
+        		template.add("string", ret);
+        		template.add("size", generateNewRegister());
+        		template.add("int", String.valueOf(str.length()));
+
+        		CodeFragment code = new CodeFragment();
+        		code.addCode(template.render());
+        		code.setRegister(ret);
+        		code.setType("string");
+
+        		String index = generateNewRegister();
+        		code.addCode(String.format("%s = add i32 0, 0\n", index));
+        		for(int i = 0; i < str.length(); i++) {
+        				ST template_i = new ST(
+        						"<index> = add i32 1, <old_index>\n" +
+        						"<char> = add i8 0, <chvalue>\n" +
+        						"call void @setArrayItemChar(i32* <string>, i32 <index>, i8 <char>)\n"
+        				);
+        				String old_index = index;
+        				index = generateNewRegister();
+        				template_i.add("index", index);
+        				template_i.add("old_index", old_index);
+        				template_i.add("string", ret);
+        				template_i.add("char", generateNewRegister());
+        				template_i.add("chvalue", String.valueOf((int) str.charAt(i)));
+
+        				code.addCode(template_i.render());
+        		}
+
         		return code;
         }
 
@@ -654,6 +703,24 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 CodeFragment code = new CodeFragment();
                 code.addCode(String.format("%s = alloca i32*\n", register));
                 code.setType(type);
+
+                if (ctx.expression() != null) {
+                		CodeFragment expression = visit(ctx.expression());
+
+                		ST template = new ST(
+		        				"<expression_code>" +
+		        				"<ret> = call i32* @createIntArray(i32 <expression_register>)\n" +
+		        				"store i32* <ret>, i32** <register>\n"                				
+                		);
+                		template.add("expression_code", expression);
+                		String ret = generateNewRegister();
+                		template.add("ret", ret);
+                		template.add("expression_register", expression.getRegister());
+                		template.add("register", register);
+
+                		code.addCode(template.render());
+                		code.setRegister(ret);
+                }
 
         		return code;
         }

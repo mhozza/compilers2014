@@ -45,8 +45,8 @@ assignment
 array_resize: id LBRACK expression RBRACK ;
 
 declaration
-	: VAR type id LBRACK RBRACK 						# ArrayDecl
-	| VAR type id ( ASSIGN expression )? 				# VarDecl
+	: type id LBRACK expression? RBRACK				# ArrayDecl
+	| type id ( ASSIGN expression )? 				# VarDecl
 	;
 
 return_statement: RETURN expression?;
@@ -54,7 +54,7 @@ return_statement: RETURN expression?;
 if_statement : IF expression if_form ( ELIF expression if_form )* (ELSE if_form )? ;
 
 if_form
-	: SEMICOLON statement 								# ShortIf
+	: SEMICOLON NEWLINE? statement						# ShortIf
 	| block 											# LongIf
 	;
 
@@ -94,7 +94,6 @@ type: ( 'int' | 'float' | 'bool' | 'string' | 'char') ;
 
 id: ID;
 
-VAR: 'var';
 IF: 'if';
 ELIF: 'elif';
 ELSE: 'else';
