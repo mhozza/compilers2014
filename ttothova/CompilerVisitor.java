@@ -15,7 +15,23 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         private int currentFunctionType = Type.INT;
         private String currentContinueLabel = "";
         private String currentBreakLabel = "";
-        // type: 0..int, 1..float, 2..void, 3..bool, 4..string 
+        private String initial_functions = "declare i32 @printInt(i32)\n" +
+                        "declare i32 @printFloat(float)\n" +
+                        "declare i32 @iexp(i32, i32)\n" + 
+                        "declare float @fexp(float, float)\n" +
+                        "declare i32 @floatToInt(float)\n" +
+                        "declare float @intToFloat(i32)\n" +
+                        "declare i32* @createIntArray(i32)\n" +
+                        "declare void @setArrayItemInt(i32*, i32, i32)\n" +
+                        "declare i32 @getArrayItemInt(i32*, i32)\n"ˇ+
+                        "declare i32* @createFloatArray(i32)\n" +
+                        "declare void @setArrayItemFloat(i32*, i32, float)\n" +
+                        "declare float @getArrayItemFloat(i32*, i32)\n";
+                        "declare i32* @createCharArray(i32)\n" +
+                        "declare void @setArrayItemChar(i32*, i32, i8)\n" +
+                        "declare i8 @getArrayItemChar(i32*, i32)\n";
+
+        // type: 0..int, 1..float, 2..void, 3..bool, 4..string, 5..char 
 
         public CompilerVisitor() {
             super();
@@ -25,6 +41,15 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
             function_mem.put("fexp", Type.FLOAT);
             function_mem.put("printInt", Type.VOID);
             function_mem.put("printFloat", Type.VOID);
+            function_mem.put("createIntArray", Type.INT);
+            function_mem.put("createFloatArray", Type.INT);
+            function_mem.put("createCharArray", Type.INT);
+            function_mem.put("setArrayItemInt", Type.VOID);
+            function_mem.put("setArrayItemFloat", Type.VOID);
+            function_mem.put("setArrayItemChar", Type.VOID);
+            function_mem.put("getArrayItemInt", Type.INT);
+            function_mem.put("getArrayItemFloat", Type.FLOAT);
+            function_mem.put("getArrayItemChar", Type.CHAR);
         }
 
         private String generateNewLabel() {
@@ -40,14 +65,10 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 				CodeFragment body = visit(ctx.functions());
 
 				ST template = new ST(
-                        "declare i32 @printInt(i32)\n" + 
-                        "declare i32 @printFloat(float)\n" +
-                        "declare i32 @iexp(i32, i32)\n" + 
-                        "declare float @fexp(float, float)\n" +
-                        "declare i32 @floatToInt(float)\n" +
-                        "declare float @intToFloat(i32)\n" +
+                        "<initial_functions>" +
 						"<body_code>"					
 				);
+				template.add("initial_functions", initial_functions);
 				template.add("body_code", body);
 
 				CodeFragment code = new CodeFragment();
@@ -147,18 +168,14 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 CodeFragment body = visit(ctx.statements());
 
                 ST template = new ST(
-                        "declare i32 @printInt(i32)\n" + 
-                        "declare i32 @printFloat(float)\n" +
-                        "declare i32 @iexp(i32, i32)\n" + 
-                        "declare float @fexp(float, float)\n" +
-                        "declare i32 @floatToInt(float)\n" +
-                        "declare float @intToFloat(i32)\n" +
+                        "<initial_functions>" +
                         "define i32 @main() {\n" + 
                         "start:\n" + 
                         "<body_code>" + 
                         "ret i32 0\n" +
                         "}\n"
                 );
+                template.add("initial_functions", initial_functions);
                 template.add("body_code", body);
 
                 function_mem.put("main", Type.INT);
@@ -195,12 +212,12 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         }
 
         @Override
-        public CodeFragment visitAssignment(teeteeParser.AssignmentContext ctx) {
+        public CodeFragment visitAssignVar(teeteeParser.AssignVarContext ctx) {
                 CodeFragment value = visit(ctx.expression());
                 String identifier = ctx.id().getText();
 
                 if (value.getType() != mem.getType(identifier)) {
-                    System.err.println(String.format("Error: identifier %s: type mismatch", identifier));
+                    	System.err.println(String.format("Error: identifier %s: type mismatch", identifier));
                 }
 
                 String mem_register = "!\"Unknown identifier\"";
@@ -209,6 +226,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 } else {
                         mem_register = mem.get(identifier);
                 }
+
                 ST template = new ST(
                         "<value_code>" + 
                         "store <type> <value_register>, <type>* <mem_register>\n"
@@ -224,6 +242,47 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 ret.setRegister(value.getRegister());
                 ret.setType(value.getType());
                 return ret;
+        }
+
+        @Override
+        public CodeFragment visitAssignArray(teeteeParser.AssignArrayContext ctx) {
+        		String identifier = ctx.id().getText();
+
+                if (!mem.containsKey(identifier)) {
+                        System.err.println(String.format("Error: identifier '%s' does not exist", identifier));
+                }
+                String register = mem.get(identifier);
+
+        		CodeFragment index = visit(ctx.expression(0));
+        		CodeFragment expression = visit(ctx.expression(1));
+
+        		if (index.getType() != Type.INT) {
+                        System.err.println(String.format("Error: excepted type int for index, %s", identifier));
+        		}
+        		if (expression.getType() != mem.getType(identifier)) {
+                        System.err.println(String.format("Error: type mismatch, assign to array %s", identifier));        			
+        		}
+
+        		ST template = new ST(
+        				"<index_code>" +
+        				"<expression_code>" +
+        				"<array> = load i32** <register>\n" +
+        				"call void @setArrayItem<method_type>(i32* <array>, i32 <index_register>, <type> <expression_register>)\n"
+        		);
+        		template.add("index_code", index);
+        		template.add("expression_code", expression);
+        		template.add("array", generateNewRegister());
+        		template.add("register", register);
+        		template.add("method_type", Type.getMethodType(mem.getType(identifier)));
+        		template.add("index_register", index.getRegister());
+        		template.add("type", Type.getLLVMtype(expression.getType()));
+        		template.add("expression_register", expression.getRegister());
+
+        		CodeFragment code = new CodeFragment();
+        		code.addCode(template.render());
+        		code.setRegister(expression.getRegister());
+        		code.setType(expression.getType());
+        		return code;
         }
 
         @Override
@@ -473,8 +532,8 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         }
 
         @Override
-        public CodeFragment visitVariable(teeteeParser.VariableContext ctx) {
-                String id = ctx.ID().getText();
+        public CodeFragment visitSimpleVar(teeteeParser.SimpleVarContext ctx) {
+                String id = ctx.id().getText();
                 CodeFragment code = new CodeFragment();
                 String register = generateNewRegister();
                 String pointer = "!\"Unknown identifier\"";
@@ -545,7 +604,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         }
 
         @Override
-        public CodeFragment visitDeclaration(teeteeParser.DeclarationContext ctx) {
+        public CodeFragment visitVarDecl(teeteeParser.VarDeclContext ctx) {
                 String identifier = ctx.id().getText();
                 String type = ctx.type().getText();
 
@@ -560,8 +619,8 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 code.addCode(String.format("%s = alloca %s\n", register, Type.getLLVMtype(type)));
                 code.setType(type);
 
-                if (ctx.expression().size() > 0) {
-                		CodeFragment expression = visit(ctx.expression(0));
+                if (ctx.expression() != null) {
+                		CodeFragment expression = visit(ctx.expression());
                 		if (expression.getType() != Type.getType(type)) {
                 			System.err.println(String.format("Error: type mismatch in declaration %s", identifier));
                 		}
@@ -578,6 +637,88 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 }
 
                 return code;
+        }
+
+        @Override
+        public CodeFragment visitArrayDecl(teeteeParser.ArrayDeclContext ctx) {
+        		String type = ctx.type().getText();
+        		String identifier = ctx.id().getText();
+
+                if (mem.thisContainsKey(identifier)) {
+                        System.err.println(String.format("Error: identifier '%s' is already defined", identifier));
+                }
+
+                String register = generateNewRegister();
+                mem.put(identifier, register, Type.getType(type));
+
+                CodeFragment code = new CodeFragment();
+                code.addCode(String.format("%s = alloca i32*\n", register));
+                code.setType(type);
+
+        		return code;
+        }
+
+        @Override
+        public CodeFragment visitArray_resize(teeteeParser.Array_resizeContext ctx) {
+        		String identifier = ctx.id().getText();
+       			if (!mem.containsKey(identifier)) {
+       					System.err.println(String.format("Error: unknown identifier '%s'", identifier));
+       			}
+       			String register = mem.get(identifier);
+        		CodeFragment expression = visit(ctx.expression());
+
+        		ST template = new ST(
+        				"<expression_code>" +
+        				"<array> = load i32** <register>\n" +
+        				"<ret> = call i32* @createIntArray(i32 <expression_register>)\n" +
+        				"store i32* <ret>, i32** <register>\n"
+        		);
+        		template.add("expression_code", expression);
+        		template.add("expression_register", expression.getRegister());
+        		template.add("register", register);
+        		template.add("array", generateNewRegister());
+        		String ret = generateNewRegister();
+        		template.add("ret", ret);
+
+        		CodeFragment code = new CodeFragment();
+        		code.addCode(template.render());
+        		code.setRegister(ret);
+        		code.setType(mem.getType(identifier));
+
+        		return code;
+        }
+
+        @Override
+        public CodeFragment visitArrayVar(teeteeParser.ArrayVarContext ctx) {
+        		String identifier = ctx.id().getText();
+        		if (!mem.containsKey(identifier)) {
+        				System.err.println(String.format("Error: invalid identifier '%s'", identifier));
+        		}
+        		String register = mem.get(identifier);
+        		CodeFragment expression = visit(ctx.expression());
+        		if (expression.getType() != Type.INT) {
+        				System.err.println("Error: excepted type INT for method resize");
+        		}
+
+        		ST template = new ST(
+        				"<expression_code>" +
+        				"<array> = load i32** <register>\n" +
+        				"<ret> = call <type> @getArrayItem<method_type>(i32* <array>, i32 <expression_register>)\n"
+        		);
+        		template.add("expression_code", expression);
+        		template.add("expression_register", expression.getRegister());
+        		template.add("array", generateNewRegister());
+        		template.add("register", register);
+        		template.add("type", Type.getLLVMtype(mem.getType(identifier)));
+        		template.add("method_type", Type.getMethodType(mem.getType(identifier)));
+        		String ret = generateNewRegister();
+        		template.add("ret", ret);
+
+        		CodeFragment code = new CodeFragment();
+        		code.addCode(template.render());
+        		code.setRegister(ret);
+        		code.setType(mem.getType(identifier));
+        		return code;
         }
 
         @Override
@@ -644,7 +785,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 						} else {
 								template.add("cmp_register", cmp_register);
 								template.add("cmp_instruction", 
-									genereateComparingInstruction(condition.getType(), cmp_register, condition.getRegister()));							
+								genereateComparingInstruction(condition.getType(), cmp_register, condition.getRegister()));							
 						}
 						template.add("true_label", generateNewLabel());
 						template.add("false_label", generateNewLabel());

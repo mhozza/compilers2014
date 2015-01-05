@@ -48,6 +48,18 @@ public class Type {
 			return "int";
 	}
 
+	public static String getMethodType(int t) {
+			switch (t) {
+					case 0: return "Int";
+					case 1: return "Float";
+					case 2: return "Void";
+					case 3: return "Bool";
+					case 4: return "String";			
+					case 5: return "Char";			
+			}
+			return "Int";		
+	}
+
 	public static boolean isVoid(String type) {
 			if (type.equals("void")) { return true; }
 			return false;

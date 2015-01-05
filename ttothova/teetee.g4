@@ -28,19 +28,26 @@ statement
 	| declaration 										# Declare
 	| expression										# Print
 	| return_statement 									# Ret
-	| op=(BREAK | CONTINUE) 							# Cycle_flow
 	| block 											# Block_stmt
 	| if_statement 										# If
 	| for_statement 									# For
 	| while_statement 									# While_stmt
+	| BREAK 											# Break
+	| CONTINUE 				 							# Continue
 	| 													# Empty
 	;
 
-assignment: id ASSIGN expression;
+assignment
+	: id LBRACK expression RBRACK ASSIGN expression 	# AssignArray
+	| id ASSIGN expression 								# AssignVar
+	;
 
-array_resize: id (LBRACK expression? RBRACK)+ ;
+array_resize: id LBRACK expression RBRACK ;
 
-declaration: VAR type id (LBRACK expression RBRACK)* ( ASSIGN expression )? ;
+declaration
+	: VAR type id LBRACK RBRACK 						# ArrayDecl
+	| VAR type id ( ASSIGN expression )? 				# VarDecl
+	;
 
 return_statement: RETURN expression?;
 
@@ -59,8 +66,8 @@ while_statement
 	;
 
 var
-	: id LBRACK expression ( COMMA expression )* RBRACK
-	| id
+	: id LBRACK expression RBRACK						# ArrayVar
+	| id 												# SimpleVar
 	;
 
 expression
@@ -76,12 +83,14 @@ expression
 	| INT 												# Int
 	| FLOAT 											# Float
 	| BOOL 												# Bool
-	| ID												# Variable
+	| CHAR 	 											# Char
+	| STRING 											# String
+	| var												# Variable
 	;
 
 callfunction: fname OPEN_PAR ( expression (COMMA expression)* )? CLOSE_PAR;
 
-type: ( 'int' | 'float' | 'bool' | 'string') ;
+type: ( 'int' | 'float' | 'bool' | 'string' | 'char') ;
 
 id: ID;
 
@@ -122,9 +131,12 @@ INT: NUMBER;
 FLOAT: NUMBER '.' DIGIT+;
 BOOL: 'true' | 'false';
 STRING: '"' (~'"' | NEWLINE)* '"';
+CHAR: '\'' (~'\'') '\'';
 
 NEWLINE: '\r'? '\n' | '\r';
 WHITESPACE: [ \t] -> skip;
+
+COMMENT: '#' ~[\r\n]* -> skip;
 
 ID: [a-zA-Z] [a-zA-Z0-9]*;
 
