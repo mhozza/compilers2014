@@ -46,15 +46,14 @@ bool p = Check(pole, n)
 ak (p == pravda)
 <
     char[] ano = [0:3]
-    ano[0] = 'A'
-    ano[1] = 'N'
-    ano[2] = 'O'
+    ano[0] = 'Y'
+    ano[1] = 'E'
+    ano[2] = 'S'
     vypis ano
 > inak
 <
-    char[] nie = [0:3]
+    char[] nie = [0:2]
     nie[0] = 'N'
-    nie[1] = 'I'
-    nie[2] = 'E'
+    nie[1] = 'O'
     vypis nie
 >

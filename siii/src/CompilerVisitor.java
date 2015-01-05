@@ -1028,34 +1028,39 @@ public class CompilerVisitor extends siiiBaseVisitor<CodeFragment> {
                             instruction = "and";
                     case siiiParser.OR_ASSIGN:
                             ST temp = new ST(
-                                    "<r1> = icmp ne i32 \\<left_val>, 0\n" +
-                                    "<r2> = icmp ne i32 \\<right_val>, 0\n" +
+                                    "<r1> = icmp ne <left_type> \\<left_val>, 0\n" +
+                                    "<r2> = icmp ne <right_type> \\<right_val>, 0\n" +
                                     "<r3> = \\<instruction> i1 <r1>, <r2>\n" +
                                     "\\<ret> = zext i1 <r3> to i32\n"
                             );
                             temp.add("r1", generateNewRegister());
                             temp.add("r2", generateNewRegister());
                             temp.add("r3", generateNewRegister());
+                            temp.add("left_type", left.getType());
+                            temp.add("right_type", right.getType());
                             code_stub = temp.render();
                             break;
             }
             ST template = new ST(
-                    "<left_val> = load i32* <mem_register>\n" +
+                    "<left_code>" + 
+                    "<loadit>" + 
                     "<right_code>" + 
                     code_stub +
-                    "store i32 <left_val>, i32* <mem_register>\n"
+                    "<storeit>"
             );
-            String register = generateNewRegister();
-            String ret_reg = generateNewRegister();
+            String mem_reg = generateNewRegister();
+            template.add("left_code", left);
             template.add("right_code", right);
+            template.add("loadit", String.format("%s = load %s* %s", mem_reg, left.getType(), left.getRegister()));
             template.add("instruction", instruction);
-            template.add("left_val", register);
+            template.add("left_val", mem_reg);
             template.add("right_val", right.getRegister());
-            template.add("ret", ret_reg);
-            template.add("mem_register", left.getRegister());
+            String ret_register = generateNewRegister();
+            template.add("ret", ret_register);
+            template.add("storeit", String.format("store %s %s, %s* %s\n", left.getType(), ret_register, left.getType(), left.getRegister()));
             
             CodeFragment ret = new CodeFragment();
-            ret.setRegister(left.getRegister());
+            ret.setRegister(ret_register);
             ret.addCode(template.render());
             ret.setType("i32");
             return ret;
