@@ -1,0 +1,60 @@
+def Find int (int[] parent, int x)
+<
+    ak (parent{x} == x)
+    <
+        vrat x
+    >
+    int t = Find(parent, parent{x})
+    vrat t
+>
+
+def Union nic (int[] parent, int x, int y)
+<
+    int rootx = Find(parent, x)
+    int rooty = Find(parent, y)
+    parent[rootx] = rooty
+>
+
+def Check bool (int[] parent, int n)
+<
+    int x = Find(parent, 0)
+    pre i v [1:n]
+    <
+        int tmp = Find(parent, i)
+        ak (tmp != x)
+        <
+            vrat nepravda
+        >
+    >
+    vrat pravda
+>
+
+int n
+nacitaj n
+int m
+nacitaj m
+int[] pole = [0:n]
+pre i v [0:m]
+<
+    int x
+    nacitaj x
+    int y
+    nacitaj y
+    Union(pole, x, y)
+>
+bool p = Check(pole, n)
+ak (p == pravda)
+<
+    char[] ano = [0:3]
+    ano[0] = 'A'
+    ano[1] = 'N'
+    ano[2] = 'O'
+    vypis ano
+> inak
+<
+    char[] nie = [0:3]
+    nie[0] = 'N'
+    nie[1] = 'I'
+    nie[2] = 'E'
+    vypis nie
+>
