@@ -1,0 +1,67 @@
+val n = readInt()
+val m = readInt()
+
+val pole = Array[Int](n)
+
+for (i <- 0 until n){
+    pole[i] = -1
+}
+
+def findset(pole: Array[Int], x: Int): Int ={
+        var i = x
+        var k = x
+        while(pole[i]>=0){
+          i = pole[i]
+        }
+
+        while(pole[x]>=0){
+          k = pole[x]
+          pole[x] = i
+          x = k
+        }
+
+        return x
+}
+
+def union(pole: Array[Int], x: Int, y: Int){
+      val sx = findset(pole, x)
+      val sy = findset(pole, y)
+
+      if (sx != sy){
+        if (pole[sx] < pole[sy]){
+          pole[sx] += pole[sy]
+          pole[sy] = sx
+        }
+        else{
+          pole[sy] += pole[sx]
+          pole[sx] = sy
+        }
+      }
+}
+
+def printArray(pole: Array[Int], n: Int){
+    for(i <- 0 until n){
+        printInt(pole[i])
+    }
+}
+
+for (i <- 0 until m){
+     val x = readInt()
+     val y = readInt()
+     union(pole, x, y)
+}
+
+var components = 0
+for (i <- 0 until n){
+    if (pole[i]<0){
+        components += 1
+    }
+}
+
+if (components == 1){
+    printString("YES")
+}
+else {
+    printString("NO")
+}
+

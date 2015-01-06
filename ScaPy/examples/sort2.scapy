@@ -1,0 +1,66 @@
+var n = readInt()
+val pole = Array[Int](n)
+
+for (i <- 0 until n){
+  pole[i] = readInt()
+}
+
+def merge(pole1: Array[Int], length1: Int, pole2: Array[Int], length2: Int, pole: Array[Int]){
+
+    var p1 = 0
+    var p2 = 0
+
+    while (p1 < length1 and p2 < length2) {
+        if (pole1[p1] <= pole2[p2]) {
+            pole[p1+p2] = pole1[p1]
+            p1 += 1
+        }
+        else {
+            pole[p1+p2] = pole2[p2]
+            p2 += 1
+        }
+    }
+
+    while (p1 < length1) {
+        pole[p1+p2] = pole1[p1]
+        p1 += 1
+    }
+
+    while (p2 < length2) {
+        pole[p1+p2] = pole2[p2]
+        p2 += 1
+    }
+}
+
+def mergeSort(pole: Array[Int], length: Int){
+
+    if (length > 1){
+
+        val odd = length % 2
+        val length1 = length/2 + odd
+        val length2 = length/2
+
+        val pole1 = Array[Int](length1)
+        val pole2 = Array[Int](length2)
+
+        for (i <- 0 until (length1)) {
+            pole1[i] = pole[i]
+        }
+
+        for (i <- 0 until (length2)) {
+            pole2[i] = pole[i + length1]
+
+        }
+
+        mergeSort(pole1, length1)
+        mergeSort(pole2, length2)
+
+        merge(pole1, length1, pole2, length2, pole)
+    }
+}
+
+mergeSort(pole, n)
+
+for (i <- 0 until n){
+  printInt(pole[i])
+}

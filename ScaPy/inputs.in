@@ -1,0 +1,5 @@
+hello examples/hello.scapy
+primes examples/primes.scapy
+graph examples/graph.scapy
+reverz examples/reverz.scapy
+sort examples/sort.scapy

@@ -1,0 +1,14 @@
+var a = readString()
+var length = getLengthString(a)
+
+val reverz = Array[Char](length)
+
+var ind1 = length - 1
+var ind2 = 0
+while (ind1 >= 0){
+    reverz[ind2] = a[ind1]
+    ind2 += 1
+    ind1 -= 1
+}
+
+printString2(reverz, length)

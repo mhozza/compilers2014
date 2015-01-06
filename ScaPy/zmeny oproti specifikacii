@@ -1,0 +1,5 @@
+- miesanie blokov odsadenim a { } -> nechal som len { } (tak ako si mi poradil v maile)
+- pridanie k navratovej hodnote klucove slovo return
+- zmenil tvar indexovanie do pola z () na [] -> bol problem s gramatikou a to s nejednoznacnostou kedy je to indexovanie do pola a kedy volanie funkcie
+- zrusenie osobitneho typu String -> teraz je String pole char
+- upravenie deklaracie funkcie/procedury -> namiesto <typ> <nazov_arg0> je <nazov_arg0>: <typ> (tak ako to je v scale)

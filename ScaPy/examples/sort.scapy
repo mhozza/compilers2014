@@ -1,0 +1,18 @@
+var n = readInt()
+val pole = Array[Int](n)
+
+for (i <- 0 until n) pole[i] = readInt()
+
+# bubble sort
+for (i <- 0 until n){
+  for (j <- i+1 until n){
+    if (pole[i] > pole[j]){
+      var tmp = pole[i]
+      pole[i] = pole[j]
+      pole[j] = tmp
+      }
+  }
+}
+
+for (i <- 0 until n) printInt(pole[i])
+

@@ -1,0 +1,18 @@
+def check(prime :Int): Boolean = {
+  for (i <- 2 until prime){
+    if ((prime % i) == 0){
+      return false
+    }
+  }
+  return true
+}
+
+var n = readInt()
+var i = 2
+
+while (i <= n){
+    if (check(i)){
+        printInt(i)
+    }
+    i += 1
+}

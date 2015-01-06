@@ -1,0 +1,16 @@
+./build.sh
+./compile.sh examples/graphs.scapy graphs.ll
+./compile.sh examples/hello.scapy hello.ll
+./compile.sh examples/primes.scapy primes.ll
+./compile.sh examples/reverz.scapy reverz.ll
+./compile.sh examples/sort.scapy sort.ll
+./compile.sh examples/sort2.scapy sort2.ll
+
+for f in test/graph/*.in; do echo $f; diff <(./run.sh graphs.ll < $f) "${f%.in}.out"; done
+for f in test/hello/*.in; do echo $f; diff <(./run.sh hello.ll < $f) "${f%.in}.out"; done
+for f in test/primes/*.in; do echo $f; diff <(./run.sh primes.ll < $f) "${f%.in}.out"; done
+for f in test/reverz/*.in; do echo $f; diff <(./run.sh reverz.ll < $f) "${f%.in}.out"; done
+for f in test/sort/*.in; do echo $f; diff <(./run.sh sort.ll < $f) "${f%.in}.out"; done
+for f in test/sort/*.in; do echo $f; diff <(./run.sh sort2.ll < $f) "${f%.in}.out"; done
+
+rm *.ll
