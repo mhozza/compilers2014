@@ -1,19 +1,19 @@
 @set[1000],@n,@m,@rank[1000]
 
-find(x):
-    set[x]=x:
+find(x,n,m,s[n],r[n]):
+    s[x]=x:
         ret x
     !^:
-        set[x] << find(set[x])
-        ret set[x]
+        s[x] << find(s[x])
+        ret s[x]
 
-union(x,y):
+union(x,y,n,m,s[n],r[n]):
     fy << find(y)
     fx << find(x)
-    rank[fx] < rank[fy]:
-        set[fx]=fy
+    r[fx] < r[fy]:
+        s[fx]=fy
     !^:
-        set[fy]=fx
+        s[fy]=fx
 
 >> n,m
 rank << 1

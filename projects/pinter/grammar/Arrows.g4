@@ -1,99 +1,5 @@
 grammar Arrows;
 
-tokens {
-  INDENT,
-  DEDENT
-}
-
-//from ANTLR python parser
-@lexer::members {
-     
-     // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
-     private java.util.Queue<Token> tokens = new java.util.LinkedList<>();
-     
-     // The stack that keeps track of the indentation level.
-     private java.util.Stack<Integer> indents = new java.util.Stack<>();
-     
-     // The amount of opened braces, brackets and parenthesis.
-     private int opened = 0;
-     
-     // The most recently produced token.
-     private Token lastToken = null;
-     
-     @Override
-     public void emit(Token t) {
-          super.setToken(t);
-          tokens.offer(t);
-     }
-     
-     @Override
-     public Token nextToken() {
-          
-          // Check if the end-of-file is ahead and there are still some DEDENTS expected.
-          if (_input.LA(1) == EOF && !this.indents.isEmpty()) {
-          
-               // Poll the EOF from the token stream so that a linebreak can be placed upon it.
-               tokens.poll();
-               
-               // First emit an extra line break that serves as the end of the statement.
-               this.emit(commonToken(ArrowsParser.NEWLINE, "\n"));
-               
-               // Now emit as much DEDENT tokens as needed.
-               while (!indents.isEmpty()) {
-                    this.emit(createDedent());
-                    indents.pop();
-               }
-               
-               // Put the EOF back on the token stream.
-               this.emit(commonToken(ArrowsParser.EOF, "<EOF>"));
-          
-          }
-          
-          Token next = super.nextToken();
-          if (next.getChannel() == Token.DEFAULT_CHANNEL) {
-           
-               // Keep track of the last token on the default channel.
-               this.lastToken = next;
-          
-          }
-          return tokens.isEmpty() ? next : tokens.poll();
-     }
-
-     private Token createDedent() {
-          CommonToken dedent = commonToken(ArrowsParser.DEDENT, "");
-          dedent.setLine(this.lastToken.getLine());
-          return dedent;
-     }
-
-     private CommonToken commonToken(int type, String text) {
-          int start = this.getCharIndex();
-          int stop = start + text.length();
-          return new CommonToken(this._tokenFactorySourcePair, type, DEFAULT_TOKEN_CHANNEL, start, stop);
-     }
-
-     // Calculates the indentation of the provided spaces and tabs
-     static int getIndentationCount(String spaces) {
-          int count = 0;
-          for (char ch : spaces.toCharArray()) {
-               switch (ch) {
-                    case '\t':
-                         count += 4;
-                         break;
-                    default:
-                         // A normal space char.
-                         count++;
-               }
-          }
-          return count;
-     }
-
-     //some grammar code,from a more .. civilized age
-     //range: LR expression ((ADD | SUB) | (DOTS expression))? RR;
-     //| INT32                                             # Int32
-     // op=(INC|DEC) expression                                   # PreInc
-     //| expression op=(INC|DEC)                               # PostInc
-}
-
 init: statements;
 
 function: lvalue PAREN_OPEN args PAREN_CLOSE COLON NEWLINE block;
@@ -131,7 +37,7 @@ expression:
 
 operator: INC | DEC | DIV | MUL | ADD | SUB | AND | OR | EQ;
 
-variable: lvalue(range)*
+variable: lvalue(range)*;
 
 singleInput: inputArrow variable (',' variable)* ;
 singleOutput: outputArrow expression (',' expression)* (COLON quotedString) ;
@@ -171,42 +77,17 @@ otherArrow:
      ;
 
 range: singleRange | boundedRange;
-dynamicRange: LR expression RR;
+singleRange: LR expression RR;
 boundedRange: LR expression DOTS expression RR; 
 
 COMMENT: '#' ~[\r\n]* -> skip;
 SPACES: [ \t]+ -> skip;
 
-NEWLINE: ( '\r'? '\n' | '\r' ) SPACES?
-{
-     String newLine = getText().replaceAll("[^\r\n]+", "");
-     String spaces = getText().replaceAll("[\r\n]+", "");
-     int next = _input.LA(1);
-     if (opened > 0 || next == '\r' || next == '\n' || next == '#') {
-          // If we're inside a list or on a blank line, ignore all indents,
-          // dedents and line breaks.
-          skip();
-     } else {
-          emit(commonToken(NEWLINE, newLine));
-          int indent = getIndentationCount(spaces);
-          int previous = indents.isEmpty() ? 0 : indents.peek();
-          if (indent == previous) {
-               // skip indents of the same size as the present indent-size
-               skip();
-          } else if (indent > previous) {
-               indents.push(indent);
-               emit(commonToken(ArrowsParser.INDENT, spaces));
-          } else {
-               // Possibly emit more than 1 DEDENT token.
-               while(!indents.isEmpty() && indents.peek() > indent) {
-                    this.emit(createDedent());
-                    indents.pop();
-               }
-          }
-     }
-}
-;
+NEWLINE: ( '\r'? '\n' | '\r' ) SPACES?;
 
+INDENT: '{';
+DEDENT: '}';
+EOF: '<EOF>';
 COLON: ':';
 LA: '>>';
 LPA: '+>';

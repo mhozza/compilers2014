@@ -1,6 +1,4 @@
-@pole[10000000]
-
-rekurz(left,right):
+rekurz(left,right,pole[right+1]):
     left=right:
         ret
     pivot << pole[(left+right)/2]
@@ -14,7 +12,8 @@ rekurz(left,right):
     rekurz(left,(left+right)/2)
     rekurz((left+right)/2+1,right)
 
-<<n
+>> n
+pole[n]
 for i >> [0..n-1]:
     >> pole[i]
-rekurz(0,n-1)
+rekurz(0,n-1,pole)
