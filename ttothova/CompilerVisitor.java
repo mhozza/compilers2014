@@ -195,6 +195,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         mem.put(identifier, reference_register, type);
                         if (llvm_type.equals("i32*")) {
                                 mem.setArrayStatus(identifier, true);
+                                mem.setArrayType(identifier,type+"[]");
                         }
                 }
 
@@ -1043,7 +1044,6 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 for(int i = 0; i < count; i++) {
                     newType += "[]";
                 }
-                System.err.println(String.format("old:%s, count:%d, new:%s, exp:%d", arrayType, count, newType, ctx.expression().size()));
 
                 code.setArrayType(newType);
         		return code;
@@ -1056,10 +1056,11 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 if (ctx.expression() != null) {
                         CodeFragment expression = visit(ctx.expression());
                         String type = expression.getArrayType();
-/*                      if (currentFunctionType.equals("void") || !currentFunctionType.equals(expression.getArrayType())) {
-                                System.err.println("Error: invalid return type");
+                      if (currentFunctionType.equals("void") || !currentFunctionType.equals(expression.getArrayType())) {
+                                System.err.println(String.format("Error: invalid return type %s and %s",
+                                            currentFunctionType, expression.getArrayType()));
                         }
-*/      
+      
                         ST template = new ST(
                                 "<expression_code>" +
                                 "ret <type> <expression_register>\n"
@@ -1340,7 +1341,6 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         CodeFragment expression = visit(v);
                         String expType = expression.getArrayType();
                         String instr_type = Type.getLLVMtype(expType);
-                        System.err.println(String.format("%s type:%s, instr:%s", identifier, expType, instr_type));
 
                         ST template = new ST(
                                 "<expression_code>" 
