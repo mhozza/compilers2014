@@ -2,6 +2,7 @@ public class CodeFragment {
         private String code;
         private String register;
         private Integer type;   // 0..int 1..float 2..void
+        private String arrayType;
 
         public CodeFragment() {
                 this.code = "";
@@ -54,5 +55,13 @@ public class CodeFragment {
 
         public Boolean isFloat() {
                 return Type.isFloat(this.type);
+        }
+
+        public void setArrayType(String type) {
+                this.arrayType = type;
+        }
+
+        public String getArrayType() {
+                return this.arrayType;
         }
 }

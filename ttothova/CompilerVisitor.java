@@ -193,6 +193,9 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         											reference_register, llvm_type,
                             										llvm_type, register, llvm_type, reference_register));
                         mem.put(identifier, reference_register, type);
+                        if (llvm_type.equals("i32*")) {
+                                mem.setArrayStatus(identifier, true);
+                        }
                 }
 
                 return code;
@@ -692,11 +695,15 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         pointer = mem.get(id);
                         type = mem.getType(id);
                         typeString = Type.getLLVMtype(type);
+                        if (mem.isArray(id)) {
+                                typeString = "i32*";
+
+                        }
                 }
                 code.addCode(String.format("%s = load %s* %s\n", register, typeString, pointer));
                 code.setRegister(register);
                 code.setType(type);
-                code.setArrayType(Type.getStringType(type));
+                code.setArrayType(mem.getArrayType(id));
                 return code;
         }
 
@@ -944,7 +951,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 code.setArrayType(arrayType);
                 return code;
         }
-
+/*
         @Override
         public CodeFragment visitArray_resize(teeteeParser.Array_resizeContext ctx) {
         		String identifier = ctx.id().getText();
@@ -974,7 +981,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 
         		return code;
         }
-
+*/
         private int countMatches(String s, char c) {
                 int res = 0;
                 for(int i = 0; i < s.length(); i++) {
@@ -1036,6 +1043,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 for(int i = 0; i < count; i++) {
                     newType += "[]";
                 }
+                System.err.println(String.format("old:%s, count:%d, new:%s, exp:%d", arrayType, count, newType, ctx.expression().size()));
 
                 code.setArrayType(newType);
         		return code;
@@ -1045,24 +1053,26 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         public CodeFragment visitReturn_statement(teeteeParser.Return_statementContext ctx) {
         		CodeFragment ret = new CodeFragment();
         
-        		if (ctx.expression() != null) {
-		                CodeFragment expression = visit(ctx.expression());
-		                if (currentFunctionType.equals("void") || !currentFunctionType.equals(expression.getArrayType())) {
-		                		System.err.println("Error: invalid return type");
-		                }
-		
-		                ST template = new ST(
-		                        "<expression_code>" +
-		                        "ret <type> <expression_register>\n"
-		                );
+                if (ctx.expression() != null) {
+                        CodeFragment expression = visit(ctx.expression());
+                        String type = expression.getArrayType();
+/*                      if (currentFunctionType.equals("void") || !currentFunctionType.equals(expression.getArrayType())) {
+                                System.err.println("Error: invalid return type");
+                        }
+*/      
+                        ST template = new ST(
+                                "<expression_code>" +
+                                "ret <type> <expression_register>\n"
+                        );
 
 		                template.add("expression_code", expression);
 		                template.add("expression_register", expression.getRegister());
-		                template.add("type", expression.getTypeString());
+		                template.add("type", Type.getLLVMtype(type));
 
 		                ret.addCode(template.render());
 		                ret.setRegister(expression.getRegister());
 		                ret.setType(expression.getType());
+                        ret.setArrayType(type);
 		                return ret;
         		}
 
@@ -1329,6 +1339,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         CodeFragment expression = visit(v);
                         String expType = expression.getArrayType();
                         String instr_type = Type.getLLVMtype(expType);
+                        System.err.println(String.format("type:%s, instr:%s", expType, instr_type));
 
                         ST template = new ST(
                                 "<expression_code>" 
