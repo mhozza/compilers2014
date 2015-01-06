@@ -1,7 +1,7 @@
 public class CodeFragment {
         private String code;
         private String register;
-        private Integer type;   // 0..int 1..float
+        private Integer type;   // 0..int 1..float 2..void
 
         public CodeFragment() {
                 this.code = "";
@@ -53,9 +53,6 @@ public class CodeFragment {
         }
 
         public Boolean isFloat() {
-                if (this.type == Type.FLOAT) {
-                        return true;
-                }
-                return false;
+                return Type.isFloat(this.type);
         }
 }
