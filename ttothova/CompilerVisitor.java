@@ -37,7 +37,12 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         "declare i8 @getArrayItemChar(i32*, i32)\n" +
                         "declare i32* @createArrayType(i32)\n" +
                         "declare void @setArrayItemType(i32*, i32, i32*)\n" +
-                        "declare i32* @getArrayItemType(i32*, i32)\n";
+                        "declare i32* @getArrayItemType(i32*, i32)\n" +
+                        "declare i32 @sizeArrayInt(i32*)\n" +
+                        "declare i32 @sizeArrayFloat(i32*)\n" +
+                        "declare i32 @sizeArrayChar(i32*)\n" +
+                        "declare i32 @sizeArrayType(i32*)\n"
+                        ;
 
         // type: 0..int, 1..float, 2..void, 3..bool, 4..string, 5..char 
 
@@ -66,6 +71,10 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
             function_mem.put("getArrayItemFloat", Type.FLOAT);
             function_mem.put("getArrayItemChar", Type.CHAR);
             function_mem.put("getArrayItemType", Type.CHAR);
+            function_mem.put("sizeArrayInt", Type.INT);
+            function_mem.put("sizeArrayFloat", Type.INT);
+            function_mem.put("sizeArrayChar", Type.INT);
+            function_mem.put("sizeArrayType", Type.INT);
         }
 
         private String generateNewLabel() {
@@ -169,6 +178,10 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         String register = generateNewRegister();
                         String reference_register = generateNewRegister();
                         String llvm_type = Type.getLLVMtype(type);
+                        CodeFragment arrayStatus = visit(ctx.aarray(i));
+                        if (!arrayStatus.getArrayType().equals("")) {
+                                llvm_type = "i32*";
+                        }
                         code.addParameter(llvm_type + " " + register);
                         code.addInitParametersCode( String.format("%s = alloca %s\n store %s %s, %s* %s\n",
                         											reference_register, llvm_type,
@@ -176,6 +189,20 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         mem.put(identifier, reference_register, type);
                 }
 
+                return code;
+        }
+
+        @Override
+        public CodeFragment visitArray(teeteeParser.ArrayContext ctx) {
+                CodeFragment code = new CodeFragment();
+                code.setArrayType("[]");
+                return code;
+        }
+
+        @Override
+        public CodeFragment visitNotArray(teeteeParser.NotArrayContext ctx) {
+                CodeFragment code = new CodeFragment();
+                code.setArrayType("");
                 return code;
         }
 
@@ -791,6 +818,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 
                 String register = generateNewRegister();
                 mem.put(identifier, register, Type.getType(type));
+                mem.setArrayType(identifier, type);
                 
                 ArrayCodeFragment code = new ArrayCodeFragment();
                 code.setIdentifier(identifier);
@@ -806,6 +834,8 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 String identifier = var.getIdentifier();
                 String register = mem.get(identifier);
                 int type = mem.getType(identifier);
+                String arrayType = mem.getArrayType(identifier);
+                mem.setArrayType(identifier, arrayType + "[]");
 
                 ArrayCodeFragment code = new ArrayCodeFragment();
                 
@@ -1257,32 +1287,38 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 for(teeteeParser.ExpressionContext v: ctx.expression()) {
                         CodeFragment expression = visit(v);
                         String instruction = "add";
-                        String instr_type = "i32";
+                        String instr_type = "i32*";
                         String zero = "0";
                         if (Type.isFloat(expression.getType())) {
-                            instruction = "fadd";
-                            instr_type = "float";
-                            zero = "0.0";
+                                instruction = "fadd";
+                                instr_type = "float";
+                                zero = "0.0";
+                        }
+                        if (Type.isInt(expression.getType())) {
+                                instruction = "add";
+                                instr_type = "i32";
+                                zero = "0";
                         }
 
                         ST template = new ST(
-                                "<expression_code>" +
-                                "<param_register> = <instruction> <type> <expression_register>, <zero>\n"
+                                "<expression_code>" 
+//                                "<param_register> = <instruction> <type> <expression_register>, <zero>\n"
                         );
 
                         template.add("expression_code", expression);
-                        template.add("expression_register", expression.getRegister());
+  /*                      template.add("expression_register", expression.getRegister());
                         String param_register = generateNewRegister();
                         template.add("param_register", param_register);
                         template.add("instruction", instruction);
                         template.add("type", instr_type);
                         template.add("zero", zero);
-
+*/
                         code.addCode(template.render());
                         if (parameters.equals("")) {
-                        		parameters = String.format("%s %s", Type.getLLVMtype(instr_type), param_register);
+                        		parameters = String.format("%s %s", Type.getLLVMtype(instr_type), expression.getRegister());
                         } else {
-                        		parameters += String.format(",%s %s", Type.getLLVMtype(instr_type), param_register);
+                        		parameters += String.format(",%s %s", Type.getLLVMtype(instr_type), 
+                                                                        expression.getRegister());
                         }
                 }
 

@@ -103,6 +103,10 @@ int getArrayItemInt(int* array, int index) {
    return getArrayItem<int>((vector<int>*) array, index);
 }
 
+int sizeArrayInt(int* array) {
+    return ((vector<int>*) array)->size();
+}
+
 int* createFloatArray(int size) {
     return (int*) createArray<float>(size);
 }
@@ -113,6 +117,10 @@ void setArrayItemFloat(int* array, int index, float item) {
 
 float getArrayItemFloat(int* array, int index) {
    return getArrayItem<float>((vector<float>*) array, index);
+}
+
+int sizeArrayFloat(int* array) {
+    return ((vector<float>*) array)->size();
 }
 
 int* createCharArray(int size) {
@@ -127,6 +135,10 @@ char getArrayItemChar(int* array, int index) {
    return getArrayItem<char>((vector<char>*) array, index);
 }
 
+int sizeArrayChar(int* array) {
+    return ((vector<char>*) array)->size();
+}
+
 int* createArrayType(int size, int* type) {
     return (int*) createArray<int*>(size);
 }
@@ -137,6 +149,10 @@ void setArrayItemType(int* array, int index, int* item) {
 
 int* getArrayItemType(int* array, int index) {
     return getArrayItem<int*>((vector<int*>*) array, index);
+}
+
+int sizeArrayType(int* array) {
+    return ((vector<int*>*) array)->size();
 }
 
 #ifdef __cplusplus

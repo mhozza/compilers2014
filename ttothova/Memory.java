@@ -115,4 +115,23 @@ public class Memory {
 			this.parent.changeRegister(key, register);
 		}
 	}
+
+	public void setArrayType(String key, String arrayType) {
+		if (this.variable_mem.containsKey(key)) {
+			this.variable_mem.get(key).setArrayType(arrayType);
+		}
+		if (this.parent != null) {
+			this.parent.setArrayType(key, arrayType);
+		}		
+	}
+
+	public String getArrayType(String key) {
+		if (this.variable_mem.containsKey(key)) {
+			return this.variable_mem.get(key).getArrayType();
+		}
+		if (this.parent != null) {
+			return this.parent.getArrayType(key);
+		}		
+		return null;
+	}
 }

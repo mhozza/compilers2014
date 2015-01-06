@@ -13,7 +13,7 @@ public class Type {
 			if (type.equals("bool"  )) { return BOOL;  }
 			if (type.equals("string")) { return STRING;}
 			if (type.equals("char")) { return CHAR;}
-			return INT;
+			return STRING;
 	}
 
 	public static String getLLVMtype(String type) {
@@ -29,7 +29,7 @@ public class Type {
 					case 4: return "i32*";	
 					case 5: return "i8";					
 			}
-			return "i32";
+			return "i32*";
 	}
 
 	public static String getStringType(int t) {

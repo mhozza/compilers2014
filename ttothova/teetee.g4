@@ -14,13 +14,18 @@ functions: function (NEWLINE+ function)* ;
 function: ftype fname OPEN_PAR fparameters CLOSE_PAR block;
 
 ftype
-	: VOID
-	| type (LBRACK RBRACK)*
+	: VOID 												
+	| type LBRACK RBRACK 										
 	;
 
 fname: ID;
 
-fparameters: ( type id ( COMMA type id )* )? ;
+fparameters: ( type id aarray ( COMMA type id aarray )* )? ;
+
+aarray
+	: LBRACK RBRACK										# Array
+	|   												# NotArray
+	;
 
 statement
 	: assignment 										# Assign

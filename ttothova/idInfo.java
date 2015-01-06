@@ -1,12 +1,13 @@
 public class idInfo {
 	private String register;
 	private Integer type;
-	private Boolean array;
+	private Boolean arrayStatus;
+	private String arrayType = "";
 
-	public idInfo(String register, Integer type, Boolean array) {
+	public idInfo(String register, Integer type, Boolean arrayStatus) {
 		this.register = register;
 		this.type = type;
-		this.array = array;
+		this.arrayStatus = arrayStatus;
 	}
 
 	public String getRegister() {
@@ -34,10 +35,18 @@ public class idInfo {
 	}
 
 	public Boolean isArray() {
-		return this.array;
+		return this.arrayStatus;
 	}
 
-	public void setArrayStatus(Boolean array) {
-		this.array = array;
+	public void setArrayStatus(Boolean arrayStatus) {
+		this.arrayStatus = arrayStatus;
+	}
+
+	public void setArrayType(String arrayType) {
+		this.arrayType = arrayType;
+	}
+
+	public String getArrayType() {
+		return this.arrayType;
 	}
 }
