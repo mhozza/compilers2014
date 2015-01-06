@@ -329,7 +329,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 code.setType(exp.getType());
                 return code;
         }
-
+/*
         @Override
         public CodeFragment visitPrint(teeteeParser.PrintContext ctx) {
                 CodeFragment code = visit(ctx.expression());
@@ -355,15 +355,16 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 CodeFragment ret = new CodeFragment();
                 ret.addCode(template.render());
                 ret.setType(code.getType());
-                return ret;
+                return new;
         }
-
+*/
         public CodeFragment generateBinaryOperatorCodeFragment(CodeFragment left, CodeFragment right, Integer operator) {
                 Integer type = left.getType();;
                 if (left.getType() != right.getType()) {
                     System.err.println(String.format("Error: type mismatch in binary operation"));
                 } 
 
+                Integer finalType = type;
                 String code_stub = "<ret> = <instruction> <type> <left_val>, <right_val>\n";
                 String instruction = "or";
                 switch (operator) {
@@ -418,6 +419,8 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                                         System.err.println(String.format("Error: type mismatch: AND float"));
                                 }
                                 instruction = "and";
+                                finalType = Type.BOOL;
+                                break;
                         case teeteeParser.OR:
                                 if (type == Type.FLOAT) {
                                         System.err.println(String.format("Error: type mismatch: OR float"));
@@ -440,7 +443,57 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 		                                template.add("r3", generateNewRegister());
 		                                code_stub = template.render();                                	
                                 }
+                                finalType = Type.BOOL;
                                 break;
+                        case teeteeParser.EQ:
+                                switch (type) {
+                                        case Type.BOOL:
+                                        case Type.INT: instruction = "icmp eq"; break;
+                                        case Type.FLOAT: instruction = "fcmp oeq"; break;
+                                }
+                                finalType = Type.BOOL;
+                                break;
+                        case teeteeParser.NE:
+                                switch (type) {
+                                        case Type.BOOL:
+                                        case Type.INT: instruction = "icmp ne"; break;
+                                        case Type.FLOAT: instruction = "fcmp one"; break;
+                                }
+                                finalType = Type.BOOL;
+                                break;
+                        case teeteeParser.LT:
+                                switch (type) {
+                                        case Type.BOOL:
+                                        case Type.INT: instruction = "icmp slt"; break;
+                                        case Type.FLOAT: instruction = "fcmp olt"; break;
+                                }
+                                finalType = Type.BOOL;
+                                break;
+                        case teeteeParser.LE:
+                                switch (type) {
+                                        case Type.BOOL:
+                                        case Type.INT: instruction = "icmp sle"; break;
+                                        case Type.FLOAT: instruction = "fcmp ole"; break;
+                                }
+                                finalType = Type.BOOL;
+                                break;
+                        case teeteeParser.GT:
+                                switch (type) {
+                                        case Type.BOOL:
+                                        case Type.INT: instruction = "icmp sgt"; break;
+                                        case Type.FLOAT: instruction = "fcmp ogt"; break;
+                                }
+                                finalType = Type.BOOL;
+                                break;
+                        case teeteeParser.GE:
+                                switch (type) {
+                                        case Type.BOOL:
+                                        case Type.INT: instruction = "icmp sge"; break;
+                                        case Type.FLOAT: instruction = "fcmp oge"; break;
+                                }
+                                finalType = Type.BOOL;
+                                break;
+
                 }
                 ST template = new ST(
                         "<left_code>" + 
@@ -452,14 +505,14 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 template.add("instruction", instruction);
                 template.add("left_val", left.getRegister());
                 template.add("right_val", right.getRegister());
-                template.add("type", left.getTypeString()); 
+                template.add("type", Type.getLLVMtype(left.getType())); 
                 String ret_register = this.generateNewRegister();
                 template.add("ret", ret_register);
                 
                 CodeFragment ret = new CodeFragment();
                 ret.setRegister(ret_register);
                 ret.addCode(template.render());
-                ret.setType(type);
+                ret.setType(finalType);
                 return ret;
         
         }
@@ -557,6 +610,15 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 
         @Override
         public CodeFragment visitAnd(teeteeParser.AndContext ctx) {
+                return generateBinaryOperatorCodeFragment(
+                        visit(ctx.expression(0)),
+                        visit(ctx.expression(1)),
+                        ctx.op.getType()
+                );
+        }
+
+        @Override
+        public CodeFragment visitCom(teeteeParser.ComContext ctx) {
                 return generateBinaryOperatorCodeFragment(
                         visit(ctx.expression(0)),
                         visit(ctx.expression(1)),
@@ -938,11 +1000,11 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         		return ret;
         }
 
-		private String genereateComparingInstruction(int type, String cmp_register, String value_register) {
-			if (type == 0) {
-				return String.format("%s = icmp ne i32 %s, 0\n", cmp_register, value_register);
-			} else {
+		private String generateComparingInstruction(int type, String cmp_register, String value_register) {
+			if (type == Type.FLOAT) {
 				return String.format("%s = fcmp one float %s, 0.0\n", cmp_register, value_register);
+            } else {
+                return String.format("%s = icmp ne %s %s, 0\n", cmp_register, Type.getLLVMtype(type), value_register);
 			}
 		}
 
@@ -972,7 +1034,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 						} else {
 								template.add("cmp_register", cmp_register);
 								template.add("cmp_instruction", 
-								genereateComparingInstruction(condition.getType(), cmp_register, condition.getRegister()));							
+								generateComparingInstruction(condition.getType(), cmp_register, condition.getRegister()));							
 						}
 						template.add("true_label", generateNewLabel());
 						template.add("false_label", generateNewLabel());
@@ -1028,7 +1090,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 String cmp_register = generateNewRegister();
                 template.add("cmp_register", cmp_register);
                 template.add("cmp_instruction",
-                	genereateComparingInstruction(condition.getType(), cmp_register, condition.getRegister()));
+                	generateComparingInstruction(condition.getType(), cmp_register, condition.getRegister()));
                 template.add("body_label", generateNewLabel());
                 template.add("end_label", currentBreakLabel);
                 template.add("body_code", body);

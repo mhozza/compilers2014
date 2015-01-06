@@ -6,11 +6,11 @@ for i in (0,n+1) {
 }
 
 for i in (2,n+1) {
-	if (a[i] < 0) {
-		printInt(a[i])
-		continue
-	}
-	for j in (2*i,n+1) do j+i {
+	if (a[i] < 0) ; continue
+
+	printInt(i)
+	
+	for j in (i,n+1) do j+i {
 		if (a[j] > 0) ;
 			a[j] = a[j]* -1
 	}

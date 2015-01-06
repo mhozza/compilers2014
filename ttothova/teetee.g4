@@ -81,6 +81,7 @@ expression
     | op=NOT expression                                 # Not
     | expression op=AND expression                      # And
     | expression op=OR expression                       # Or
+    | expression op=(EQ|NE|LT|LE|GT|GE) expression		# Com
 	| callfunction										# FunctionCall
 	| INT 												# Int
 	| FLOAT 											# Float
@@ -126,6 +127,12 @@ EXP: '^';
 AND: 'and' | '&&';
 OR: 'or' | '||';
 NOT: 'not' | '!';
+EQ: '==';
+NE: '!=';
+LT: '<';
+LE: '<=' | '=<';
+GT: '>';
+GE: '>=' | '<=';
 
 VOID: 'void';
 INT: NUMBER;
