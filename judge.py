@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import sys
 import re
@@ -24,7 +24,10 @@ class cd:
 def run_script(project, script, *args, **kwargs):
     with cd(project):
         if '_in' in kwargs or '_out' in kwargs:
-            return sh.Command(script)(*args, **kwargs)
+            try:
+                return sh.Command(script)(*args, **kwargs)
+            except sh.ErrorReturnCode as e:
+                print(e)
         else:
             return os.system(script)
 
