@@ -31,11 +31,19 @@ public class Memory {
 	}
 
 	public void put(String key, String var, Integer type) {
-		this.variable_mem.put(key, new idInfo(var,type));
+		this.variable_mem.put(key, new idInfo(var,type,false));
 	}
 
 	public void put(String key, String var, String type) {
-		this.variable_mem.put(key, new idInfo(var,Type.getType(type)));
+		this.variable_mem.put(key, new idInfo(var,Type.getType(type),false));
+	}
+
+	public void put(String key, String var, Integer type, Boolean array) {
+		this.variable_mem.put(key, new idInfo(var,type,array));
+	}
+
+	public void put(String key, String var, String type, Boolean array) {
+		this.variable_mem.put(key, new idInfo(var,Type.getType(type),array));
 	}
 
 	public String get(String key) {
@@ -78,5 +86,33 @@ public class Memory {
 
 	public Boolean thisContainsKey(String key) {
 		return this.variable_mem.containsKey(key);
+	}
+
+	public  Boolean isArray(String key) {
+		if (this.variable_mem.containsKey(key)) {
+			return this.variable_mem.get(key).isArray();
+		}
+		if (this.parent != null) {
+			return this.parent.isArray(key);
+		}
+		return null;		
+	}
+
+	public void setArrayStatus(String key, Boolean array) {
+		if (this.variable_mem.containsKey(key)) {
+			this.variable_mem.get(key).setArrayStatus(array);
+		}
+		if (this.parent != null) {
+			this.parent.setArrayStatus(key, array);
+		}
+	}
+
+	public void changeRegister(String key, String register) {
+		if (this.variable_mem.containsKey(key)) {
+			this.variable_mem.get(key).setRegister(register);
+		}
+		if (this.parent != null) {
+			this.parent.changeRegister(key, register);
+		}
 	}
 }

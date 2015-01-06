@@ -61,6 +61,15 @@ int printChar(char a) {
     return 0;
 }
 
+int printString(int* array) {
+    vector<char>* v = (vector<char>*) array;
+    for (int i = 0; i < (*v).size(); ++i)
+    {
+        cout << (*v)[i];
+    }
+    cout << endl;
+}
+
 int iexp(int a, int b) {
     int ret = 1;
     for (int i = 0; i < b; i++) {
@@ -116,6 +125,18 @@ void setArrayItemChar(int* array, int index, char item) {
 
 char getArrayItemChar(int* array, int index) {
    return getArrayItem<char>((vector<char>*) array, index);
+}
+
+int* createArrayType(int size, int* type) {
+    return (int*) createArray<int*>(size);
+}
+
+void setArrayItemType(int* array, int index, int* item) {
+    setArrayItem<int*>((vector<int*>*) array, index, item);
+}
+
+int* getArrayItemType(int* array, int index) {
+    return getArrayItem<int*>((vector<int*>*) array, index);
 }
 
 #ifdef __cplusplus

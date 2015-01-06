@@ -17,11 +17,7 @@ public class Type {
 	}
 
 	public static String getLLVMtype(String type) {
-			if (type.equals("int" )) {return "i32";}
-			if (type.equals("bool")) {return "i1"; }
-			if (type.equals("char")) {return "i8"; }
-
-			return type;
+			return Type.getLLVMtype(Type.getType(type));
 	}
 
 	public static String getLLVMtype(int t) {

@@ -38,15 +38,17 @@ statement
 	;
 
 assignment
-	: id LBRACK expression RBRACK ASSIGN expression 	# AssignArray
+	: id LBRACK expression (COMMA expression)* RBRACK ASSIGN expression 	# AssignArray
 	| id ASSIGN expression 								# AssignVar
 	;
 
 array_resize: id LBRACK expression RBRACK ;
 
-declaration
-	: type id LBRACK expression? RBRACK				# ArrayDecl
-	| type id ( ASSIGN expression )? 				# VarDecl
+declaration: decl_var ( ASSIGN expression )? ;
+
+decl_var
+	: decl_var LBRACK expression? RBRACK			# ArrayDecl
+	| type id 										# VarDecl
 	;
 
 return_statement: RETURN expression?;
@@ -66,7 +68,7 @@ while_statement
 	;
 
 var
-	: id LBRACK expression RBRACK						# ArrayVar
+	: id LBRACK expression (COMMA expression)* RBRACK	# ArrayVar
 	| id 												# SimpleVar
 	;
 

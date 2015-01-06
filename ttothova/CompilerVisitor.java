@@ -18,6 +18,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         private String initial_functions = "declare i32 @printInt(i32)\n" +
                         "declare i32 @printFloat(float)\n" +
                         "declare i32 @printChar(i8)\n" +
+                        "declare i32 @printString(i32*)\n" +
                         "declare i32 @readInt()\n" +
                         "declare float @readFloat()\n" +
                         "declare i8 @readChar()\n" +
@@ -33,7 +34,10 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         "declare float @getArrayItemFloat(i32*, i32)\n" +
                         "declare i32* @createCharArray(i32)\n" +
                         "declare void @setArrayItemChar(i32*, i32, i8)\n" +
-                        "declare i8 @getArrayItemChar(i32*, i32)\n";
+                        "declare i8 @getArrayItemChar(i32*, i32)\n" +
+                        "declare i32* @createArrayType(i32)\n" +
+                        "declare void @setArrayItemType(i32*, i32, i32*)\n" +
+                        "declare i32* @getArrayItemType(i32*, i32)\n";
 
         // type: 0..int, 1..float, 2..void, 3..bool, 4..string, 5..char 
 
@@ -46,18 +50,22 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
             function_mem.put("printInt", Type.INT);
             function_mem.put("printFloat", Type.INT);
             function_mem.put("printChar", Type.INT);
+            function_mem.put("printString", Type.INT);
             function_mem.put("readInt", Type.INT);
             function_mem.put("readFloat", Type.FLOAT);
             function_mem.put("readChar", Type.CHAR);
             function_mem.put("createIntArray", Type.INT);
             function_mem.put("createFloatArray", Type.INT);
             function_mem.put("createCharArray", Type.INT);
+            function_mem.put("createArrayType", Type.INT);
             function_mem.put("setArrayItemInt", Type.VOID);
             function_mem.put("setArrayItemFloat", Type.VOID);
             function_mem.put("setArrayItemChar", Type.VOID);
+            function_mem.put("setArrayItemType", Type.INT);
             function_mem.put("getArrayItemInt", Type.INT);
             function_mem.put("getArrayItemFloat", Type.FLOAT);
             function_mem.put("getArrayItemChar", Type.CHAR);
+            function_mem.put("getArrayItemType", Type.CHAR);
         }
 
         private String generateNewLabel() {
@@ -254,43 +262,72 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 
         @Override
         public CodeFragment visitAssignArray(teeteeParser.AssignArrayContext ctx) {
-        		String identifier = ctx.id().getText();
-
+                String identifier = ctx.id().getText();
                 if (!mem.containsKey(identifier)) {
-                        System.err.println(String.format("Error: identifier '%s' does not exist", identifier));
+                        System.err.println(String.format("Error: invalid identifier '%s'", identifier));
                 }
                 String register = mem.get(identifier);
 
-        		CodeFragment index = visit(ctx.expression(0));
-        		CodeFragment expression = visit(ctx.expression(1));
+                CodeFragment code = new CodeFragment();
+                String old_array_register = generateNewRegister();
+                String new_array_register = generateNewRegister();
 
-        		if (index.getType() != Type.INT) {
-                        System.err.println(String.format("Error: excepted type int for index, %s", identifier));
-        		}
-        		if (expression.getType() != mem.getType(identifier)) {
-                        System.err.println(String.format("Error: type mismatch, assign to array %s", identifier));        			
-        		}
+                CodeFragment exp = visit(ctx.expression(ctx.expression().size()-1));
+                if (exp.getType() != mem.getType(identifier)) {
+                        System.err.println(String.format("Error: type mismatch durig assignment %s", identifier));                    
+                }
+                ST start_temp = new ST(
+                        "<array> = load i32** <register>\n" +
+                        "<expression_code>"
+                );
+                start_temp.add("array", old_array_register);
+                start_temp.add("register", register);
+                start_temp.add("expression_code", exp);
 
-        		ST template = new ST(
-        				"<index_code>" +
-        				"<expression_code>" +
-        				"<array> = load i32** <register>\n" +
-        				"call void @setArrayItem<method_type>(i32* <array>, i32 <index_register>, <type> <expression_register>)\n"
-        		);
-        		template.add("index_code", index);
-        		template.add("expression_code", expression);
-        		template.add("array", generateNewRegister());
-        		template.add("register", register);
-        		template.add("method_type", Type.getMethodType(mem.getType(identifier)));
-        		template.add("index_register", index.getRegister());
-        		template.add("type", Type.getLLVMtype(expression.getType()));
-        		template.add("expression_register", expression.getRegister());
+                code.addCode(start_temp.render());
 
-        		CodeFragment code = new CodeFragment();
-        		code.addCode(template.render());
-        		code.setRegister(expression.getRegister());
-        		code.setType(expression.getType());
-        		return code;
+                CodeFragment expression;
+                for(int i = ctx.expression().size()-2; i > 0; i--) {
+                        expression = visit(ctx.expression(i));
+                        if (expression.getType() != Type.INT) {
+                                System.err.println("Error: excepted type INT for method resize");
+                        }
+
+                        ST template = new ST(
+                                "<expression_code>" +
+                                "<ret> = call i32* @getArrayItemType(i32* <array>, i32 <expression_register>)\n"
+                        );
+                        template.add("expression_code", expression);
+                        template.add("expression_register", expression.getRegister());
+                        template.add("array", old_array_register);
+                        template.add("ret", new_array_register);
+
+                        code.addCode(template.render());
+
+                        old_array_register = new_array_register;
+                        new_array_register = generateNewRegister();
+                }
+
+                expression = visit(ctx.expression(0));
+                if (expression.getType() != Type.INT) {
+                        System.err.println("Error: excepted type INT for method resize");
+                }
+
+                ST template = new ST(
+                        "<expression_code>" +
+                        "call void @setArrayItem<method_type>(i32* <array>, i32 <expression_register>, <type> <exp_reg>)\n"
+                );
+                template.add("expression_code", expression);
+                template.add("expression_register", expression.getRegister());
+                template.add("array", old_array_register);
+                template.add("method_type", Type.getMethodType(mem.getType(identifier)));
+                template.add("type", Type.getLLVMtype(exp.getType()));
+                template.add("exp_reg", exp.getRegister());
+
+                code.addCode(template.render());
+                code.setRegister(exp.getRegister());
+                code.setType(exp.getType());
+                return code;
         }
 
         @Override
@@ -310,6 +347,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 switch (code.getType()) {
                 	case 0: instruction = "printInt"; break;
                 	case 1: instruction = "printFloat"; break;
+                    case 4: instruction = "printString"; break;
                 	case 5: instruction = "printChar"; break;
                 }
                 template.add("instruction", instruction);
@@ -616,14 +654,13 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         		String str = ctx.STRING().getText();
 
         		ST template = new ST(
-        				"<string> = alloca i32*\n" +
         				"<size> = add i32 0, <int>\n" +
         				"<string> = call i32* @createCharArray(i32 <size>)\n"
         		);
+                template.add("size", generateNewRegister());
+                template.add("int", String.valueOf(str.length()-1));
         		String ret = generateNewRegister();
         		template.add("string", ret);
-        		template.add("size", generateNewRegister());
-        		template.add("int", String.valueOf(str.length()));
 
         		CodeFragment code = new CodeFragment();
         		code.addCode(template.render());
@@ -632,7 +669,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 
         		String index = generateNewRegister();
         		code.addCode(String.format("%s = add i32 0, 0\n", index));
-        		for(int i = 0; i < str.length(); i++) {
+        		for(int i = 1; i < str.length(); i++) {
         				ST template_i = new ST(
         						"<index> = add i32 1, <old_index>\n" +
         						"<char> = add i8 0, <chvalue>\n" +
@@ -653,6 +690,35 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         }
 
         @Override
+        public CodeFragment visitDeclaration(teeteeParser.DeclarationContext ctx) {
+                CodeFragment var = visit(ctx.decl_var());
+                if (ctx.expression() == null) {
+                        return var;
+                }
+
+        		CodeFragment expression = visit(ctx.expression());
+        		if (expression.getType() != var.getType()) {
+        			System.err.println(String.format("Error: type mismatch in declaration"));
+        		}
+				ST template = new ST(
+                        "<var_code>" +
+						"<expression_code>" +
+						"store <type> <expression_register>, <type>* <variable_register>\n"
+				);               		
+                template.add("var_code", var);
+				template.add("expression_code", expression);
+				template.add("expression_register", expression.getRegister());
+				template.add("type", Type.getLLVMtype(var.getType()));
+				template.add("variable_register", var.getRegister());
+
+                CodeFragment code = new CodeFragment();
+				code.addCode(template.render());
+                code.setRegister(var.getRegister());
+                code.setType(var.getType());
+                return code;            
+        }
+
+        @Override
         public CodeFragment visitVarDecl(teeteeParser.VarDeclContext ctx) {
                 String identifier = ctx.id().getText();
                 String type = ctx.type().getText();
@@ -664,65 +730,106 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 String register = generateNewRegister();
                 mem.put(identifier, register, Type.getType(type));
                 
-                CodeFragment code = new CodeFragment();
+                ArrayCodeFragment code = new ArrayCodeFragment();
+                code.setIdentifier(identifier);
                 code.addCode(String.format("%s = alloca %s\n", register, Type.getLLVMtype(type)));
+                code.setRegister(register);
                 code.setType(type);
-
-                if (ctx.expression() != null) {
-                		CodeFragment expression = visit(ctx.expression());
-                		if (expression.getType() != Type.getType(type)) {
-                			System.err.println(String.format("Error: type mismatch in declaration %s", identifier));
-                		}
-						ST template = new ST(
-								"<expression_code>" +
-								"store <type> <expression_register>, <type>* <variable_register>\n"
-						);               		
-						template.add("expression_code", expression);
-						template.add("expression_register", expression.getRegister());
-						template.add("type", Type.getLLVMtype(type));
-						template.add("variable_register", register);
-
-						code.addCode(template.render());
-                }
-
                 return code;
         }
 
         @Override
         public CodeFragment visitArrayDecl(teeteeParser.ArrayDeclContext ctx) {
-        		String type = ctx.type().getText();
-        		String identifier = ctx.id().getText();
+                ArrayCodeFragment var = (ArrayCodeFragment) visit(ctx.decl_var());
+                String identifier = var.getIdentifier();
+                String register = mem.get(identifier);
+                int type = mem.getType(identifier);
 
-                if (mem.thisContainsKey(identifier)) {
-                        System.err.println(String.format("Error: identifier '%s' is already defined", identifier));
+                ArrayCodeFragment code = new ArrayCodeFragment();
+                
+                if (mem.isArray(identifier)) {
+                        //code.addCode(String.format("%s = alloca i32*\n", register));
+                        code.setType(type);
+                        code.setIdentifier(identifier);
+
+                        if (ctx.expression() != null) {
+                                CodeFragment expression = visit(ctx.expression());
+
+                                ST template = new ST(
+                                        "<expression_code>" +
+                                        "<ret> = call i32* @createArrayType(i32 <expression_register>)\n" +
+                                        "<iterator> = alloca i32\n" +
+                                        "store i32 0, i32* <iterator>\n" +
+                                        "br label %<cmp_label>\n" +
+                                        "<cmp_label>:\n" +
+                                        "<cmp_iter> = load i32* <iterator>\n" +
+                                        "<cmp_register> = icmp slt i32 <cmp_iter>, <expression_register>\n" +
+                                        "br i1 <cmp_register>, label %<body_label>, label %<end_label>\n" +
+                                        "<body_label>:\n" +
+                                        "<var_code>" +
+                                        "<index> = load i32* <iterator>\n" +
+                                        "call void @setArrayItemType(i32* <ret>, i32 <index>, i32* <var_register>)\n" +
+                                        "br label %<iterate_label>\n" +
+                                        "<iterate_label>:\n" +
+                                        "<old_i> = load i32* <iterator>\n" +
+                                        "<new_i> = add i32 <old_i>, 1\n" +
+                                        "store i32 <new_i>, i32* <iterator>\n" +
+                                        "br label %<cmp_label>\n" +
+                                        "<end_label>:\n" +
+                                        "store i32* <ret>, i32** <register>\n" 
+                                );
+                                template.add("expression_code", expression);
+                                String ret = generateNewRegister();
+                                template.add("ret", ret);
+                                template.add("expression_register", expression.getRegister());
+                                template.add("register", register);
+                                template.add("iterator", generateNewRegister());
+                                template.add("cmp_label", generateNewLabel());
+                                template.add("cmp_iter", generateNewRegister());
+                                template.add("cmp_register", generateNewRegister());
+                                template.add("body_label", generateNewLabel());
+                                template.add("end_label", generateNewLabel());
+                                template.add("var_code", var);
+                                template.add("index", generateNewRegister());
+                                template.add("var_register", var.getRegister());
+                                template.add("iterate_label", generateNewLabel());
+                                template.add("old_i", generateNewRegister());
+                                template.add("new_i", generateNewRegister());
+                                template.add("return", generateNewRegister());
+
+                                code.addCode(template.render());
+                                code.setRegister(ret);
+                        }
+                } else {
+                        mem.setArrayStatus(identifier, true);
+
+                        register = generateNewRegister();
+                        code.addCode(String.format("%s = alloca i32*\n", register));
+                        mem.changeRegister(identifier, register);
+                        code.setType(type);
+                        code.setIdentifier(identifier);
+
+                        if (ctx.expression() != null) {
+                                CodeFragment expression = visit(ctx.expression());
+
+                                ST template = new ST(
+                                        "<expression_code>" +
+                                        "<ret> = call i32* @create<method_type>Array(i32 <expression_register>)\n" +
+                                        "store i32* <ret>, i32** <register>\n"
+                                );
+                                String ret = generateNewRegister();
+                                template.add("expression_code", expression);
+                                template.add("ret", ret);
+                                template.add("method_type", Type.getMethodType(mem.getType(identifier)));
+                                template.add("expression_register", expression.getRegister());
+                                template.add("register", register);
+
+                                code.addCode(template.render());
+                                code.setRegister(ret);
+                        }
                 }
 
-                String register = generateNewRegister();
-                mem.put(identifier, register, Type.getType(type));
-
-                CodeFragment code = new CodeFragment();
-                code.addCode(String.format("%s = alloca i32*\n", register));
-                code.setType(type);
-
-                if (ctx.expression() != null) {
-                		CodeFragment expression = visit(ctx.expression());
-
-                		ST template = new ST(
-		        				"<expression_code>" +
-		        				"<ret> = call i32* @createIntArray(i32 <expression_register>)\n" +
-		        				"store i32* <ret>, i32** <register>\n"                				
-                		);
-                		template.add("expression_code", expression);
-                		String ret = generateNewRegister();
-                		template.add("ret", ret);
-                		template.add("expression_register", expression.getRegister());
-                		template.add("register", register);
-
-                		code.addCode(template.render());
-                		code.setRegister(ret);
-                }
-
-        		return code;
+                return code;
         }
 
         @Override
@@ -762,28 +869,41 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         				System.err.println(String.format("Error: invalid identifier '%s'", identifier));
         		}
         		String register = mem.get(identifier);
-        		CodeFragment expression = visit(ctx.expression());
-        		if (expression.getType() != Type.INT) {
-        				System.err.println("Error: excepted type INT for method resize");
-        		}
 
-        		ST template = new ST(
-        				"<expression_code>" +
-        				"<array> = load i32** <register>\n" +
-        				"<ret> = call <type> @getArrayItem<method_type>(i32* <array>, i32 <expression_register>)\n"
-        		);
-        		template.add("expression_code", expression);
-        		template.add("expression_register", expression.getRegister());
-        		template.add("array", generateNewRegister());
-        		template.add("register", register);
-        		template.add("type", Type.getLLVMtype(mem.getType(identifier)));
-        		template.add("method_type", Type.getMethodType(mem.getType(identifier)));
-        		String ret = generateNewRegister();
-        		template.add("ret", ret);
+                CodeFragment code = new CodeFragment();
+                String old_array_register = generateNewRegister();
+                String new_array_register = generateNewRegister();
+                code.addCode(String.format("%s = load i32** %s\n", old_array_register, register));
+                for(int i = ctx.expression().size() - 1; i > -1; i--) {
+                        CodeFragment expression = visit(ctx.expression(i));
+                        if (expression.getType() != Type.INT) {
+                                System.err.println("Error: excepted type INT for method resize");
+                        }
 
-        		CodeFragment code = new CodeFragment();
-        		code.addCode(template.render());
-        		code.setRegister(ret);
+                        ST template = new ST(
+                                "<expression_code>" +
+                                "<ret> = call <type> @getArrayItem<method_type>(i32* <array>, i32 <expression_register>)\n"
+                        );
+                        template.add("expression_code", expression);
+                        template.add("expression_register", expression.getRegister());
+                        template.add("array", old_array_register);
+                        template.add("ret", new_array_register);
+
+                        if (i > 0) {
+                                template.add("method_type", "Type");
+                                template.add("type", "i32*");
+                        } else {
+                                template.add("method_type", Type.getMethodType(mem.getType(identifier)));
+                                template.add("type", Type.getLLVMtype(mem.getType(identifier)));
+                        }
+
+                        code.addCode(template.render());
+
+                        old_array_register = new_array_register;
+                        new_array_register = generateNewRegister();
+                }
+
+        		code.setRegister(old_array_register);
         		code.setType(mem.getType(identifier));
         		return code;
         }
