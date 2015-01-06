@@ -1233,6 +1233,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 	        	String identifier = ctx.id().getText();
 	        	String register = generateNewRegister();
 	        	mem.put(identifier, register, "int");
+                mem.setArrayType(identifier, "int");
 	        	CodeFragment start = visit(ctx.expression(0));
 	        	CodeFragment end = visit(ctx.expression(1));
 	        	CodeFragment body = visit(ctx.block());
@@ -1339,7 +1340,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         CodeFragment expression = visit(v);
                         String expType = expression.getArrayType();
                         String instr_type = Type.getLLVMtype(expType);
-                        System.err.println(String.format("type:%s, instr:%s", expType, instr_type));
+                        System.err.println(String.format("%s type:%s, instr:%s", identifier, expType, instr_type));
 
                         ST template = new ST(
                                 "<expression_code>" 
