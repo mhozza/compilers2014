@@ -23,4 +23,13 @@ public class MemoryRecord {
 		numberOfDimensions=_dim;
 	}
 
+	public MemoryRecord(MemoryRecord mr) {
+		register=mr.register;
+		identificator=mr.identificator;
+		type=mr.type;
+		arrayMemSizeRegister=mr.arrayMemSizeRegister;
+		dimensionSizesRegister=mr.dimensionSizesRegister;
+		numberOfDimensions=mr.numberOfDimensions;	
+	}
+
 }

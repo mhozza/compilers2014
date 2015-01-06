@@ -8,21 +8,24 @@ public class Container {
 	//variable info
 	private String register;
 	private String identifier;
-	private MemoreRecord record;
+	private MemoryRecord record;
 	//operator info
 	private boolean swap;
 	//array info
 	private Integer dimensionShift;
 	private String arrayMemSizeRegister;
 	private String arrayOffsetRegister;
-	//private ArrayList<Integer> arraySizes;
 	//range info
 	private String secondRegister; //for bounded range
 	//container type info
 	private ArrowsExtendedVisitor.Openum opType;
 	private ArrowsExtendedVisitor.Typeenum type;
+	//functions info - for params, we need only registers, for arguments also types (array vs int)
+	private ArrayList<MemoryRecord> args;
 
 	public Container() {
+		args=new ArrayList<MemoryRecord>();
+		params=new ArrayList<String>();
 		code=new StringBuilder();
 		register=null;
 		identifier=null;
@@ -39,7 +42,8 @@ public class Container {
 		this();
 	}
 
-	public Container(Openum _opt) {
+	public Container(Openum _opt,boolean _s) {
+		swap=_s;
 		opType=_opt;
 		if (opType==ArrowsExtendedVisitor.Openum.NONE) type=ArrowsExtendedVisitor.Typeenum.NONE;
 		this();
@@ -86,12 +90,12 @@ public class Container {
 		identifier=_id;
 	}
 
-	public Map<String,String> getMemoryMap() {
-		return memory_map;
+	public MemoryRecord getMemoryRecord() {
+		return record;
 	}
 
-	public void setMemoryMap(Map<String,String> _m) {
-		memory_map=_m;
+	public void setMemoryRecord(MemoryRecord mr) {
+		record=mr;
 	}
 
 	public void swap() {
@@ -126,25 +130,28 @@ public class Container {
 		dimensionShift=_ds;
 	}
 
-	public Integer getActiveDimensions() {
-		return arraySizes.size()-dimensionShift;
+	public String getArrayMemSizeRegister() {
+		return arrayMemSizeRegister;
 	}
 
-	public ArrayList<Integer> getArraySizes() {
-		return arraySizes;
+	public void setArrayMemSizeRegister(String _s) {
+		arrayMemSizeRegister=_s;
 	}
 
-	public void setArraySizes(ArrayList<Integer> arr) {
-		//arrayDimensions=arr.size();
-		arraySizes=arr;
+	public String getArrayOffsetRegister() {
+		return arrayOffsetRegister;
 	}
 
-	public Integer getArrayMemSize() {
-		return arrayMemSize;
+	public void setArrayOffsetRegister(String _o) {
+		arrayOffsetRegister=_o;
 	}
 
-	public void setArrayMemSize(int _s) {
-		arrayMemSize=_s;
+	public String getsecondRegister() {
+		return setRegister;
+	}
+
+	public void setsecondRegister(String _sr) {
+		secondRegister=_sr;
 	}
 
 	public String toString() {
@@ -164,56 +171,4 @@ public class Container {
 		type=c.getType();
 	}
 
-	public Container operateBinary(Container left,Container right) throws {
-		if (swap) {
-			Container halp=left;
-			left=right;
-			right=halp;
-		}
-
-		switch (opType) {
-			case ASSIGN:
-				break;
-			case ADDSIGN:
-				break;
-			case SUBSIGN:
-				break;
-			case MULSIGN:
-				break;
-			case DIVSIGN:
-				break;
-			case POSIGN:
-				break;
-			case SWAP:
-				break;
-			default:
-				//error
-				break;
-		}
-	}
-
-	public Container operateUnary(Container right) {
-		switch(opType) {
-			case PRINTINT:
-				break;
-			case PRINTCHAR:
-				break;
-			case PRINTCHARLINE:
-				break;
-			case PRINTINTLINE:
-				break;
-			case READINT:
-				break;
-			case READCHAR:
-				break;
-			case READCHARLINE:
-				break;
-			case READINTLINE:
-				break;
-		}
-	}
-
-	//saving ryan's privates
-	
-	
 }

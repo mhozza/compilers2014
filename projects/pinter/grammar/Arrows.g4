@@ -90,6 +90,8 @@ tokens {
      //some grammar code,from a more .. civilized age
      //range: LR expression ((ADD | SUB) | (DOTS expression))? RR;
      //| INT32                                             # Int32
+     // op=(INC|DEC) expression                                   # PreInc
+     //| expression op=(INC|DEC)                               # PostInc
 }
 
 init: statements;
@@ -106,28 +108,28 @@ statement:
      | (singleOutput)+   #Output
      | block                 							# Blck
      | expression COLON NEWLINE tr=block (ELSE NEWLINE fa=block)?  		# If
-     | WHILE expression COLON NEWLINE block                       # While
-     | FOR lvalue op=(LA|RA) range COLON NEWLINE block			    # For
+     | WHILE expression COLON NEWLINE statement                       # While
+     | FOR expression op=(LA|RA) range COLON NEWLINE statement			    # For
      | RET expression                                   # Return
      | PASS                                             # Pass
      ;
 
 expression:
-	 op=(INC|DEC) expression							 # PreInc
-	| expression op=(INC|DEC)						 # PostInc
-     | op=('-'|'+') expression                           # Una
-     | expression op=(DIV|MUL) expression                # Mul
-     | expression op=(ADD|SUB) expression                # Add
+	op=('-'|'+') expression                           # Una
+     | expression operator expression                # Mul
+     | expression operator expression                # Add
      | op=NOT expression                                 # Not
-     | expression op=AND expression                      # And
-     | expression op=OR expression                       # Or
-     | expression op=EQ expression						 # Eq
+     | expression operator expression                      # And
+     | expression operator expression                       # Or
+     | expression operator expression						 # Eq
      | PAREN_OPEN expression PAREN_CLOSE                 # Par
      | lvalue '('params')'                               # Call
      | variable                                           # Var
      | INT 									   # Int
      | quotedString			                            # Qstr								 
      ;
+
+operator: INC | DEC | DIV | MUL | ADD | SUB | AND | OR | EQ;
 
 variable: lvalue(range)*
 

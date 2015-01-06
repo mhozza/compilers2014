@@ -105,6 +105,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 			ret.appendCode(opRes);
 			ret.inheritFromContainer(opRes);
 			String targetPointer;
+			String fromPointer;
 			if (left.getType==Typeenum.INT) {
 				targetPointer=left.getRegister();
 			} else {
@@ -113,12 +114,17 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 				ret.appendCode(String.format("%s = load i32* %s\n",offsetReg,left.getArrayOffsetRegister()));
 				ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",targetPointer,left.getRegister(),offsetReg));
 			}
+			if (right.getType!=Typeenum.INT) {
+				fromPointer=generateNewRegister();
+				String offsetReg=generateNewRegister();
+				ret.appendCode(String.format("%s = load i32* %s\n",offsetReg,right.getArrayOffsetRegister()));
+				ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",fromPointer,right.getRegister(),offsetReg));
+			}
 			if (right.getType==Typeenum.INT) {
 				ret.appendCode(String.format("store i32 %s, i32* %s\n",right.getRegister(),targetPointer));
 			} else {
-				//TODO MEMCOPY
+				ret.appendCode(String.format("call @llvm.memcpy.p0i32.p0i32.i32(i32* %s, i32* %s, i32 %s, i32 0, i1 0)\n",targetPointer,fromPointer,right.getArrayMemSizeRegister()));
 			}
-			//TODO 3 riadky
 		}
         return ret;
 	}
@@ -154,42 +160,27 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
             }
             switch (operator) {
             		case Openum.ASSIGN:
-					case Openum.SWAP:
 						code_stub="";
 						break;
-						//throw new CompilerException("Swap was processed as a standard binary operation, which shouldn't have happened - something went horribly wrong...");		
                     case Openum.ADD:
                     case Openum.ADDSIGN:
-                    		if ((left.type==Typeenum.ARRAY)||(right.type==Typeenum.ARRAY)) {
-                    			throw new CompilerException("Invalid operation on arrays");
-                    		}
                             instruction = "add";
                             break;
                     case Openum.SUB:
                     case Openum.SUBSIGN:
-                    		if ((left.type==Typeenum.ARRAY)||(right.type==Typeenum.ARRAY)) {
-                    			throw new CompilerException("Invalid operation on arrays");
-                    		}
                             instruction = "sub";
                             break;
                     case Openum.MUL:
                     case Openum.MULSIGN:
-                    		if ((left.type==Typeenum.ARRAY)||(right.type==Typeenum.ARRAY)) {
-                    			throw new CompilerException("Invalid operation on arrays");
-                    		}
                             instruction = "mul";
                             break;
                     case Openum.DIV:
                     case Openum.DIVSIGN:
-                    		if ((left.type==Typeenum.ARRAY)||(right.type==Typeenum.ARRAY)) {
-                    			throw new CompilerException("Invalid operation on arrays");
-                    		}
                             instruction = "sdiv";
                             break;
+                    case Openum.EQ:
+                    	instruction="icmp eq";
                     case Openum.AND:
-                    		if ((left.type==Typeenum.ARRAY)||(right.type==Typeenum.ARRAY)) {
-                    			throw new CompilerException("Invalid operation on arrays");
-                    		}
                             instruction = "and";
                     case Openum.OR:
                             ST temp = new ST(
@@ -204,7 +195,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
                             code_stub = temp.render();
                             break;
                     default:
-                    	throw new CompilerException("Invalid binary operator (wrong use of I/O arrows?)");
+                    	throw new CompilerException("Invalid binary operator (wrong use of I/O string arrow?)");
                     	break;
             }
             ST template = new ST(
@@ -215,7 +206,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
             template.add("left_code", left);
             template.add("right_code", right);
 	        //set types & everything to the same as were 
-	        ret.inheritFromContainer(right);
+	        ret.inheritFromContainer(left);
             String ret_register;
             if (!code_stub.isEmpty()) {
 	            template.add("instruction", instruction);
@@ -235,15 +226,15 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
             if (code.type!=Typeenum.INT) {
             	throw new CompilerException("Invalid unary operation on a non-integer type.");
             }
-            if (operator == calculatorParser.ADD) {
+            if (operator == ArrowsParser.ADD) {
                     return code;
             }
             String code_stub = "";
             switch(operator) {
-                    case calculatorParser.SUB:
+                    case ArrowsParser.SUB:
                             code_stub = "<ret> = sub i32 0, <input>\n";
                             break;
-                    case calculatorParser.NOT:
+                    case ArrowsParser.NOT:
                             ST temp = new ST(
                                     "<r> = icmp eq i32 \\<input>, 0\n" + 
                                     "\\<ret> = zext i1 <r> to i32\n"
@@ -262,9 +253,32 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
             ret.setRegister(ret_register);
             ret.addCode(template.render());
             return ret;
-            
     }
 
+
+    @Override 
+    public Container visitInputArrow(ArrowsParser.ArrowContext ctx) { 
+    	if (ctx.LA()!=null) return new Container(Openum.ASSIGN,true);
+    	return new Container(Openum.STRING,true);
+    }
+
+    @Override 
+    public Container visitOutputArrow(ArrowsParser.ArrowContext ctx) { 
+    	if (ctx.LA()!=null) return new Container(Openum.ASSIGN,false);
+    	return new Container(Openum.STRING,false);
+    }
+
+    @Override 
+    public Container visitOtherArrow(ArrowsParser.ArrowContext ctx) { 
+    	if (ctx.LPA()!=null) return new Container(Openum.ADDSIGN,true);
+    	if (ctx.RPA()!=null) return new Container(Openum.ADDSIGN,false);
+    	if (ctx.LSA()!=null) return new Container(Openum.SUBSIGN,true);
+    	if (ctx.RSA()!=null) return new Container(Openum.SUBSIGN,false);
+    	if (ctx.LDA()!=null) return new Container(Openum.DIVSIGN,true);
+    	if (ctx.RDA()!=null) return new Container(Openum.DIVSIGN,false);
+    	if (ctx.LMA()!=null) return new Container(Openum.MULSIGN,true);
+    	if (ctx.RMA()!=null) return new Container(Openum.MULSIGN,false);
+    }
 
     @Override
     public Container visitInt(ArrowsParser.IntContext ctx) {
@@ -296,7 +310,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 				ret=new Container(Typeenum.ARRAY);
 				ret.setRegister(generateNewRegister());
 				ret.setIdentifier(ctx.lvalue().getText());
-				ret.setDimensionShift(0);
+				ret.setDimensionShift(ctx.range().size()); //number of "active", or unsorted dimensions, which is all of them on a newly created array
 				//a register for array dimension sizes
 				String arrSizesRegister=generateNewRegister();
 				ret.appendCode(String.format("%s = alloca i32, i32 %d\n",arrSizesRegister,ctx.range().size()));
@@ -395,10 +409,16 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 
     @Override
     public Container visitRange(ArrowsParser.RangeContext ctx) {
-    	Container ret=visit(ctx.expression(0));
+    	Container ret=convertToInt(visit(ctx.expression(0)));
+    	if (ret==null) {
+    		throw new CompilerException("Invalid data type (non-integer) inside range");
+    	}
     	ret.setType(Typeenum.RANGE);
     	if (ctx.expression().size()>1) {
-    		Container second=visit(ctx.expression(1));
+    		Container second=convertToInt(visit(ctx.expression(1)));
+    		if (second==null) {
+	    		throw new CompilerException("Invalid data type (non-integer) inside range");
+	    	}
     		ret.appendCode(second.getCode());
     		ret.setSecondRegister(second.getRegister());
     	}
@@ -411,7 +431,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
     	//TODO check and fix
     	String str= ctx.content().getText();
     	byte[] stringBytes=str.getBytes("ISO-8859-1");
-    	Container ret(Typeenum.STRING);		//string differs from ARRAY in that it has no 
+    	Container ret(Typeenum.STRING);		//string differs from ARRAY in that it has no MemoryRecord
     	ret.setRegister(generateNewRegister());
     	ret.setDimensionShift(1);
     	//store 0 offset in register
@@ -453,20 +473,24 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 	    	Container var=visit(ctx.variable(i));
 	    	Container input;
 	    	switch (arw.Optype) {
-	    		case Optype.ASSIGN:
+	    		case Openum.ASSIGN:
 	    			input = new Container(Typeenum.INT);
 			        input.setRegister(generateNewRegister());
-			        input.appendCode(String.format("%s = callTODO\n", register, value));
-			        Container assign=generateBinaryOperatorContainer(Container left, Container right, Openum arw.getOptype());
+			        input.appendCode(String.format("%s = call i32 @readInt()\n", input.getRegister()));
+			        Container assign=generateBinaryOperatorContainer(var, input, Openum.ASSIGN);
 			        ret.inheritFromContainer(assign);
 			        ret.appendCode(assign);
 	    			break;
-	    		case Optype.STRING:
+	    		case Openum.STRING:
 	    			arw.setOptype(Openum.ASSIGN); //for purposes of generateBinOp, we're just assigning
 	    			input = new Container(Typeenum.ARRAY);
+	    			input.inheritFromContainer(var);
 			        input.setRegister(generateNewRegister());
-			        input.appendCode(String.format("%s = callTODO\n", register, value));
-			        Container assign=generateBinaryOperatorContainer(Container left, Container right, Openum arw.getOptype());
+			        input.setMemoryRecord(null);
+			        String size=generateNewRegister();
+			        input.appendCode(String.format("%s = load i32* %s\n",size,var.getArrayMemSize()));
+			        input.appendCode(String.format("call void @readString(i32* %s, i32 %s)\n", input.getRegister(),size));
+			        Container assign=generateBinaryOperatorContainer(var, input, Openum.ASSIGN);
 			        ret.inheritFromContainer(assign);
 			        ret.appendCode(assign);
 	    			break;
@@ -482,7 +506,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
     	for (int i=0;i<ctx.singleOutput().size();i++) {
     		ret.appendCode(visit(ctx.singleOutput(i)));
     	}
-    	//TODO newline
+    	ret.appendCode("call void @printLine()\n")
     	return ret;
     }
 
@@ -491,10 +515,9 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
     public Container visitSingleOutput(ArrowsParser.SingleOutputContext ctx) {
 	    Container arw=visit(ctx.inputArrow());
     	Container ret=new Container(Typeenum.NONE);
-    	String separator="";
+    	Container separator=null;
     	if (ctx.quotedString()!=null) {
-    		separator=ctx.quotedString().toText();
-    		separator=separator.replaceAll("\"","");
+    		separator=visit(ctx.quotedString());
     	}
     	for (int i=0;i<ctx.expression.size();i++) {
 	    	Container exp=visit(ctx.expression(i));
@@ -505,16 +528,35 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 		    		if (exp.getType()!=Typeenum.INT) {
 		    			throw new CompilerException("Non-int expression supplied to int-printing statement");
 		    		}
-			        ret.appendCode(String.format("%s = callTODO\n", register, value));
+		    		if (separator==null) {
+		    			input.appendCode(String.format("call void @printInt(i32 %s)\n", exp.getRegister()));
+		    		} else {
+				        String size=generateNewRegister();
+				        input.appendCode(String.format("%s = load i32* %s\n",size,separator.getArrayMemSize()));
+				        input.appendCode(String.format("call void @printInt(i32 %s, i32* %s, i32 %s)\n", exp.getRegister(), separator.getRegister(), size));
+		    		}
 	    			break;
 	    		case Optype.STRING:
 	    			if (exp.getType()!=Typeenum.ARRAY) {
 		    			throw new CompilerException("Non-array expression supplied to string-printing statement");
 		    		}
+		    		if (exp.getDimensionShift()>1) {
+		    			throw new CompilerException("An array of up to 1 dimension may be supplied to the printing statement");	
+		    		}
+		    		//load size, load offset, if no memrecord just subtract, if there is one get given dimension and length reaches to it's limits
+		    		//TODO
+		    		if (separator==null) {
+		    			//TODO
+		    			String size=generateNewRegister();
+				        input.appendCode(String.format("%s = load i32* %s\n",size, var.getArrayMemSize())); //todo here
+				        input.appendCode(String.format("call void @printInt(i32 %s, i32* %s, i32 %s)\n", exp.getRegister(), separator.getRegister(), size));
+		    		} else {
+		    			//todo
+		    			
+		    		}
 		    		ret.appendCode(String.format("%s = callTODO\n", register, value));
 	    			break;
 	    	}
-	    	//TODO call 
     	}
     	return ret;
  	}    
@@ -522,6 +564,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
 
     @Override
     public Container visitAdd(ArrowsParser.AddContext ctx) {
+            if ()
             return generateBinaryOperatorContainer(
                     visit(ctx.expression(0)),
                     visit(ctx.expression(1)),
@@ -557,7 +600,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
     public Container visitUna(ArrowsParser.UnaContext ctx) {
             return generateUnaryOperatorContainer(
                     visit(ctx.expression()),
-                    ctx.op.getOptype()
+                    ctx.op.getType()
             );
     }
 
@@ -565,7 +608,7 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
     public Container visitNot(ArrowsParser.NotContext ctx) {
             return generateUnaryOperatorContainer(
                     visit(ctx.expression()),
-                    ctx.op.getOptype()
+                    ctx.op.getType()
             );
     }
 
@@ -588,50 +631,291 @@ public class ArrowsVisitor extends ArrowsBaseVisitor<Container> {
     }
 
 
-    private String paramsToString(List<String> params) {
-            String s = "";
-            boolean begin = true;
-            for (String p : params) {
-                    if (!begin) {
-                            s += ", ";
-                    } else {
-                            begin = false;
-                    }
-                    s += "i32 " + p;
-            }
-            return s;
+    @Override
+    public Container visitWhile(ArrowsParser.WhileContext ctx) {
+        Container condition = visit(ctx.expression());
+        Container body = visit(ctx.statement());
+        ST template = new ST(
+            "br label %<cmp_label>\n" + 
+            "<cmp_label>:\n" + 
+            "<condition_code>" +
+            "<cmp_register> = icmp ne i32 <condition_register>, 0\n" + 
+            "br i1 <cmp_register>, label %<body_label>, label %<end_label>\n" + 
+            "<body_label>:\n" + 
+            "<body_code>" + 
+            "br label %<cmp_label>\n" + 
+            "<end_label>:\n" + 
+            "<ret> = add i32 0, 0\n"
+        );
+        template.add("cmp_label", generateNewLabel());
+        template.add("condition_code", condition);
+        template.add("cmp_register", generateNewRegister());
+        template.add("condition_register", condition.getRegister());
+        template.add("body_label", generateNewLabel());
+        template.add("end_label", generateNewLabel());
+        template.add("body_code", body);
+        String end_register = generateNewRegister();
+        template.add("ret", end_register);
+        
+        Container ret = new Container(Typeenum.NONE);
+        ret.addCode(template.render());
+        ret.setRegister(end_register);
+        return ret;
     }
-
 
     @Override
-    public CodeFragment visitEmp(calculatorParser.EmpContext ctx) {
-            return new CodeFragment();
+    public Container visitFor(ArrowsParser.ForContext ctx) {
+        Container exp = visit(ctx.expression());
+        Container body = visit(ctx.statement());
+        Container range = visit(ctx.range());
+        if (range.getSecondRegister()==null) {
+        	throw new CompilerException("Invalid use of range in for");
+        }
+        if (exp.getMemoryRecord()==null) {
+        	throw new CompilerException("You must supply a variable to for");
+        }
+        String it=exp.getMemoryRecord().register;
+        String step;
+        String bound;
+        String start;
+        if (ctx.op.getType()==LA) {
+        	step="add";
+        	bound=range.getSecondRegister();
+        	start=range.getRegister();
+        } else {
+        	step="sub";
+        	bound=range.getRegister();
+        	start=range.getSecondRegister();
+        }
+        //initialize the iterator
+        String reg=generateNewRegister();
+        ST init_code=new ST(
+        	"<reg> = load i32* <start>\n" +
+        	"store i32 <reg>, i32* <it>\n"
+        );
+        init_code.add("reg",reg);
+        init_code.add("start",start);
+        init_code.add("it",it);
+        //condition code
+        String load=generateNewRegister();
+        String loadIt=generateNewRegister();
+        String compare=generateNewRegister();
+        String cond_code=new ST(
+        	"<load> = load i32* <bound>\n" +
+        	"<load_it> = load i32* <it>\n" +
+        	"<compare> = icmp ne i32 <load>, <bound>\n"
+        );
+        cond_code.add("load",load);
+        cond_code.add("load_it",loadIt);
+        cond_code.add("it",it);
+        cond_code.add("compare",compare);
+        cond_code.add("bound",bound);
+        //increment/decrement code
+        load=generateNewRegister();
+        loadIt=generateNewRegister();
+        compare=generateNewRegister();
+        ST inc_code=new ST(
+        	"<loadIt> = load i32* <it>\n" +
+        	"<load> = <step> i32 <loadIt>, 1\n" +
+        	"store i32 <load>, i32* <it>\n"
+        );
+        cond_code.add("load",load);
+        cond_code.add("loadIt",loadIt);
+        cond_code.add("it",it);
+        ST template = new ST(
+        	"<init_code>" +
+            "br label %<cmp_label>\n" + 
+            "<cmp_label>:\n" + 
+            "<condition_code>" +
+            "<cmp_register> = icmp ne i32 <condition_register>, 0\n" + 
+            "br i1 <cmp_register>, label %<body_label>, label %<end_label>\n" + 
+            "<body_label>:\n" + 
+            "<body_code>" +
+            "<increment>" + 
+            "br label %<cmp_label>\n" + 
+            "<end_label>:\n" + 
+            "<ret> = add i32 0, 0\n"
+        );
+        template.add("init_code",init_code.render());
+        template.add("cmp_label", generateNewLabel());
+        template.add("condition_code", cond_code.render());
+        template.add("cmp_register", generateNewRegister());
+        template.add("condition_register", compare);
+        template.add("body_label", generateNewLabel());
+        template.add("end_label", generateNewLabel());
+        template.add("body_code", body);
+        template.add("increment",inc_code.render())
+        String end_register = generateNewRegister();
+        template.add("ret", end_register);
+        
+        Container ret = new Container(Typeenum.NONE);
+        ret.addCode(template.render());
+        ret.setRegister(end_register);
+        return ret;
     }
 
 
-	private Container generateFunctionCode() {
-        Container code = new Container();
-        for(Map.Entry<String,Function> e : func.entrySet()) {
-                Function f=e.getValue();
-                ST template = new ST(
-                        "define i32 @<name>(<args>) {\n" +
-                        "start:\n" +
-                        "<body_code>" +
-                        "ret i32 0" + 
-                        "}\n"
-                );
-                template.add("name", f.name);
-                template.add("body_code", f.code);
-                template.add("args", paramsToString(f.args));
+	@Override
+        public Container visitFunc(ArrowsParser.FuncContext ctx) {
+                Container code = new Container(Typeenum.NONE);
+                String name = ctx.lvalue().getText();
 
-                code.addCode(template.render());
-                code.setRegister(f.code.getRegister());
+                Function f = new Function(name, new Container(Typeenum.NONE),null);
+                if (!func.containsKey(name)) {
+                        func.put(name, f);
+                } else {
+                        throw new CompilerException(String.format("Error: function '%s' already declared", name));
+                }
+
+                mem.addLast(new LinkedList<Map<String,String> >());
+                mem.getLast().addLast(new HashMap<String, String>());
+                Container args = visit(ctx.args());
+                f.args=args.args;
+                f.code.appendCode(args);
+                f.code.appendCode(visit(ctx.statement()));
+                mem.removeLast();
+                //code.setRegister(f.code.getRegister());
+                return code;
         }
-        return code;
-	}
 
+        @Override
+        public Container visitCall(calculatorParser.CallContext ctx) {
+                Container code = new Container();
+                String name = ctx.lvalue().getText();
+                Function f = null;
+                if (func.containsKey(name)){
+                    f = func.get(name);
+                } else {
+                    throw new CompilerException(String.format("Error: function '%s' is not declared", name));
+                }
+                Container params = visit(ctx.params());
+                String register = generateNewRegister();
+                ST template = new ST(
+                    "<args_code>" +
+                    "<reg> = call i32 @<name>(<args>)\n"
+                );
+                template.add("args_code", params);
+                template.add("name", f.name);
+                template.add("args", argsToString(params.getArgs()));
+                template.add("reg", register);
+                code.addCode(template.render());
+                //code.setRegister(register);
+                return code;
+        }
 
-	
+        //for extracting single elements from arrays as ints - if not possible, returns null 
+        private Container converToInt(Container c) {
+        	if (c.getType()==Typeenum.INT) {
+        		return c;
+        	} else {
+        		if (c.getDimensionShift()==0) {
+        			String elem=generateNewRegister();
+        			String offset=generateNewRegister();
+        			String result=generateNewRegister();
+        			c.appendCode(String.format("%s = load i32* %s\n",offset,c.getarrayOffsetRegister));
+        			c.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",reg,c.getRegister(),offset));
+            		c.appendCode(String.format("%s = load i32* %s\n",result,elem));
+            		c.setRegister(result);
+            		c.setType(Typeenum.INT);
+            		c.setMemoryRecord(null);
+            		return c;
+        		} else {
+        			return null;
+        		}
+        	}
+        }
+
+        @Override
+        public Container visitReturn(calculatorParser.ReturnContext ctx) {
+                Container code;
+                code = convertToInt(visit(ctx.expression()));
+                if (code==null) {
+                	throw new CompilerException("Invalid return value");
+                }
+                code.addCode(String.format("ret i32 %s\n", code.getRegister()));
+                return code;
+        }
+
+        @Override public Container visitArgs(calculatorParser.ArgsContext ctx) {
+                Container code = new Container(Typeenum.NONE);
+                for (int i = 0; i< ctx.variable().size(); i++) {
+                		Container var=visit(ctx.variable(i)); //allocates some extra memory we won't use , TODO match the line in code and delete it
+                		if (var.getMemoryRecord()==null) {
+                			throw new CompilerException("Invalid function argument");
+                		}
+                        String argRegister = this.generateNewRegister(); //this goes into parentheses along with type
+                        var.setRegister(argRegister);
+                        if (var.getType()==Typeenum.INT) {
+                        	String reg=generateNewRegister();
+                        	var.appendCode(reg+" = alloca i32\n");
+                            var.appendCode("store i32 "+argRegister+", i32* "+reg+"\n");
+                            var.getMemoryRecord().register=reg;
+                        } else {
+                        	//arrays already pass pointers
+	                        var.getMemoryRecord().register=argRegister;
+                        }
+                		code.appendCode(var);
+                		//for the sake of arg, modify the memory record in case of INT (the code does nothing in case of ARRAYS, that already use argRegister  as pointer)
+                		MemoryRecord mr=new MemoryRecord(var.getMemoryRecord());
+                		mr.register=argRegister;
+                        code.args.add(var.getMemoryRecord());
+                }
+                return code;
+        }
+
+        @Override 
+        public CodeFragment visitParams(calculatorParser.ParamsContext ctx) {
+                CodeFragment code = new CodeFragment();
+                for (int i = 0; i < ctx.expression().size(); i++) {
+                    CodeFragment expr_code = visit(ctx.expression(i));
+                    //turn 1 element array into int if possible
+                    Container coverted=convertToInt(expr_code);
+                    if (converted!=null) expr_code=converted;
+                    code.appendCodeFragment(expr_code);
+                	code.args.add(MemoryRecord(expr_code.getIdentifier(),expr_code.getRegister(),expr_code.getType())); //we need just register and type, ignoring the rest
+                }
+                return code;
+        }
+
+        private CodeFragment getFuncCode() {
+                CodeFragment code = new CodeFragment();
+                for(Map.Entry<String,Function> e : func.entrySet()) {
+                        Function f=e.getValue();
+                        ST template = new ST(
+                                "define i32 @<name>(<args>) {\n" +
+                                "start:\n" +
+                                "<body_code>" +
+                                "ret i32 0" + 
+                                "}\n"
+                        );
+                        template.add("name", f.name);
+                        template.add("body_code", f.code);
+                        template.add("args", argsToString(f.getArgs()));
+
+                        code.addCode(template.render());
+                        code.setRegister(f.code.getRegister());
+                }
+                return code;
+        }
+
+        private String argsToString(List<MemoryRecord> records) {
+                String s = "";
+                boolean begin = true;
+                for (MemoryRecord m : records) {
+                        if (!begin) {
+                                s += ", ";
+                        } else {
+                                begin = false;
+                        }
+                        if (m.type==Typeenum.ARRAY) {
+                        	s += "i32* " + m.register;
+                        } else {
+                        	s += "i32 " + m.register;
+                    	}
+                }
+                return s;
+            }
+
 }
 
 //STANDARTNA KOPA BORDELU, keby sa nieco z neho chcelo revivnut
