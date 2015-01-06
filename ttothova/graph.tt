@@ -1,0 +1,51 @@
+int n = readInt()
+int m = readInt()
+
+int v[n][n]
+
+for i in (0,n) {
+	for j in (0,n) {
+		v[i,j] = 0
+	}
+}
+
+int a
+int b
+for i in (0,m) {
+	a = readInt()
+	b = readInt()
+	v[a,b] = 1
+	v[b,a] = 1
+}
+
+int komp[n]
+for i in (0,n) {
+	komp[i] = 0
+}
+
+komp[0] = 1
+bool zmena = true
+while zmena {
+	zmena = false
+	for i in (0,n) {
+		if komp[i] == 1 ;
+			for j in (0,n) {
+				if v[i,j] == 1 ;
+					if komp[j] == 0 {
+						komp[j] = 1
+						zmena = true
+					}
+			}
+	}
+}
+
+bool cele = true
+for i in (0,n) {
+	if (komp[i] == 0) ;
+		cele = false
+}
+if cele {
+	printString("ANO")
+} else {
+	printString("NIE")
+}
