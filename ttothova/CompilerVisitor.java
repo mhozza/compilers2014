@@ -8,11 +8,11 @@ import java.util.Set;
 public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         private Memory mem = new Memory();
         private Memory root_mem = mem;
-        private Map<String,Integer> function_mem = new HashMap<String,Integer>(); // <name, type>
+        private Map<String,String> function_mem = new HashMap<String,String>(); // <name, type>
         private int labelIndex = 0;
         private int registerIndex = 0;
         private CodeFragment functionCode = new CodeFragment();
-        private int currentFunctionType = Type.INT;
+        private String currentFunctionType = "int";
         private String currentContinueLabel = "";
         private String currentBreakLabel = "";
         private String initial_functions = "declare i32 @printInt(i32)\n" +
@@ -48,33 +48,33 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 
         public CompilerVisitor() {
             super();
-            function_mem.put("intToFloat", Type.FLOAT);
-            function_mem.put("floatToInt", Type.INT);
-            function_mem.put("iexp", Type.INT);
-            function_mem.put("fexp", Type.FLOAT);
-            function_mem.put("printInt", Type.INT);
-            function_mem.put("printFloat", Type.INT);
-            function_mem.put("printChar", Type.INT);
-            function_mem.put("printString", Type.INT);
-            function_mem.put("readInt", Type.INT);
-            function_mem.put("readFloat", Type.FLOAT);
-            function_mem.put("readChar", Type.CHAR);
-            function_mem.put("createIntArray", Type.INT);
-            function_mem.put("createFloatArray", Type.INT);
-            function_mem.put("createCharArray", Type.INT);
-            function_mem.put("createArrayType", Type.INT);
-            function_mem.put("setArrayItemInt", Type.VOID);
-            function_mem.put("setArrayItemFloat", Type.VOID);
-            function_mem.put("setArrayItemChar", Type.VOID);
-            function_mem.put("setArrayItemType", Type.INT);
-            function_mem.put("getArrayItemInt", Type.INT);
-            function_mem.put("getArrayItemFloat", Type.FLOAT);
-            function_mem.put("getArrayItemChar", Type.CHAR);
-            function_mem.put("getArrayItemType", Type.CHAR);
-            function_mem.put("sizeArrayInt", Type.INT);
-            function_mem.put("sizeArrayFloat", Type.INT);
-            function_mem.put("sizeArrayChar", Type.INT);
-            function_mem.put("sizeArrayType", Type.INT);
+            function_mem.put("intToFloat", "float");
+            function_mem.put("floatToInt", "int");
+            function_mem.put("iexp", "int");
+            function_mem.put("fexp", "float");
+            function_mem.put("printInt", "int");
+            function_mem.put("printFloat", "int");
+            function_mem.put("printChar", "int");
+            function_mem.put("printString", "int");
+            function_mem.put("readInt", "int");
+            function_mem.put("readFloat", "float");
+            function_mem.put("readChar", "char");
+            function_mem.put("createIntArray", "int[]");
+            function_mem.put("createFloatArray", "float[]");
+            function_mem.put("createCharArray", "char[]");
+            function_mem.put("createArrayType", "[]");
+            function_mem.put("setArrayItemInt", "void");
+            function_mem.put("setArrayItemFloat", "void");
+            function_mem.put("setArrayItemChar", "void");
+            function_mem.put("setArrayItemType", "void");
+            function_mem.put("getArrayItemInt", "int");
+            function_mem.put("getArrayItemFloat", "float");
+            function_mem.put("getArrayItemChar", "char");
+            function_mem.put("getArrayItemType", "[]");
+            function_mem.put("sizeArrayInt", "int");
+            function_mem.put("sizeArrayFloat", "int");
+            function_mem.put("sizeArrayChar", "int");
+            function_mem.put("sizeArrayType", "int");
         }
 
         private String generateNewLabel() {
@@ -110,6 +110,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         code.addCode(function);
                         code.setRegister(function.getRegister());
                         code.setType(function.getType());
+                        code.setArrayType(function.getArrayType());
                 }
                 return code;
         }
@@ -122,8 +123,8 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         		}
         		String type = ctx.ftype().getText();
 
-        		currentFunctionType = Type.getType(type);
-        		function_mem.put(identifier, currentFunctionType);
+        		currentFunctionType = type;
+        		function_mem.put(identifier, type);
 
         		Memory new_mem = new Memory(mem);
         		mem = new_mem;
@@ -134,17 +135,21 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 mem = mem.getParent();
 
                 String return_statement = "";
+                String body_register = "0";
                 if (Type.isVoid(type)) {
-                		return_statement = "ret void\n";
+                        return_statement = "ret void\n";
                 } else {
-                		String body_register = "0";
-                		if (body.getRegister() != null) {
-                				body_register = body.getRegister();
-                		} else {
-                			if (Type.isFloat(type)) {
-                				body_register = "0.0";
-                			}
-                		}
+                        if (type.contains("[]")) {
+                                body_register = "null";
+                        } else {
+                        		if (body.getRegister() != null) {
+                        				body_register = body.getRegister();
+                        		} else {
+                        			if (Type.isFloat(type)) {
+                        				body_register = "0.0";
+                        			}
+                        		}                            
+                        }
                 		return_statement = String.format("ret %s %s\n", Type.getLLVMtype(type), body_register);
                 }
 
@@ -165,6 +170,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 
                 CodeFragment code = new CodeFragment();
                 code.addCode(template.render());
+                code.setArrayType(type);
                 return code;
         }
 
@@ -221,12 +227,13 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 template.add("initial_functions", initial_functions);
                 template.add("body_code", body);
 
-                function_mem.put("main", Type.INT);
+                function_mem.put("main", "int");
 
                 CodeFragment code = new CodeFragment();
                 code.addCode(template.render());
                 code.setRegister(body.getRegister());
                 code.setType("int");
+                code.setArrayType("int");
                 return code;
         }
 
@@ -258,8 +265,10 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         public CodeFragment visitAssignVar(teeteeParser.AssignVarContext ctx) {
                 CodeFragment value = visit(ctx.expression());
                 String identifier = ctx.id().getText();
+                String valueType = value.getArrayType();
+                String idType = mem.getArrayType(identifier);
 
-                if (value.getType() != mem.getType(identifier)) {
+                if (!valueType.equals(idType)) {
                     	System.err.println(String.format("Error: identifier %s: type mismatch", identifier));
                 }
 
@@ -386,9 +395,9 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         }
 */
         public CodeFragment generateBinaryOperatorCodeFragment(CodeFragment left, CodeFragment right, Integer operator) {
-                Integer type = left.getType();;
+                Integer type = left.getType();
                 if (left.getType() != right.getType()) {
-                    System.err.println(String.format("Error: type mismatch in binary operation"));
+                    System.err.println(String.format("Error: type mismatch in binary operation %d", operator));
                 } 
 
                 Integer finalType = type;
@@ -540,6 +549,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 ret.setRegister(ret_register);
                 ret.addCode(template.render());
                 ret.setType(finalType);
+                ret.setArrayType(Type.getStringType(finalType));
                 return ret;
         
         }
@@ -587,6 +597,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 ret.setRegister(ret_register);
                 ret.addCode(template.render());
                 ret.setType(type);
+                ret.setArrayType(code.getArrayType());
                 return ret;
                 
         }
@@ -685,6 +696,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 code.addCode(String.format("%s = load %s* %s\n", register, typeString, pointer));
                 code.setRegister(register);
                 code.setType(type);
+                code.setArrayType(Type.getStringType(type));
                 return code;
         }
 
@@ -696,6 +708,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 code.setRegister(register);
                 code.addCode(String.format("%s = add i32 0, %s\n", register, value));
                 code.setType("int");
+                code.setArrayType("int");
                 return code;
         }
 
@@ -708,6 +721,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 	            code.setRegister(register);
 	            code.addCode(String.format("%s = fadd float 0.0, %s\n", register, Float.toString(f)));
 	            code.setType("float");
+                code.setArrayType("float");
 	            return code;
         }
 
@@ -724,6 +738,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         		code.setRegister(register);
         		code.addCode(String.format("%s = add i1 0, %s\n", register, value));
         		code.setType("bool");
+                code.setArrayType("bool");
         		return code;
         }
 
@@ -735,6 +750,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         		code.setRegister(register);
         		code.addCode(String.format("%s = add i8 0, %d\n", register, (int) value.charAt(1)));
         		code.setType("char");
+                code.setArrayType("char");
         		return code;
         }
 
@@ -755,25 +771,26 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         		code.addCode(template.render());
         		code.setRegister(ret);
         		code.setType("string");
+                code.setArrayType("char[]");
 
-        		String index = generateNewRegister();
-        		code.addCode(String.format("%s = add i32 0, 0\n", index));
-        		for(int i = 1; i < str.length(); i++) {
-        				ST template_i = new ST(
-        						"<index> = add i32 1, <old_index>\n" +
-        						"<char> = add i8 0, <chvalue>\n" +
-        						"call void @setArrayItemChar(i32* <string>, i32 <index>, i8 <char>)\n"
-        				);
-        				String old_index = index;
-        				index = generateNewRegister();
-        				template_i.add("index", index);
-        				template_i.add("old_index", old_index);
-        				template_i.add("string", ret);
-        				template_i.add("char", generateNewRegister());
-        				template_i.add("chvalue", String.valueOf((int) str.charAt(i)));
+                String index = generateNewRegister();
+                code.addCode(String.format("%s = add i32 0, 0\n", index));
+                for(int i = 1; i < str.length(); i++) {
+                        ST template_i = new ST(
+                                "<index> = add i32 1, <old_index>\n" +
+                                "<char> = add i8 0, <chvalue>\n" +
+                                "call void @setArrayItemChar(i32* <string>, i32 <index>, i8 <char>)\n"
+                        );
+                        String old_index = index;
+                        index = generateNewRegister();
+                        template_i.add("index", index);
+                        template_i.add("old_index", old_index);
+                        template_i.add("string", ret);
+                        template_i.add("char", generateNewRegister());
+                        template_i.add("chvalue", String.valueOf((int) str.charAt(i)));
 
-        				code.addCode(template_i.render());
-        		}
+                        code.addCode(template_i.render());
+                }
 
         		return code;
         }
@@ -804,6 +821,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 				code.addCode(template.render());
                 code.setRegister(var.getRegister());
                 code.setType(var.getType());
+                code.setArrayType(var.getArrayType());
                 return code;            
         }
 
@@ -825,6 +843,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 code.addCode(String.format("%s = alloca %s\n", register, Type.getLLVMtype(type)));
                 code.setRegister(register);
                 code.setType(type);
+                code.setArrayType(type);
                 return code;
         }
 
@@ -835,7 +854,8 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 String register = mem.get(identifier);
                 int type = mem.getType(identifier);
                 String arrayType = mem.getArrayType(identifier);
-                mem.setArrayType(identifier, arrayType + "[]");
+                arrayType += "[]";
+                mem.setArrayType(identifier, arrayType);
 
                 ArrayCodeFragment code = new ArrayCodeFragment();
                 
@@ -921,6 +941,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                         }
                 }
 
+                code.setArrayType(arrayType);
                 return code;
         }
 
@@ -952,6 +973,16 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         		code.setType(mem.getType(identifier));
 
         		return code;
+        }
+
+        private int countMatches(String s, char c) {
+                int res = 0;
+                for(int i = 0; i < s.length(); i++) {
+                        if (s.charAt(i) == c) {
+                                res++;
+                        }
+                }
+                return res;
         }
 
         @Override
@@ -997,6 +1028,16 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 
         		code.setRegister(old_array_register);
         		code.setType(mem.getType(identifier));
+                
+                String arrayType = mem.getArrayType(identifier);
+                int count = countMatches(arrayType, '[');
+                count -= ctx.expression().size();
+                String newType = Type.getStringType(mem.getType(identifier));
+                for(int i = 0; i < count; i++) {
+                    newType += "[]";
+                }
+
+                code.setArrayType(newType);
         		return code;
         }
 
@@ -1006,7 +1047,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
         
         		if (ctx.expression() != null) {
 		                CodeFragment expression = visit(ctx.expression());
-		                if (currentFunctionType == Type.VOID || currentFunctionType != expression.getType()) {
+		                if (currentFunctionType.equals("void") || !currentFunctionType.equals(expression.getArrayType())) {
 		                		System.err.println("Error: invalid return type");
 		                }
 		
@@ -1279,40 +1320,22 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
 						System.err.println(String.format("Error: function '%s' does not exist", identifier));
 				}
 
-				int type = function_mem.get(identifier);
+				String type = function_mem.get(identifier);
 
                 CodeFragment code = new CodeFragment();
                 String parameters = "";
 
                 for(teeteeParser.ExpressionContext v: ctx.expression()) {
                         CodeFragment expression = visit(v);
-                        String instruction = "add";
-                        String instr_type = "i32*";
-                        String zero = "0";
-                        if (Type.isFloat(expression.getType())) {
-                                instruction = "fadd";
-                                instr_type = "float";
-                                zero = "0.0";
-                        }
-                        if (Type.isInt(expression.getType())) {
-                                instruction = "add";
-                                instr_type = "i32";
-                                zero = "0";
-                        }
+                        String expType = expression.getArrayType();
+                        String instr_type = Type.getLLVMtype(expType);
 
                         ST template = new ST(
                                 "<expression_code>" 
-//                                "<param_register> = <instruction> <type> <expression_register>, <zero>\n"
                         );
 
                         template.add("expression_code", expression);
-  /*                      template.add("expression_register", expression.getRegister());
-                        String param_register = generateNewRegister();
-                        template.add("param_register", param_register);
-                        template.add("instruction", instruction);
-                        template.add("type", instr_type);
-                        template.add("zero", zero);
-*/
+
                         code.addCode(template.render());
                         if (parameters.equals("")) {
                         		parameters = String.format("%s %s", Type.getLLVMtype(instr_type), expression.getRegister());
@@ -1331,6 +1354,7 @@ public class CompilerVisitor extends teeteeBaseVisitor<CodeFragment> {
                 		code.setRegister(ret);
     	    	}
                 code.setType(type);
+                code.setArrayType(type);
 
                 return code;
 

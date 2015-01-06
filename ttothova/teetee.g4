@@ -15,7 +15,7 @@ function: ftype fname OPEN_PAR fparameters CLOSE_PAR block;
 
 ftype
 	: VOID 												
-	| type LBRACK RBRACK 										
+	| type (LBRACK RBRACK)?								
 	;
 
 fname: ID;

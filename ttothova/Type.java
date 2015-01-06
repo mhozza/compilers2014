@@ -17,6 +17,7 @@ public class Type {
 	}
 
 	public static String getLLVMtype(String type) {
+			if (type.contains("[]")) {return "i32*";}
 			return Type.getLLVMtype(Type.getType(type));
 	}
 
