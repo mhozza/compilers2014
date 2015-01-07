@@ -25,28 +25,62 @@ public class Container {
 
 	public Container() {
 		args=new ArrayList<MemoryRecord>();
-		params=new ArrayList<String>();
 		code=new StringBuilder();
 		register=null;
 		identifier=null;
-		memory_map=null;
+		secondRegister=null;
 		swap=false;
 		dimensionShift=0;
-		arraySizes=new ArrayList<Integer>();
 	}
 
 	public Container(ArrowsExtendedVisitor.Typeenum _t) {
+		this();
 		type=_t;
 		//if we're setting an unknown type, make both enums euqall
 		if (type==ArrowsExtendedVisitor.Typeenum.NONE) opType=ArrowsExtendedVisitor.Openum.NONE;
-		this();
 	}
 
-	public Container(Openum _opt,boolean _s) {
+	public Container(int _t) {
+		this();
+		switch(_t) {
+			case ArrowsParser.MUL: 
+				opType=ArrowsExtendedVisitor.Openum.MUL;
+				break;
+			case ArrowsParser.DIV:
+				opType=ArrowsExtendedVisitor.Openum.DIV;
+				break;
+			case ArrowsParser.ADD:
+				opType=ArrowsExtendedVisitor.Openum.ADD;
+				break;
+			case ArrowsParser.SUB:
+				opType=ArrowsExtendedVisitor.Openum.SUB;
+				break;
+			case ArrowsParser.EQ:
+				opType=ArrowsExtendedVisitor.Openum.EQUAL;
+				break;
+			case ArrowsParser.NEQ:
+				opType=ArrowsExtendedVisitor.Openum.NEQUAL;
+				break;
+			case ArrowsParser.SEQ:
+				opType=ArrowsExtendedVisitor.Openum.SEQUAL;
+				break;
+			case ArrowsParser.GEQ:
+				opType=ArrowsExtendedVisitor.Openum.GEQUAL;
+				break;
+			case ArrowsParser.GT:
+				opType=ArrowsExtendedVisitor.Openum.GREATER;
+				break;
+			case ArrowsParser.ST:
+				opType=ArrowsExtendedVisitor.Openum.SMALLER;
+				break;
+		}
+	}
+
+	public Container(ArrowsExtendedVisitor.Openum _opt,boolean _s) {
+		this();
 		swap=_s;
 		opType=_opt;
 		if (opType==ArrowsExtendedVisitor.Openum.NONE) type=ArrowsExtendedVisitor.Typeenum.NONE;
-		this();
 	}
 
 	public String getCode() {
@@ -59,7 +93,8 @@ public class Container {
 	}
 
 	public void setCode(ST _temp) {
-		code=_temp.render();
+		code=new StringBuilder();
+		code.append(_temp.render());
 	}
 
 	public void appendCode(String _c) {
@@ -146,29 +181,38 @@ public class Container {
 		arrayOffsetRegister=_o;
 	}
 
-	public String getsecondRegister() {
-		return setRegister;
+	public String getSecondRegister() {
+		return arrayOffsetRegister;
 	}
 
-	public void setsecondRegister(String _sr) {
+	public void setSecondRegister(String _sr) {
 		secondRegister=_sr;
 	}
 
+	public ArrayList<MemoryRecord> getArgs() {
+		return args;
+	}
+
+	public void setArgs(ArrayList<MemoryRecord> _a) {
+		args=_a;
+	}
+
 	public String toString() {
-		code.toString();
+		return code.toString();
 	}
 
 	public void inheritFromContainer(Container c) {
 		//sets everything except for the code
 		register=c.getRegister();
 		identifier=c.getIdentifier();
-		memory_map=c.getMemoryMap();
 		swap=c.getSwap();
 		dimensionShift=c.getDimensionShift();
-		arrayMemSize=c.getArrayMemSize();
-		arraySizes=c.getArrySizes();
+		arrayMemSizeRegister=c.getArrayMemSizeRegister();
+		arrayOffsetRegister=c.getArrayOffsetRegister();
 		opType=c.getOpType();
 		type=c.getType();
+		secondRegister=c.getSecondRegister();
+		args=c.getArgs();
 	}
 
 }

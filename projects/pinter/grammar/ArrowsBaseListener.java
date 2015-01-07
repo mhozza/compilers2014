@@ -29,19 +29,6 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterArrow(@NotNull ArrowsParser.ArrowContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitArrow(@NotNull ArrowsParser.ArrowContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterArgs(@NotNull ArrowsParser.ArgsContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -49,6 +36,19 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitArgs(@NotNull ArrowsParser.ArgsContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterArrow(@NotNull ArrowsParser.ArrowContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitArrow(@NotNull ArrowsParser.ArrowContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -101,19 +101,6 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitInputArrow(@NotNull ArrowsParser.InputArrowContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterFunction(@NotNull ArrowsParser.FunctionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitFunction(@NotNull ArrowsParser.FunctionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -185,19 +172,6 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterOtherArrow(@NotNull ArrowsParser.OtherArrowContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitOtherArrow(@NotNull ArrowsParser.OtherArrowContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterAdd(@NotNull ArrowsParser.AddContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -205,6 +179,19 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitAdd(@NotNull ArrowsParser.AddContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterOtherArrow(@NotNull ArrowsParser.OtherArrowContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitOtherArrow(@NotNull ArrowsParser.OtherArrowContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -231,19 +218,6 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitInt(@NotNull ArrowsParser.IntContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterPreInc(@NotNull ArrowsParser.PreIncContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPreInc(@NotNull ArrowsParser.PreIncContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -289,6 +263,32 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterBoundedRange(@NotNull ArrowsParser.BoundedRangeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitBoundedRange(@NotNull ArrowsParser.BoundedRangeContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterSingleRange(@NotNull ArrowsParser.SingleRangeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitSingleRange(@NotNull ArrowsParser.SingleRangeContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterPar(@NotNull ArrowsParser.ParContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -315,6 +315,19 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterFun(@NotNull ArrowsParser.FunContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitFun(@NotNull ArrowsParser.FunContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterOutputArrow(@NotNull ArrowsParser.OutputArrowContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -335,19 +348,6 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitQstr(@NotNull ArrowsParser.QstrContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void enterPostInc(@NotNull ArrowsParser.PostIncContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPostInc(@NotNull ArrowsParser.PostIncContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -458,19 +458,6 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterPass(@NotNull ArrowsParser.PassContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
-	@Override public void exitPass(@NotNull ArrowsParser.PassContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 * <p/>
-	 * The default implementation does nothing.
-	 */
 	@Override public void enterVar(@NotNull ArrowsParser.VarContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -484,13 +471,13 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void enterSingleOutput(@NotNull ArrowsParser.SingleOutputContext ctx) { }
+	@Override public void enterVariable(@NotNull ArrowsParser.VariableContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
-	@Override public void exitSingleOutput(@NotNull ArrowsParser.SingleOutputContext ctx) { }
+	@Override public void exitVariable(@NotNull ArrowsParser.VariableContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -504,6 +491,19 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * The default implementation does nothing.
 	 */
 	@Override public void exitAnd(@NotNull ArrowsParser.AndContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void enterSingleOutput(@NotNull ArrowsParser.SingleOutputContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitSingleOutput(@NotNull ArrowsParser.SingleOutputContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

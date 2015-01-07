@@ -17,9 +17,9 @@ public class Compiler {
         ArrowsParser parser = new ArrowsParser(tokens);
         ParseTree tree = parser.init(); // parse
 
-        ArrowsVisitor eval = new ArrowsVisitor();
+        ArrowsExtendedVisitor eval = new ArrowsExtendedVisitor();
         try {
-            String code = eval.visit(tree);
+            Container code = eval.visit(tree);
             System.out.print(code.toString());
         } catch (Exception e) {
             System.err.println(e.toString());

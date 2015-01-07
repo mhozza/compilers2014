@@ -1,6 +1,6 @@
 public class MemoryRecord {
 	public String register;
-	public String identificator;
+	public String identifier;
 	public ArrowsExtendedVisitor.Typeenum type;
 
 	//info for array types
@@ -10,13 +10,13 @@ public class MemoryRecord {
 
 	public MemoryRecord(String _id,String _reg, ArrowsExtendedVisitor.Typeenum _t) {
 		register=_reg;
-		identificator=_id;
+		identifier=_id;
 		type=_t;
 	}
 
 	public MemoryRecord(String _id,String _reg, ArrowsExtendedVisitor.Typeenum _t, String _size, String _arrSizes, Integer _dim) {
 		register=_reg;
-		identificator=_id;
+		identifier=_id;
 		type=_t;
 		arrayMemSizeRegister=_size;
 		dimensionSizesRegister=_arrSizes;
@@ -25,7 +25,7 @@ public class MemoryRecord {
 
 	public MemoryRecord(MemoryRecord mr) {
 		register=mr.register;
-		identificator=mr.identificator;
+		identifier=mr.identifier;
 		type=mr.type;
 		arrayMemSizeRegister=mr.arrayMemSizeRegister;
 		dimensionSizesRegister=mr.dimensionSizesRegister;

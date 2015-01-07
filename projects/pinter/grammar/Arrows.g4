@@ -1,68 +1,38 @@
 grammar Arrows;
 
-init: statements;
+init: (fun)* statements;
 
-function: lvalue PAREN_OPEN args PAREN_CLOSE COLON NEWLINE block;
+fun: DEF lvalue PAREN_OPEN args PAREN_CLOSE COLON statement;
 
-statements: (NEWLINE)* (statement (NEWLINE)*)+ EOF;
+statements: statement (NEWLINE statement)*;
 
-block: INDENT statements DEDENT;
- 
+block: INDENT (NEWLINE)* statements (NEWLINE)* DEDENT;
+
+//simple_statement: statement SEMICOLON;
+
 statement:
-     expression arrow expression (arrow expression)*    # Arw
-     | (singleInput)+       # Input
-     | (singleOutput)+   #Output
+      (singleInput)+       # Input
+     | (singleOutput)+  #Output
+     | expression arrow expression (arrow expression)*    # Arw
      | block                 							# Blck
-     | expression COLON NEWLINE tr=block (ELSE NEWLINE fa=block)?  		# If
-     | WHILE expression COLON NEWLINE statement                       # While
-     | FOR expression op=(LA|RA) range COLON NEWLINE statement			    # For
+     | expression COLON tr=statement (ELSE fa=statement)?  		# If
+     | WHILE expression COLON statement                       # While
+     | FOR expression op=(LA|RA) range COLON statement			    # For
      | RET expression                                   # Return
-     | PASS                                             # Pass
      ;
 
-expression:
-	op=('-'|'+') expression                           # Una
-     | expression operator expression                # Mul
-     | expression operator expression                # Add
-     | op=NOT expression                                 # Not
-     | expression operator expression                      # And
-     | expression operator expression                       # Or
-     | expression operator expression						 # Eq
-     | PAREN_OPEN expression PAREN_CLOSE                 # Par
-     | lvalue '('params')'                               # Call
-     | variable                                           # Var
-     | INT 									   # Int
-     | quotedString			                            # Qstr								 
-     ;
 
-operator: INC | DEC | DIV | MUL | ADD | SUB | AND | OR | EQ;
 
-variable: lvalue(range)*;
-
-singleInput: inputArrow variable (',' variable)* ;
-singleOutput: outputArrow expression (',' expression)* (COLON quotedString) ;
-
-quotedString: QUOT content=(STRING | ANYSTRING)* QUOT;
-lvalue: STRING;
-args: (lvalue (',' lvalue)*)?;
-params: (expression (',' expression)*)?;
+singleInput: inputArrow variable (COMMA variable)* ;
+singleOutput: outputArrow expression (COMMA expression)*  (COLON quotedString)?;
 
 arrow: inputArrow | outputArrow | otherArrow;
 
-inputArrow: 
-	LA
-	| IS
-	| ISL
-	;
+inputArrow: op=(LA|IS);
 
-outputArrow:
-     RA
-     | OS
-     | OL
-     | OSL
-     ;
+outputArrow: op=(RA|OS);
 
-otherArrow:
+otherArrow: op=(
      LPA
      | LSA
      | LDA
@@ -74,28 +44,46 @@ otherArrow:
      | RMA
      | RRA
      | SWAP
+     );
+
+expression:
+     op=('-'|'+') expression                           # Una
+     | expression op=(MUL|DIV) expression                # Mul
+     | expression op=(ADD|SUB) expression                # Add
+     | op=NOT expression                                 # Not
+     | expression op=AND expression                      # And
+     | expression op=OR expression                       # Or
+     | expression op=(EQ|NEQ|GT|ST) expression           # Eq
+     | PAREN_OPEN expression PAREN_CLOSE                 # Par
+     | lvalue '('params')'                               # Call
+     | variable                                           # Var
+     | INT                                                # Int
+     | quotedString                                       # Qstr                                     
      ;
+
+variable: lvalue(range)*;
+
+quotedString: QUOT (content=(STRING|ANYSTRING))? QUOT;
+lvalue: STRING;
+args: (variable (COMMA variable)*)?;
+params: (expression (COMMA expression)*)?;
 
 range: singleRange | boundedRange;
 singleRange: LR expression RR;
 boundedRange: LR expression DOTS expression RR; 
 
-COMMENT: '#' ~[\r\n]* -> skip;
-SPACES: [ \t]+ -> skip;
-
-NEWLINE: ( '\r'? '\n' | '\r' ) SPACES?;
-
+DEF: 'def';
 INDENT: '{';
 DEDENT: '}';
-EOF: '<EOF>';
 COLON: ':';
+SEMICOLON: ';';
 LA: '>>';
+RA: '<<';
 LPA: '+>';
 LSA: '->';
 LDA: '/>';
 LMA: '*>';
 LRA: '&>';
-RA: '<<';
 RPA: '<+';
 RSA: '<-';
 RDA: '</';
@@ -109,9 +97,6 @@ OL: '<!';
 OSL: '<$';
 RET: 'ret';
 INT: DIGIT+;
-INT32: DIGIT+'i32';
-INC: '++';
-DEC: '--';
 MUL: '*';
 DIV: '/';
 ADD: '+';
@@ -121,7 +106,11 @@ RR: ']';
 DOTS: '..';
 WHITESPACE: [ \t] -> skip;
 EQ: '=';
-PEQ: '==';
+NEQ: '!=';
+GEQ: '>=';
+SEQ: '<=';
+GT: '>';
+ST: '<';
 IF: 'if';
 ELSE: 'else';
 WHILE: 'while';
@@ -132,10 +121,14 @@ OR: '|';
 NOT: '!';
 PAREN_OPEN: '(';
 PAREN_CLOSE: ')';
-STRING: [a-zA-Z][a-zA-Z0-9]*;
-ANYSTRING: ~[\r\n"]+;
 COMMA: ',';
 QUOT: '"';
 QO: '?';
+STRING: [a-zA-Z][a-zA-Z0-9]*;
+NEWLINE: '\n';
+ANYSTRING: ~[\r\n"]+?;
+
+COMMENT: '#' ~[\r\n]* -> skip;
+SPACES: [ \t]+ -> skip;
 
 fragment DIGIT: [0-9];
