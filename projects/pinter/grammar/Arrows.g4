@@ -1,6 +1,6 @@
 grammar Arrows;
 
-init: (fun)* statements;
+init: (fun)* (NEWLINE)* statements;
 
 fun: DEF lvalue PAREN_OPEN args PAREN_CLOSE COLON statement;
 
@@ -15,12 +15,12 @@ statement:
      | (singleOutput)+  #Output
      | expression arrow expression (arrow expression)*    # Arw
      | block                 							# Blck
-     | expression COLON tr=statement (ELSE fa=statement)?  		# If
+     | expression COLON tr=statement (ELSE fa=statement)?		# If
      | WHILE expression COLON statement                       # While
      | FOR expression op=(LA|RA) range COLON statement			    # For
      | RET expression                                   # Return
+     | expression #ee
      ;
-
 
 
 singleInput: inputArrow variable (COMMA variable)* ;

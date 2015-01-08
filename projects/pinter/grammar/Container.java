@@ -182,7 +182,7 @@ public class Container {
 	}
 
 	public String getSecondRegister() {
-		return arrayOffsetRegister;
+		return secondRegister;
 	}
 
 	public void setSecondRegister(String _sr) {

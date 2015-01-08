@@ -241,6 +241,14 @@ public class ArrowsBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements
 	 * The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.
 	 */
+	@Override public T visitEe(@NotNull ArrowsParser.EeContext ctx) { return visitChildren(ctx); }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.
+	 */
 	@Override public T visitLvalue(@NotNull ArrowsParser.LvalueContext ctx) { return visitChildren(ctx); }
 
 	/**

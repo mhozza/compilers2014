@@ -1,1 +1,6 @@
->> wat
+def bleh(x): {
+	<< x
+}
+
+x << 8
+bleh(x)

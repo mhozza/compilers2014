@@ -207,6 +207,13 @@ public interface ArrowsVisitor<T> extends ParseTreeVisitor<T> {
 	T visitSingleInput(@NotNull ArrowsParser.SingleInputContext ctx);
 
 	/**
+	 * Visit a parse tree produced by {@link ArrowsParser#ee}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEe(@NotNull ArrowsParser.EeContext ctx);
+
+	/**
 	 * Visit a parse tree produced by {@link ArrowsParser#lvalue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

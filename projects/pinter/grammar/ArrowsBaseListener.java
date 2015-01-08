@@ -380,6 +380,19 @@ public class ArrowsBaseListener implements ArrowsListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterEe(@NotNull ArrowsParser.EeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitEe(@NotNull ArrowsParser.EeContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterLvalue(@NotNull ArrowsParser.LvalueContext ctx) { }
 	/**
 	 * {@inheritDoc}

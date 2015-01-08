@@ -316,6 +316,17 @@ public interface ArrowsListener extends ParseTreeListener {
 	void exitSingleInput(@NotNull ArrowsParser.SingleInputContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ArrowsParser#ee}.
+	 * @param ctx the parse tree
+	 */
+	void enterEe(@NotNull ArrowsParser.EeContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ArrowsParser#ee}.
+	 * @param ctx the parse tree
+	 */
+	void exitEe(@NotNull ArrowsParser.EeContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ArrowsParser#lvalue}.
 	 * @param ctx the parse tree
 	 */

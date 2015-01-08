@@ -1,0 +1,14 @@
+TODO FIX
+>> n
+a[n]
+for i >> [0..n]: a[i] << 0
+while i*i<n : {
+    a[i]!=0 : {
+        << i
+        j << i
+        while j*j<n : {
+            i +> j >> a[j]
+        }
+    i <+ 1
+    }
+}
