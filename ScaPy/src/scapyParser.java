@@ -67,18 +67,18 @@ public class scapyParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class InitContext extends ParserRuleContext {
-		public List<TerminalNode> NEWLINE() { return getTokens(scapyParser.NEWLINE); }
-		public TerminalNode NEWLINE(int i) {
-			return getToken(scapyParser.NEWLINE, i);
-		}
-		public StatementsContext statements() {
-			return getRuleContext(StatementsContext.class,0);
-		}
 		public Import_functionContext import_function(int i) {
 			return getRuleContext(Import_functionContext.class,i);
 		}
 		public List<Import_functionContext> import_function() {
 			return getRuleContexts(Import_functionContext.class);
+		}
+		public StatementsContext statements() {
+			return getRuleContext(StatementsContext.class,0);
+		}
+		public List<TerminalNode> NEWLINE() { return getTokens(scapyParser.NEWLINE); }
+		public TerminalNode NEWLINE(int i) {
+			return getToken(scapyParser.NEWLINE, i);
 		}
 		public InitContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -150,19 +150,19 @@ public class scapyParser extends Parser {
 	}
 
 	public static class Import_functionContext extends ParserRuleContext {
+		public TerminalNode COLON() { return getToken(scapyParser.COLON, 0); }
+		public TerminalNode IMPORT() { return getToken(scapyParser.IMPORT, 0); }
+		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
-		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
-		public TerminalNode IMPORT() { return getToken(scapyParser.IMPORT, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
-		public TerminalNode COLON() { return getToken(scapyParser.COLON, 0); }
-		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
 		public ArglistContext arglist() {
 			return getRuleContext(ArglistContext.class,0);
 		}
+		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
 		public Import_functionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -210,14 +210,14 @@ public class scapyParser extends Parser {
 
 	public static class StatementsContext extends ParserRuleContext {
 		public List<TerminalNode> NEWLINE() { return getTokens(scapyParser.NEWLINE); }
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
 		public TerminalNode NEWLINE(int i) {
 			return getToken(scapyParser.NEWLINE, i);
 		}
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
+		}
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
 		}
 		public StatementsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -284,25 +284,6 @@ public class scapyParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class BaseContext extends StatementContext {
-		public Base_statementContext base_statement() {
-			return getRuleContext(Base_statementContext.class,0);
-		}
-		public BaseContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterBase(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitBase(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitBase(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class FuncDefContext extends StatementContext {
 		public Func_defContext func_def() {
 			return getRuleContext(Func_defContext.class,0);
@@ -338,6 +319,25 @@ public class scapyParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitProcDef(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BaseContext extends StatementContext {
+		public Base_statementContext base_statement() {
+			return getRuleContext(Base_statementContext.class,0);
+		}
+		public BaseContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterBase(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitBase(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitBase(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -395,20 +395,20 @@ public class scapyParser extends Parser {
 	}
 	public static class Super_assignmentContext extends AssignmentContext {
 		public Token op;
+		public TerminalNode SUB_ASS() { return getToken(scapyParser.SUB_ASS, 0); }
+		public TerminalNode MUL_ASS() { return getToken(scapyParser.MUL_ASS, 0); }
+		public TerminalNode DIV_ASS() { return getToken(scapyParser.DIV_ASS, 0); }
+		public Array_listContext array_list() {
+			return getRuleContext(Array_listContext.class,0);
+		}
 		public TerminalNode MOD_ASS() { return getToken(scapyParser.MOD_ASS, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
-		public TerminalNode DIV_ASS() { return getToken(scapyParser.DIV_ASS, 0); }
-		public TerminalNode MUL_ASS() { return getToken(scapyParser.MUL_ASS, 0); }
-		public TerminalNode SUB_ASS() { return getToken(scapyParser.SUB_ASS, 0); }
-		public Array_listContext array_list() {
-			return getRuleContext(Array_listContext.class,0);
-		}
+		public TerminalNode ADD_ASS() { return getToken(scapyParser.ADD_ASS, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode ADD_ASS() { return getToken(scapyParser.ADD_ASS, 0); }
 		public Super_assignmentContext(AssignmentContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -425,23 +425,23 @@ public class scapyParser extends Parser {
 		}
 	}
 	public static class Create_array_assignmentContext extends AssignmentContext {
-		public IdContext id() {
-			return getRuleContext(IdContext.class,0);
-		}
-		public TerminalNode OPENBRACKET() { return getToken(scapyParser.OPENBRACKET, 0); }
-		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
-		public TerminalNode CLOSEBRACKET() { return getToken(scapyParser.CLOSEBRACKET, 0); }
 		public TerminalNode ASSIGN() { return getToken(scapyParser.ASSIGN, 0); }
-		public TypeContext type() {
-			return getRuleContext(TypeContext.class,0);
-		}
+		public TerminalNode TYPE_ARRAY() { return getToken(scapyParser.TYPE_ARRAY, 0); }
+		public TerminalNode OPENBRACKET() { return getToken(scapyParser.OPENBRACKET, 0); }
 		public Array_listContext array_list() {
 			return getRuleContext(Array_listContext.class,0);
 		}
+		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
+		public IdContext id() {
+			return getRuleContext(IdContext.class,0);
+		}
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public TerminalNode CLOSEBRACKET() { return getToken(scapyParser.CLOSEBRACKET, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode TYPE_ARRAY() { return getToken(scapyParser.TYPE_ARRAY, 0); }
 		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
 		public Create_array_assignmentContext(AssignmentContext ctx) { copyFrom(ctx); }
 		@Override
@@ -459,12 +459,12 @@ public class scapyParser extends Parser {
 		}
 	}
 	public static class Simple_assignmentContext extends AssignmentContext {
-		public IdContext id() {
-			return getRuleContext(IdContext.class,0);
-		}
 		public TerminalNode ASSIGN() { return getToken(scapyParser.ASSIGN, 0); }
 		public Array_listContext array_list() {
 			return getRuleContext(Array_listContext.class,0);
+		}
+		public IdContext id() {
+			return getRuleContext(IdContext.class,0);
 		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -580,19 +580,19 @@ public class scapyParser extends Parser {
 		}
 	}
 	public static class ArraylistContext extends Array_listContext {
+		public TerminalNode CLOSEBRACKET(int i) {
+			return getToken(scapyParser.CLOSEBRACKET, i);
+		}
+		public List<TerminalNode> OPENBRACKET() { return getTokens(scapyParser.OPENBRACKET); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public List<TerminalNode> OPENBRACKET() { return getTokens(scapyParser.OPENBRACKET); }
-		public TerminalNode OPENBRACKET(int i) {
-			return getToken(scapyParser.OPENBRACKET, i);
-		}
-		public List<TerminalNode> CLOSEBRACKET() { return getTokens(scapyParser.CLOSEBRACKET); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public TerminalNode CLOSEBRACKET(int i) {
-			return getToken(scapyParser.CLOSEBRACKET, i);
+		public List<TerminalNode> CLOSEBRACKET() { return getTokens(scapyParser.CLOSEBRACKET); }
+		public TerminalNode OPENBRACKET(int i) {
+			return getToken(scapyParser.OPENBRACKET, i);
 		}
 		public ArraylistContext(Array_listContext ctx) { copyFrom(ctx); }
 		@Override
@@ -664,18 +664,18 @@ public class scapyParser extends Parser {
 		}
 	}
 	public static class Declare_simple_constContext extends Declare_constContext {
+		public TerminalNode ASSIGN() { return getToken(scapyParser.ASSIGN, 0); }
+		public TerminalNode VAL() { return getToken(scapyParser.VAL, 0); }
+		public TerminalNode COLON() { return getToken(scapyParser.COLON, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
-		public TerminalNode ASSIGN() { return getToken(scapyParser.ASSIGN, 0); }
-		public TerminalNode VAL() { return getToken(scapyParser.VAL, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode COLON() { return getToken(scapyParser.COLON, 0); }
 		public Declare_simple_constContext(Declare_constContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -737,64 +737,36 @@ public class scapyParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class Declare_simple_varContext extends Declare_variableContext {
-		public IdContext id() {
-			return getRuleContext(IdContext.class,0);
-		}
-		public TerminalNode ASSIGN() { return getToken(scapyParser.ASSIGN, 0); }
-		public TerminalNode VAR() { return getToken(scapyParser.VAR, 0); }
-		public TypeContext type() {
-			return getRuleContext(TypeContext.class,0);
-		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode COLON() { return getToken(scapyParser.COLON, 0); }
-		public Declare_simple_varContext(Declare_variableContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterDeclare_simple_var(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitDeclare_simple_var(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitDeclare_simple_var(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class Declare_array_varContext extends Declare_variableContext {
-		public IdContext id() {
-			return getRuleContext(IdContext.class,0);
-		}
-		public TerminalNode OPENBRACKET(int i) {
-			return getToken(scapyParser.OPENBRACKET, i);
-		}
-		public TerminalNode VAL() { return getToken(scapyParser.VAL, 0); }
+		public List<TerminalNode> OPENBRACKET() { return getTokens(scapyParser.OPENBRACKET); }
 		public TypeContext type(int i) {
 			return getRuleContext(TypeContext.class,i);
 		}
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
+		public TerminalNode VAL() { return getToken(scapyParser.VAL, 0); }
+		public TerminalNode COLON() { return getToken(scapyParser.COLON, 0); }
+		public IdContext id() {
+			return getRuleContext(IdContext.class,0);
+		}
+		public List<TerminalNode> CLOSEBRACKET() { return getTokens(scapyParser.CLOSEBRACKET); }
+		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
+		public TerminalNode ASSIGN() { return getToken(scapyParser.ASSIGN, 0); }
+		public List<TerminalNode> TYPE_ARRAY() { return getTokens(scapyParser.TYPE_ARRAY); }
+		public TerminalNode TYPE_ARRAY(int i) {
+			return getToken(scapyParser.TYPE_ARRAY, i);
 		}
 		public TerminalNode CLOSEBRACKET(int i) {
 			return getToken(scapyParser.CLOSEBRACKET, i);
 		}
-		public List<TerminalNode> OPENBRACKET() { return getTokens(scapyParser.OPENBRACKET); }
 		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
-		public TerminalNode ASSIGN() { return getToken(scapyParser.ASSIGN, 0); }
-		public List<TerminalNode> CLOSEBRACKET() { return getTokens(scapyParser.CLOSEBRACKET); }
-		public TerminalNode TYPE_ARRAY(int i) {
-			return getToken(scapyParser.TYPE_ARRAY, i);
-		}
 		public List<TypeContext> type() {
 			return getRuleContexts(TypeContext.class);
 		}
-		public List<TerminalNode> TYPE_ARRAY() { return getTokens(scapyParser.TYPE_ARRAY); }
-		public TerminalNode COLON() { return getToken(scapyParser.COLON, 0); }
-		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public TerminalNode OPENBRACKET(int i) {
+			return getToken(scapyParser.OPENBRACKET, i);
+		}
 		public Declare_array_varContext(Declare_variableContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -807,6 +779,34 @@ public class scapyParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitDeclare_array_var(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Declare_simple_varContext extends Declare_variableContext {
+		public TerminalNode ASSIGN() { return getToken(scapyParser.ASSIGN, 0); }
+		public TerminalNode VAR() { return getToken(scapyParser.VAR, 0); }
+		public TerminalNode COLON() { return getToken(scapyParser.COLON, 0); }
+		public IdContext id() {
+			return getRuleContext(IdContext.class,0);
+		}
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public Declare_simple_varContext(Declare_variableContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterDeclare_simple_var(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitDeclare_simple_var(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitDeclare_simple_var(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -891,6 +891,117 @@ public class scapyParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
+	public static class BCallContext extends Base_statementContext {
+		public Func_callContext func_call() {
+			return getRuleContext(Func_callContext.class,0);
+		}
+		public BCallContext(Base_statementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterBCall(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitBCall(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitBCall(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Declare_conContext extends Base_statementContext {
+		public Declare_constContext declare_const() {
+			return getRuleContext(Declare_constContext.class,0);
+		}
+		public Declare_conContext(Base_statementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterDeclare_con(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitDeclare_con(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitDeclare_con(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class Declare_varContext extends Base_statementContext {
+		public Declare_variableContext declare_variable() {
+			return getRuleContext(Declare_variableContext.class,0);
+		}
+		public Declare_varContext(Base_statementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterDeclare_var(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitDeclare_var(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitDeclare_var(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ForContext extends Base_statementContext {
+		public TerminalNode FOR() { return getToken(scapyParser.FOR, 0); }
+		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
+		public IdContext id() {
+			return getRuleContext(IdContext.class,0);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode UNTIL() { return getToken(scapyParser.UNTIL, 0); }
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
+		public TerminalNode ARROW() { return getToken(scapyParser.ARROW, 0); }
+		public ForContext(Base_statementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterFor(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitFor(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitFor(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class BlockContext extends Base_statementContext {
+		public TerminalNode OPENBLOCK() { return getToken(scapyParser.OPENBLOCK, 0); }
+		public StatementsContext statements() {
+			return getRuleContext(StatementsContext.class,0);
+		}
+		public TerminalNode CLOSEBLOCK() { return getToken(scapyParser.CLOSEBLOCK, 0); }
+		public BlockContext(Base_statementContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterBlock(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitBlock(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitBlock(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class EmpContext extends Base_statementContext {
 		public EmpContext(Base_statementContext ctx) { copyFrom(ctx); }
 		@Override
@@ -927,11 +1038,11 @@ public class scapyParser extends Parser {
 		}
 	}
 	public static class WhileContext extends Base_statementContext {
+		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
 		public StatementContext statement() {
 			return getRuleContext(StatementContext.class,0);
 		}
 		public TerminalNode WHILE() { return getToken(scapyParser.WHILE, 0); }
-		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
@@ -948,25 +1059,6 @@ public class scapyParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitWhile(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Declare_conContext extends Base_statementContext {
-		public Declare_constContext declare_const() {
-			return getRuleContext(Declare_constContext.class,0);
-		}
-		public Declare_conContext(Base_statementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterDeclare_con(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitDeclare_con(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitDeclare_con(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -990,57 +1082,24 @@ public class scapyParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ForContext extends Base_statementContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public IdContext id() {
-			return getRuleContext(IdContext.class,0);
-		}
-		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
-		public TerminalNode FOR() { return getToken(scapyParser.FOR, 0); }
-		public TerminalNode ARROW() { return getToken(scapyParser.ARROW, 0); }
-		public TerminalNode UNTIL() { return getToken(scapyParser.UNTIL, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
-		public ForContext(Base_statementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterFor(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitFor(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitFor(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class IfContext extends Base_statementContext {
 		public StatementContext tr;
 		public StatementContext fa;
-		public List<TerminalNode> NEWLINE() { return getTokens(scapyParser.NEWLINE); }
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
+		public TerminalNode ELSE() { return getToken(scapyParser.ELSE, 0); }
 		public TerminalNode IF() { return getToken(scapyParser.IF, 0); }
+		public List<TerminalNode> NEWLINE() { return getTokens(scapyParser.NEWLINE); }
 		public TerminalNode NEWLINE(int i) {
 			return getToken(scapyParser.NEWLINE, i);
 		}
 		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
-		public TerminalNode ELSE() { return getToken(scapyParser.ELSE, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
+		}
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
 		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
 		public IfContext(Base_statementContext ctx) { copyFrom(ctx); }
@@ -1055,65 +1114,6 @@ public class scapyParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitIf(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class BlockContext extends Base_statementContext {
-		public TerminalNode CLOSEBLOCK() { return getToken(scapyParser.CLOSEBLOCK, 0); }
-		public StatementsContext statements() {
-			return getRuleContext(StatementsContext.class,0);
-		}
-		public TerminalNode OPENBLOCK() { return getToken(scapyParser.OPENBLOCK, 0); }
-		public BlockContext(Base_statementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterBlock(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitBlock(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitBlock(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class BCallContext extends Base_statementContext {
-		public Func_callContext func_call() {
-			return getRuleContext(Func_callContext.class,0);
-		}
-		public BCallContext(Base_statementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterBCall(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitBCall(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitBCall(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class Declare_varContext extends Base_statementContext {
-		public Declare_variableContext declare_variable() {
-			return getRuleContext(Declare_variableContext.class,0);
-		}
-		public Declare_varContext(Base_statementContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterDeclare_var(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitDeclare_var(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitDeclare_var(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1269,11 +1269,11 @@ public class scapyParser extends Parser {
 		public TerminalNode NEWLINE(int i) {
 			return getToken(scapyParser.NEWLINE, i);
 		}
-		public Func_statementContext func_statement(int i) {
-			return getRuleContext(Func_statementContext.class,i);
-		}
 		public List<Func_statementContext> func_statement() {
 			return getRuleContexts(Func_statementContext.class);
+		}
+		public Func_statementContext func_statement(int i) {
+			return getRuleContext(Func_statementContext.class,i);
 		}
 		public Func_statementsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1330,15 +1330,15 @@ public class scapyParser extends Parser {
 	}
 
 	public static class Proc_statementsContext extends ParserRuleContext {
-		public List<TerminalNode> NEWLINE() { return getTokens(scapyParser.NEWLINE); }
-		public TerminalNode NEWLINE(int i) {
-			return getToken(scapyParser.NEWLINE, i);
-		}
 		public List<Base_statementContext> base_statement() {
 			return getRuleContexts(Base_statementContext.class);
 		}
 		public Base_statementContext base_statement(int i) {
 			return getRuleContext(Base_statementContext.class,i);
+		}
+		public List<TerminalNode> NEWLINE() { return getTokens(scapyParser.NEWLINE); }
+		public TerminalNode NEWLINE(int i) {
+			return getToken(scapyParser.NEWLINE, i);
 		}
 		public Proc_statementsContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1480,23 +1480,23 @@ public class scapyParser extends Parser {
 	}
 
 	public static class ArglistContext extends ParserRuleContext {
-		public List<IdContext> id() {
-			return getRuleContexts(IdContext.class);
+		public IdContext id(int i) {
+			return getRuleContext(IdContext.class,i);
 		}
-		public List<TerminalNode> COMMA() { return getTokens(scapyParser.COMMA); }
 		public TypeContext type(int i) {
 			return getRuleContext(TypeContext.class,i);
-		}
-		public List<TypeContext> type() {
-			return getRuleContexts(TypeContext.class);
 		}
 		public TerminalNode COLON(int i) {
 			return getToken(scapyParser.COLON, i);
 		}
-		public IdContext id(int i) {
-			return getRuleContext(IdContext.class,i);
-		}
+		public List<TerminalNode> COMMA() { return getTokens(scapyParser.COMMA); }
 		public List<TerminalNode> COLON() { return getTokens(scapyParser.COLON); }
+		public List<IdContext> id() {
+			return getRuleContexts(IdContext.class);
+		}
+		public List<TypeContext> type() {
+			return getRuleContexts(TypeContext.class);
+		}
 		public TerminalNode COMMA(int i) {
 			return getToken(scapyParser.COMMA, i);
 		}
@@ -1566,25 +1566,25 @@ public class scapyParser extends Parser {
 	}
 
 	public static class Func_defContext extends ParserRuleContext {
+		public TerminalNode ASSIGN() { return getToken(scapyParser.ASSIGN, 0); }
+		public TerminalNode OPENBLOCK() { return getToken(scapyParser.OPENBLOCK, 0); }
+		public TerminalNode COLON() { return getToken(scapyParser.COLON, 0); }
+		public TerminalNode DEF() { return getToken(scapyParser.DEF, 0); }
+		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
 		public TerminalNode CLOSEBLOCK() { return getToken(scapyParser.CLOSEBLOCK, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
-		public TerminalNode DEF() { return getToken(scapyParser.DEF, 0); }
-		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
-		public TerminalNode ASSIGN() { return getToken(scapyParser.ASSIGN, 0); }
-		public TerminalNode OPENBLOCK() { return getToken(scapyParser.OPENBLOCK, 0); }
-		public TypeContext type() {
-			return getRuleContext(TypeContext.class,0);
-		}
 		public Func_statementsContext func_statements() {
 			return getRuleContext(Func_statementsContext.class,0);
 		}
-		public TerminalNode COLON() { return getToken(scapyParser.COLON, 0); }
-		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
 		public ArglistContext arglist() {
 			return getRuleContext(ArglistContext.class,0);
 		}
+		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
 		public Func_defContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1635,20 +1635,20 @@ public class scapyParser extends Parser {
 	}
 
 	public static class Proc_defContext extends ParserRuleContext {
+		public TerminalNode OPENBLOCK() { return getToken(scapyParser.OPENBLOCK, 0); }
+		public Proc_statementsContext proc_statements() {
+			return getRuleContext(Proc_statementsContext.class,0);
+		}
+		public TerminalNode DEF() { return getToken(scapyParser.DEF, 0); }
+		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
 		public TerminalNode CLOSEBLOCK() { return getToken(scapyParser.CLOSEBLOCK, 0); }
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
-		public TerminalNode DEF() { return getToken(scapyParser.DEF, 0); }
-		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
-		public Proc_statementsContext proc_statements() {
-			return getRuleContext(Proc_statementsContext.class,0);
-		}
-		public TerminalNode OPENBLOCK() { return getToken(scapyParser.OPENBLOCK, 0); }
-		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
 		public ArglistContext arglist() {
 			return getRuleContext(ArglistContext.class,0);
 		}
+		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
 		public Proc_defContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1696,10 +1696,10 @@ public class scapyParser extends Parser {
 	}
 
 	public static class ParamlistContext extends ParserRuleContext {
+		public List<TerminalNode> COMMA() { return getTokens(scapyParser.COMMA); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public List<TerminalNode> COMMA() { return getTokens(scapyParser.COMMA); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
@@ -1768,12 +1768,12 @@ public class scapyParser extends Parser {
 	}
 
 	public static class Func_callContext extends ParserRuleContext {
-		public IdContext id() {
-			return getRuleContext(IdContext.class,0);
-		}
-		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
 		public ParamlistContext paramlist() {
 			return getRuleContext(ParamlistContext.class,0);
+		}
+		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
+		public IdContext id() {
+			return getRuleContext(IdContext.class,0);
 		}
 		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
 		public Func_callContext(ParserRuleContext parent, int invokingState) {
@@ -1871,12 +1871,12 @@ public class scapyParser extends Parser {
 		}
 	}
 	public static class ArrayTypeContext extends TypeContext {
+		public TerminalNode TYPE_ARRAY() { return getToken(scapyParser.TYPE_ARRAY, 0); }
 		public TerminalNode OPENBRACKET() { return getToken(scapyParser.OPENBRACKET, 0); }
-		public TerminalNode CLOSEBRACKET() { return getToken(scapyParser.CLOSEBRACKET, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
-		public TerminalNode TYPE_ARRAY() { return getToken(scapyParser.TYPE_ARRAY, 0); }
+		public TerminalNode CLOSEBRACKET() { return getToken(scapyParser.CLOSEBRACKET, 0); }
 		public ArrayTypeContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1894,10 +1894,10 @@ public class scapyParser extends Parser {
 	}
 	public static class BasicTypeContext extends TypeContext {
 		public TerminalNode TYPE_BOOLEAN() { return getToken(scapyParser.TYPE_BOOLEAN, 0); }
-		public TerminalNode TYPE_STRING() { return getToken(scapyParser.TYPE_STRING, 0); }
+		public TerminalNode TYPE_INT() { return getToken(scapyParser.TYPE_INT, 0); }
 		public TerminalNode TYPE_CHAR() { return getToken(scapyParser.TYPE_CHAR, 0); }
 		public TerminalNode TYPE_FLOAT() { return getToken(scapyParser.TYPE_FLOAT, 0); }
-		public TerminalNode TYPE_INT() { return getToken(scapyParser.TYPE_INT, 0); }
+		public TerminalNode TYPE_STRING() { return getToken(scapyParser.TYPE_STRING, 0); }
 		public BasicTypeContext(TypeContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1973,39 +1973,42 @@ public class scapyParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class VarVarContext extends VarContext {
+	public static class VarArrayContext extends VarContext {
+		public Array_listContext array_list() {
+			return getRuleContext(Array_listContext.class,0);
+		}
 		public IdContext id() {
 			return getRuleContext(IdContext.class,0);
 		}
-		public VarVarContext(VarContext ctx) { copyFrom(ctx); }
+		public VarArrayContext(VarContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVarVar(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVarArray(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVarVar(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVarArray(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVarVar(this);
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVarArray(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class VarStringContext extends VarContext {
-		public TerminalNode STRING() { return getToken(scapyParser.STRING, 0); }
-		public VarStringContext(VarContext ctx) { copyFrom(ctx); }
+	public static class VarFloatContext extends VarContext {
+		public TerminalNode FLOAT() { return getToken(scapyParser.FLOAT, 0); }
+		public VarFloatContext(VarContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVarString(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVarFloat(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVarString(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVarFloat(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVarString(this);
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVarFloat(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2026,25 +2029,37 @@ public class scapyParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class VarArrayContext extends VarContext {
-		public IdContext id() {
-			return getRuleContext(IdContext.class,0);
-		}
-		public Array_listContext array_list() {
-			return getRuleContext(Array_listContext.class,0);
-		}
-		public VarArrayContext(VarContext ctx) { copyFrom(ctx); }
+	public static class VarBoolContext extends VarContext {
+		public TerminalNode BOOL() { return getToken(scapyParser.BOOL, 0); }
+		public VarBoolContext(VarContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVarArray(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVarBool(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVarArray(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVarBool(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVarArray(this);
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVarBool(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class VarStringContext extends VarContext {
+		public TerminalNode STRING() { return getToken(scapyParser.STRING, 0); }
+		public VarStringContext(VarContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVarString(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVarString(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVarString(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2065,37 +2080,22 @@ public class scapyParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class VarBoolContext extends VarContext {
-		public TerminalNode BOOL() { return getToken(scapyParser.BOOL, 0); }
-		public VarBoolContext(VarContext ctx) { copyFrom(ctx); }
+	public static class VarVarContext extends VarContext {
+		public IdContext id() {
+			return getRuleContext(IdContext.class,0);
+		}
+		public VarVarContext(VarContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVarBool(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVarVar(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVarBool(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVarVar(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVarBool(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class VarFloatContext extends VarContext {
-		public TerminalNode FLOAT() { return getToken(scapyParser.FLOAT, 0); }
-		public VarFloatContext(VarContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVarFloat(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVarFloat(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVarFloat(this);
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVarVar(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2180,72 +2180,49 @@ public class scapyParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class ExpContext extends ExpressionContext {
-		public Token op;
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
+	public static class ParContext extends ExpressionContext {
+		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode EXP() { return getToken(scapyParser.EXP, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ExpContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
+		public ParContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterExp(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterPar(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitExp(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitPar(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitExp(this);
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitPar(this);
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class MulContext extends ExpressionContext {
+	public static class AddContext extends ExpressionContext {
 		public Token op;
+		public TerminalNode SUB() { return getToken(scapyParser.SUB, 0); }
+		public TerminalNode ADD() { return getToken(scapyParser.ADD, 0); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public TerminalNode MUL() { return getToken(scapyParser.MUL, 0); }
-		public TerminalNode DIV() { return getToken(scapyParser.DIV, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public TerminalNode MOD() { return getToken(scapyParser.MOD, 0); }
-		public MulContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public AddContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterMul(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterAdd(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitMul(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitAdd(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitMul(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class VariableContext extends ExpressionContext {
-		public VarContext var() {
-			return getRuleContext(VarContext.class,0);
-		}
-		public VariableContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVariable(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVariable(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVariable(this);
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitAdd(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2265,6 +2242,46 @@ public class scapyParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitCall(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class NotContext extends ExpressionContext {
+		public Token op;
+		public TerminalNode NOT() { return getToken(scapyParser.NOT, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public NotContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterNot(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitNot(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitNot(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class VariableContext extends ExpressionContext {
+		public VarContext var() {
+			return getRuleContext(VarContext.class,0);
+		}
+		public VariableContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterVariable(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitVariable(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitVariable(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2292,100 +2309,29 @@ public class scapyParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class UnaContext extends ExpressionContext {
-		public Token op;
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode SUB() { return getToken(scapyParser.SUB, 0); }
-		public TerminalNode ADD() { return getToken(scapyParser.ADD, 0); }
-		public UnaContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterUna(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitUna(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitUna(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class AddContext extends ExpressionContext {
+	public static class MulContext extends ExpressionContext {
 		public Token op;
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
+		public TerminalNode MOD() { return getToken(scapyParser.MOD, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public TerminalNode SUB() { return getToken(scapyParser.SUB, 0); }
-		public TerminalNode ADD() { return getToken(scapyParser.ADD, 0); }
-		public AddContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public TerminalNode DIV() { return getToken(scapyParser.DIV, 0); }
+		public TerminalNode MUL() { return getToken(scapyParser.MUL, 0); }
+		public MulContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterAdd(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterMul(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitAdd(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitMul(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitAdd(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ParContext extends ExpressionContext {
-		public TerminalNode CLOSEPARENT() { return getToken(scapyParser.CLOSEPARENT, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode OPENPARENT() { return getToken(scapyParser.OPENPARENT, 0); }
-		public ParContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterPar(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitPar(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitPar(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class CompareContext extends ExpressionContext {
-		public Token op;
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode LT() { return getToken(scapyParser.LT, 0); }
-		public TerminalNode LE() { return getToken(scapyParser.LE, 0); }
-		public TerminalNode NE() { return getToken(scapyParser.NE, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public TerminalNode GT() { return getToken(scapyParser.GT, 0); }
-		public TerminalNode GE() { return getToken(scapyParser.GE, 0); }
-		public TerminalNode EQ() { return getToken(scapyParser.EQ, 0); }
-		public CompareContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterCompare(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitCompare(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitCompare(this);
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitMul(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2413,24 +2359,78 @@ public class scapyParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class NotContext extends ExpressionContext {
+	public static class UnaContext extends ExpressionContext {
 		public Token op;
-		public TerminalNode NOT() { return getToken(scapyParser.NOT, 0); }
+		public TerminalNode SUB() { return getToken(scapyParser.SUB, 0); }
+		public TerminalNode ADD() { return getToken(scapyParser.ADD, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public NotContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public UnaContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterNot(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterUna(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitNot(this);
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitUna(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitNot(this);
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitUna(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class CompareContext extends ExpressionContext {
+		public Token op;
+		public TerminalNode GE() { return getToken(scapyParser.GE, 0); }
+		public TerminalNode LT() { return getToken(scapyParser.LT, 0); }
+		public TerminalNode GT() { return getToken(scapyParser.GT, 0); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode LE() { return getToken(scapyParser.LE, 0); }
+		public TerminalNode EQ() { return getToken(scapyParser.EQ, 0); }
+		public TerminalNode NE() { return getToken(scapyParser.NE, 0); }
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public CompareContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterCompare(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitCompare(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitCompare(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ExpContext extends ExpressionContext {
+		public Token op;
+		public TerminalNode EXP() { return getToken(scapyParser.EXP, 0); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).enterExp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof scapyListener ) ((scapyListener)listener).exitExp(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof scapyVisitor ) return ((scapyVisitor<? extends T>)visitor).visitExp(this);
 			else return visitor.visitChildren(this);
 		}
 	}
