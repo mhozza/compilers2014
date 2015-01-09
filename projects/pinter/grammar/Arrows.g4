@@ -128,7 +128,7 @@ STRING: [a-zA-Z][a-zA-Z0-9]*;
 NEWLINE: '\n';
 ANYSTRING: ~[\r\n"]+?;
 
-COMMENT: '#' ~[\r\n]* -> skip;
+COMMENT: '#' ~[\r\n]+? -> skip;
 SPACES: [ \t]+ -> skip;
 
 fragment DIGIT: [0-9];

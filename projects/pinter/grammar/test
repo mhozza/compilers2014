@@ -1,6 +1,7 @@
-def bleh(x): {
-	<< x
+def p(a[10]): {
+	for i << [9..-1]: << a[i]
 }
 
-x << 8
-bleh(x)
+a[10]
+for i >> [0..10]: a[i] << i
+p(a)

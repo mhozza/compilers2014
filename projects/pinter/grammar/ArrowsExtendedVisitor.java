@@ -186,7 +186,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
             		//ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",reg,arrSizesRegister,i));
             		//ret.appendCode(String.format("%s = load i32* %s\n",partial,memSizeRegister));
             	} else {
-            		if (operator!=Openum.ASSIGN) {
+            		if ((operator!=Openum.ASSIGN)||(left.getType()==Typeenum.INT)) {
             			Container c=convertToInt(right);
             			if (c==null) {
             				System.err.println("Invalid operation on arrays");
@@ -326,6 +326,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
             Container ret = new Container();        
             ret.setRegister(ret_register);
             ret.appendCode(template.render());
+            ret.setType(Typeenum.INT);
             return ret;
     }
 
@@ -457,7 +458,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
 				//access, returns either an array or an integer at the position given by ranges
 				int dimensionShift=mr.numberOfDimensions-ctx.range().size();
 				if (dimensionShift<0) {
-					System.err.println(String.format("Invalid number of dimensions - specified %d where %s has only %d",ctx.range().size(),mr.identifier,mr.numberOfDimensions));
+					System.err.println(String.format("Invalid number of dimensions - specified %s where %s has only %s",ctx.range().size(),mr.identifier,mr.numberOfDimensions));
 					//System.exit(1);
 				}
 				ret=new Container(Typeenum.ARRAY);
@@ -474,6 +475,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
 				ret.appendCode(String.format("store i32 0, i32* %s\n",offset));
 				for (int i=0;i<ctx.range().size();i++) {
 					Container range=visit(ctx.range(i));
+                    ret.appendCode(range.getCode());
 					if (range.getRegister()==null) {
 						System.err.println("Expression between [] does not return value");
 						//System.exit(1);
@@ -486,18 +488,24 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
 					String currentOffset=generateNewRegister();
 					String partial=generateNewRegister();
 					String partialAdd=generateNewRegister();
+                    String dimValue=generateNewRegister();
 					//calculating dimension offset
-					ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",dimSize,mr.dimensionSizesRegister,i)); //get dimension size
-					ret.appendCode(String.format("%s = mul i32 %s, %s\n",currentOffset,dimSize,range.getRegister())); //calculate current dim. offset
+                    ret.appendCode(String.format("%s = getelementptr i32* %s, i32 %s\n",dimSize,mr.dimensionSizesRegister,i)); //get dimension size
+                    ret.appendCode(String.format("%s = load i32* %s\n", dimValue,dimSize));
+                    if (i<ctx.range().size()-1) {
+					    ret.appendCode(String.format("%s = mul i32 %s, %s\n",currentOffset,dimValue,range.getRegister())); //calculate current dim. offset
+                    } else {
+                        ret.appendCode(String.format("%s = add i32 0, %s\n",currentOffset,range.getRegister())); //calculate new partial offset
+                    }
 					ret.appendCode(String.format("%s = load i32* %s\n", partial, offset)); 
 					ret.appendCode(String.format("%s = add i32 %s, %s\n",partialAdd,partial,currentOffset)); //calculate new partial offset
-					ret.appendCode(String.format("store i32 %d, i32* %s\n",partialAdd,offset)); //useless in last iteration
+					ret.appendCode(String.format("store i32 %s, i32* %s\n",partialAdd,offset)); //useless in last iteration
 					//calculating return size
 					String getRet=generateNewRegister();
 					String divRet=generateNewRegister();
 					ret.appendCode(String.format("%s = load i32* %s\n", getRet, retSize)); 
-					ret.appendCode(String.format("%s = div i32 %s, %s\n",divRet,getRet,range.getRegister())); 
-					ret.appendCode(String.format("store i32 %d, i32* %s\n",divRet,retSize)); //useless in last iteration, but whatever
+					ret.appendCode(String.format("%s = sdiv i32 %s, %s\n",divRet,getRet,dimValue)); 
+					ret.appendCode(String.format("store i32 %s, i32* %s\n",divRet,retSize)); //useless in last iteration, but whatever
 				}
 				ret.setArrayMemSizeRegister(retSize);
 				ret.setArrayOffsetRegister(offset);
@@ -656,10 +664,11 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
         }
         for (int i=0;i<ctx.expression().size();i++) {
             Container exp=visit(ctx.expression(i));
-	    	ret.appendCode(exp.getCode());
 	    	//TODO inherit ?
 	    	switch (arw.getOpType()) {
 	    		case ASSIGN:
+                    exp=convertToInt(exp);
+                    ret.appendCode(exp.getCode());
 		    		if (exp.getType()!=Typeenum.INT) {
 		    			System.err.println("Non-int expression supplied to int-printing statement");
 		    			//System.exit(1);
@@ -673,6 +682,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
 		    		}
 	    			break;
 	    		case STRING:
+                    ret.appendCode(exp.getCode());
 	    			if (exp.getType()!=Typeenum.ARRAY) {
 		    			System.err.println("Non-array expression supplied to string-printing statement");
 		    			//System.exit(1);
@@ -891,16 +901,16 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
         }
         String it=exp.getMemoryRecord().register;
         String step;
-        String bound;
-        String start;
+        String bound=range.getSecondRegister();
+        String start=range.getRegister();
         if (ctx.op.getType()==ArrowsParser.LA) {
         	step="add";
-        	bound=range.getSecondRegister();
-        	start=range.getRegister();
+        	//bound=range.getSecondRegister();
+        	//start=range.getRegister();
         } else {
         	step="sub";
-        	bound=range.getRegister();
-        	start=range.getSecondRegister();
+        	//bound=range.getRegister();
+        	//start=range.getSecondRegister();
         }
         //initialize the iterator
         String init_code=String.format("store i32 %s, i32* %s\n",start,it);
@@ -1054,23 +1064,21 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
                 			System.err.println("Invalid function argument");
                 			//System.exit(1);
                 		}
-                        String argRegister = this.generateNewRegister(); //this goes into parentheses along with type
+                        String argRegister = generateNewRegister(); //this goes into parentheses along with type
                         var.setRegister(argRegister);
                         if (var.getType()==Typeenum.INT) {
-                            var.setCode("");
-                        	String reg=var.getMemoryRecord().register;
-                        	var.appendCode(reg+" = alloca i32\n");
-                            var.appendCode("store i32 "+argRegister+", i32* "+reg+"\n");
-                            var.setRegister(argRegister);
+                        	String ptrreg=generateNewRegister();
+                            String valreg=generateNewRegister();
+                            var.appendCode("store i32 "+argRegister+", i32* "+var.getMemoryRecord().register+"\n");
                         } else {
                         	//arrays already pass pointers
-	                        var.getMemoryRecord().register=argRegister;
+	                        //var.getMemoryRecord().register=argRegister;
                         }
                 		code.appendCode(var);
                 		//for the sake of arg, modify the memory record in case of INT (the code does nothing in case of ARRAYS, that already use argRegister  as pointer)
                 		MemoryRecord mr=new MemoryRecord(var.getMemoryRecord());
-                		mr.register=argRegister;
-                        code.getArgs().add(var.getMemoryRecord());
+                        mr.register=argRegister;
+                        code.getArgs().add(mr);
                 }
                 return code;
         }
@@ -1084,10 +1092,10 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
                     Container converted=convertToInt(expr_code);
                     if (converted!=null) expr_code=converted;
                     code.appendCode(expr_code);
-                    if (code.getType()==Typeenum.INT) {
+                    if (expr_code.getType()==Typeenum.INT) {
                     	code.getArgs().add(new MemoryRecord(expr_code.getIdentifier(),expr_code.getRegister(),Typeenum.INT)); 
                     } else {
-                        code.getArgs().add(expr_code.getMemoryRecord()));
+                        code.getArgs().add(expr_code.getMemoryRecord());
                     }
                 }
                 return code;
@@ -1124,7 +1132,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
                                 begin = false;
                         }
                         if (m.type==Typeenum.ARRAY) {
-                        	s += String.format("i32* %s,",m.register);
+                        	s += "i32* " + m.register;
                         } else {
                         	s += "i32 " + m.register;
                     	}

@@ -1,0 +1,19 @@
+def rekurz(left,right,pole[right+1]):
+    left=right:
+        ret
+    pivot << pole[(left+right)/2]
+    rbout << right
+    i << left
+    while i<rbout:
+        pole[i]>pivot:
+            pole[i]<->pole[rbout--]
+        !^:
+            i++
+    rekurz(left,(left+right)/2)
+    rekurz((left+right)/2+1,right)
+
+>> n
+pole[n]
+for i >> [0..n-1]:
+    >> pole[i]
+rekurz(0,n-1,pole)
