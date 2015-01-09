@@ -1,0 +1,107 @@
+declare i32 @printInt(i32)
+declare i32 @readInt()
+declare i8* @createArrayInt (i32)
+declare void @setArrayItemInt (i8*, i32, i32)
+declare i32 @getArrayItemInt (i8*, i32)
+declare i8* @mergeArraysInt (i8*, i8*)
+declare i8* @multiplyArrayInt (i8*, i32)
+declare i32 @sizeArrayInt (i8*)
+declare i32 @iexp(i32, i32)
+define i32 @testprime(i32 %R1) {
+start:
+%R0 = alloca i32
+store i32 %R1, i32* %R0
+%R2 = add i32 0, 2
+%R3 = alloca i32
+store i32 %R2, i32* %R3
+br label %L0
+L0:
+%R4 = load i32* %R3
+%R5 = load i32* %R3
+%R6 = mul i32 %R4, %R5
+%R7 = load i32* %R0
+%R8 = icmp sle i32 %R6, %R7
+br i1 %R8, label %L1, label %L5
+L1:
+%R9 = load i32* %R0
+%R10 = load i32* %R3
+%R11 = srem i32 %R9, %R10
+%R12 = alloca i32
+store i32 %R11, i32* %R12
+%R13 = load i32* %R12
+%R14 = add i32 0, 0
+%R15 = icmp eq i32 %R13, %R14
+%R17 = icmp ne i1 %R15, 0
+br i1 %R17, label %L3, label %L4
+L3:
+%R16 = add i32 0, 0
+ret i32 %R16
+br label %L2
+L4:
+br label %L2
+L2:
+%R18 = add i32 0, 0
+%R19 = load i32* %R3
+%R20 = add i32 0, 1
+%R21 = add i32 %R19, %R20
+store i32 %R21, i32* %R3
+br label %L0
+L5:
+%R22 = add i32 0, 1
+ret i32 %R22
+}
+define i32 @main() {
+start:
+%R23 = add i32 0, 0
+%R24 = alloca i32
+store i32 %R23, i32* %R24
+%R25 = add i32 0, 0
+%R26 = alloca i32
+store i32 %R25, i32* %R26
+%R27 = call i32 @readInt ()
+store i32 %R27, i32* %R24
+%R28 = load i32* %R24
+%R29 = add i32 0, 2
+%R30 = icmp sge i32 %R28, %R29
+%R47 = icmp ne i1 %R30, 0
+br i1 %R47, label %L13, label %L14
+L13:
+%R31 = add i32 0, 2
+%R32 = alloca i32
+store i32 %R31, i32* %R32
+br label %L7
+L7:
+%R33 = load i32* %R32
+%R34 = load i32* %R24
+%R35 = icmp sle i32 %R33, %R34
+br i1 %R35, label %L8, label %L12
+L8:
+%R37 = load i32* %R32
+%R36 = call i32 @testprime(i32 %R37)
+store i32 %R36, i32* %R26
+%R38 = load i32* %R26
+%R39 = add i32 0, 1
+%R40 = icmp eq i32 %R38, %R39
+%R42 = icmp ne i1 %R40, 0
+br i1 %R42, label %L10, label %L11
+L10:
+%R41 = load i32* %R32
+call i32 @printInt (i32 %R41)
+br label %L9
+L11:
+br label %L9
+L9:
+%R43 = add i32 0, 0
+%R44 = load i32* %R32
+%R45 = add i32 0, 1
+%R46 = add i32 %R44, %R45
+store i32 %R46, i32* %R32
+br label %L7
+L12:
+br label %L6
+L14:
+br label %L6
+L6:
+%R48 = add i32 0, 0
+ret i32 0
+}

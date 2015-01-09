@@ -1,0 +1,4 @@
+primes primes.c
+sort sort.c
+graph vstup.c
+
