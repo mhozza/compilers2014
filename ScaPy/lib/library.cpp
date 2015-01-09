@@ -88,8 +88,31 @@ char* getElementArrayChar(char* pole, int index){
 }
 
 extern "C"
-int foo() {
-       cout << "FOO" << endl;
-       return 0;
+double* createArrayFloat(int length) {
+    double* pole = new double[length];
+    for(int i = 0; i < length; i++) pole[i] = 0.0;
+    return pole;
+}
+
+extern "C"
+double* getElementArrayFloat(double* pole, int index){
+    return pole+index;
+}
+
+extern "C"
+bool* createArrayBool(int length) {
+    bool* pole = new bool[length];
+    for(int i = 0; i < length; i++) pole[i] = false;
+    return pole;
+}
+
+extern "C"
+bool* getElementArrayBool(bool* pole, int index){
+    return pole+index;
+}
+
+extern "C"
+int myrandom() {
+       return 47;
 }
 
