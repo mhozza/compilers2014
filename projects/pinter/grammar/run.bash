@@ -1,4 +1,4 @@
 #!/bin/bash
 javac *.java
-java Compiler < test > vystup.ll
+java Compiler < graf > vystup.ll
 lli-3.5 -load=./library.so vystup.ll

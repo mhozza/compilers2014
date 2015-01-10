@@ -1,23 +1,23 @@
 grammar Arrows;
 
-init: (fun)* (NEWLINE)* statements;
+init: (NEWLINE)* (fun (NEWLINE)*)* statements;
 
-fun: DEF lvalue PAREN_OPEN args PAREN_CLOSE COLON statement;
+fun: DEF lvalue PAREN_OPEN args PAREN_CLOSE COLON (NEWLINE)* statement;
 
-statements: statement (NEWLINE statement)*;
+statements: statement (NEWLINE+ statement)*;
 
 block: INDENT (NEWLINE)* statements (NEWLINE)* DEDENT;
 
 //simple_statement: statement SEMICOLON;
 
 statement:
-      (singleInput)+       # Input
-     | (singleOutput)+  #Output
+      singleInput+    # Input
+     | singleOutput+  #Output
      | expression arrow expression (arrow expression)*    # Arw
      | block                 							# Blck
-     | expression COLON tr=statement (ELSE fa=statement)?		# If
-     | WHILE expression COLON statement                       # While
-     | FOR expression op=(LA|RA) range COLON statement			    # For
+     | expression COLON (NEWLINE)* tr=statement ((NEWLINE*) ELSE COLON (NEWLINE)* fa=statement)?		# If
+     | WHILE expression COLON (NEWLINE)* statement                       # While
+     | FOR expression op=(LA|RA) range COLON (NEWLINE)* statement			    # For
      | RET expression                                   # Return
      | expression #ee
      ;
@@ -48,13 +48,13 @@ otherArrow: op=(
 
 expression:
      op=('-'|'+') expression                           # Una
-     | expression op=(MUL|DIV) expression                # Mul
-     | expression op=(ADD|SUB) expression                # Add
+     | PAREN_OPEN expression PAREN_CLOSE                 # Par
      | op=NOT expression                                 # Not
      | expression op=AND expression                      # And
      | expression op=OR expression                       # Or
+     | expression op=(MUL|DIV) expression                # Mul
+     | expression op=(ADD|SUB) expression                # Add
      | expression op=(EQ|NEQ|GT|ST) expression           # Eq
-     | PAREN_OPEN expression PAREN_CLOSE                 # Par
      | lvalue '('params')'                               # Call
      | variable                                           # Var
      | INT                                                # Int
@@ -112,7 +112,7 @@ SEQ: '<=';
 GT: '>';
 ST: '<';
 IF: 'if';
-ELSE: 'else';
+ELSE: '!^';
 WHILE: 'while';
 FOR: 'for';
 PASS: 'pass';

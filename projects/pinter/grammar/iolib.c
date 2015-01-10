@@ -1,6 +1,16 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
  
+void arrcopy(int* dest,int* src,int length) {
+	int i=0;
+	for (i=0;i<length;i++) {
+		dest[i]=src[i];
+	}
+	//if anyone can tell me why memcpy returns corrupted memory here I'll be happy, kthxbai
+	//memcpy(dest,src,length);
+}
+
 int readInt() {
 	int x;
 	scanf("%d",&x);

@@ -59,7 +59,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
     	body.appendCode(visit(ctx.statements()));
 
         ST template = new ST(
-        		"declare void @llvm.memcpy.p0i32.p0i32.i32(i32*,i32*,i32,i32,i1)\n" +
+        		"declare void @arrcopy(i32*,i32*,i32)\n" +
                 "declare i32 @readInt()\n" +  
                 "declare void @readString(i32*,i32)\n" +
                 "declare void @printInt(i32)\n" +
@@ -123,7 +123,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
 		} else {
 			String size=generateNewRegister();
 			ret.appendCode(String.format("%s = load i32* %s\n",size,right.getArrayMemSizeRegister()));
-			ret.appendCode(String.format("call void @llvm.memcpy.p0i32.p0i32.i32(i32* %s, i32* %s, i32 %s, i32 0, i1 0)\n",targetPointer,fromPointer,size));
+			ret.appendCode(String.format("call void @arrcopy(i32* %s, i32* %s, i32 %s)\n",targetPointer,fromPointer,size));
 		}
 		return ret;
     }
@@ -165,6 +165,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
             String instruction = "or";
             Container ret = new Container();
             boolean cmp=false;
+            boolean log=false;
             if (left.getType()==Typeenum.ARRAY) {
             	if (left.getDimensionShift()!=0) {
             		//once here was something, but I'm quite sure now it was redundant .. TODO check this if it horribly breaks
@@ -248,22 +249,20 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
                     case AND:
                             instruction = "and";
                     case OR:
-                            ST temp = new ST(
-                                    "<r1> = icmp ne i32 \\<left_val>, 0\n" +
-                                    "<r2> = icmp ne i32 \\<right_val>, 0\n" +
-                                    "<r3> = \\<instruction> i1 <r1>, <r2>\n" +
-                                    "\\<ret> = zext i1 <r3> to i32\n"
-                            );
-                            temp.add("r1", this.generateNewRegister());
-                            temp.add("r2", this.generateNewRegister());
-                            temp.add("r3", this.generateNewRegister());
-                            code_stub = temp.render();
+                            cmp=true;
+                            instruction="or";
+                            String bitleft=generateNewRegister();
+                            String bitright=generateNewRegister();
+                            code_stub = String.format("%s = icmp ne i32 <left_val>, 0\n%s = icmp ne i32 <right_val>, 0\n<ret> = <instruction> i1 %s, %s\n",
+                                bitleft,bitright,bitleft,bitright);
                             break;
                     default:
                     	System.err.println("Invalid binary operator (wrong use of I/O string arrow?)");
                     	//System.exit(1);
                     	break;
             }
+            
+            //System.err.println("wat");
             ST template = new ST(
                     "<left_code>" + 
                     "<right_code>" + 
@@ -570,7 +569,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
 			//store length in register
 			String memSize=generateNewRegister();
 			ret.appendCode(String.format("%s = alloca i32\n",memSize));
-			ret.appendCode(String.format("store i32 %d, i32* %s\n",str.length(),memSize));
+			ret.appendCode(String.format("store i32 %d, i32* %s\n",str.length()+1,memSize));
 	    	ret.setArrayMemSizeRegister(memSize);
 	    	memSize=generateNewRegister();
 	    	ret.appendCode(String.format("%s = load i32* %s\n",memSize,ret.getArrayMemSizeRegister()));
@@ -797,11 +796,12 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
 
     @Override 
         public Container visitIf(ArrowsParser.IfContext ctx) {
+                //System.err.println("start");
                 Container condition = visit(ctx.expression());
                 Container statement_true = visit(ctx.statement(0));
+                //System.err.println("wut");
                 String return_register = generateNewRegister();
                 ST template;
-                
                 if (ctx.statement().size()==1) {
                 	template = new ST(
                         "<condition_code>" + 
@@ -813,10 +813,13 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
                         "<block_end>:\n" +
                         "<ret> = add i32 0, 0\n"
 	                );
-	                template.add("condition_code", condition);
+	                
+                    template.add("condition_code", condition);
 	                template.add("statement_true_code", statement_true);
 	                template.add("cmp_reg", this.generateNewRegister());
+                    
 	                template.add("con_reg", condition.getRegister());
+                    //System.err.println("wat");
 	                template.add("block_true", this.generateNewLabel());
 	                template.add("block_end", this.generateNewLabel());
 	                template.add("ret", return_register);
@@ -850,6 +853,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
                 ret.setRegister(return_register);
                 ret.appendCode(template.render());
                 
+                //System.err.println("finish");
                 return ret;
         }
 
@@ -1018,6 +1022,8 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
                 template.add("args", argsToString(params.getArgs()));
                 template.add("reg", register);
                 code.appendCode(template.render());
+                code.setType(Typeenum.INT);
+                code.setRegister(register);
                 //code.setRegister(register);
                 return code;
         }
@@ -1072,7 +1078,7 @@ public class ArrowsExtendedVisitor extends ArrowsBaseVisitor<Container> {
                             var.appendCode("store i32 "+argRegister+", i32* "+var.getMemoryRecord().register+"\n");
                         } else {
                         	//arrays already pass pointers
-	                        //var.getMemoryRecord().register=argRegister;
+	                        var.getMemoryRecord().register=argRegister;
                         }
                 		code.appendCode(var);
                 		//for the sake of arg, modify the memory record in case of INT (the code does nothing in case of ARRAYS, that already use argRegister  as pointer)

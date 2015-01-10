@@ -1,7 +1,2 @@
-def p(a[10]): {
-	for i << [9..-1]: << a[i]
-}
-
-a[10]
-for i >> [0..10]: a[i] << i
-p(a)
+>> n
+n=0: retval  << "NIE"

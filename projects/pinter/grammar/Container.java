@@ -73,6 +73,14 @@ public class Container {
 			case ArrowsParser.ST:
 				opType=ArrowsExtendedVisitor.Openum.SMALLER;
 				break;
+			case ArrowsParser.OR:
+				opType=ArrowsExtendedVisitor.Openum.OR;
+				break;
+			case ArrowsParser.AND:
+				opType=ArrowsExtendedVisitor.Openum.AND;
+					break;
+			default:
+				System.err.println("Invalid operator");
 		}
 	}
 
