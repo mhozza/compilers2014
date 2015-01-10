@@ -8,9 +8,6 @@ Changelog
 * no pointers (arrays are still passed as reference to functions)
 * no global variables
 * no preprocessor directives
-* _pass_
-* _null_
-* _def_
 
 Arrows is designed to make you write less code, while sacrificing speed but keeping at least a decent amount of legibility. It adheres to the off-side rule (which means thah code blocks are expressed by their identation, similarly to languages like Python of Occam) and contains just a single basic datatype of integer, while arrays of integers can be interpreted (and manipulated) as strings. Language should also provide garbage collector, if I get to it :).
 
