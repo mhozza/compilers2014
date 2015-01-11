@@ -102,8 +102,9 @@ if __name__ == '__main__':
                           'na priklade {}:\n{}'.format(program, test, ret))
                     same = False
                     prog_bad[program].append(test)
-            except sh.ErrorReturnCode:
+            except sh.ErrorReturnCode as e:
                 print('UGH: toto by sa nemalo stat.')
+                print(e)
                 exit(1)
             prog_stat[program][same] += 1
     for program in programs:
