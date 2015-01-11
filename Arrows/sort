@@ -1,0 +1,35 @@
+def rekurz(left,right,n,pole[n]): {
+    right-left<3: {
+        pole[left]>pole[right-1]: {
+            halp << pole[left]
+            pole[left] << pole[right-1]
+            pole[right-1] << halp
+        }
+        ret 0
+    }
+    pivot << pole[right-1]
+    rbout << right-2
+    i << left
+    while i<rbout: {
+        pole[i]>pivot: {
+            halp << pole[i]
+            pole[i]<<pole[rbout]
+            pole[rbout] << halp
+            rbout <- 1
+        }
+        !^: i <+ 1
+    }
+    pole[i]>pivot: {
+        halp << pole[i]
+        pole[i]<<pivot
+        pole[right-1] << halp
+    }
+    rekurz(left,i,n,pole)
+    rekurz(i,right,n,pole)
+}
+
+>> n
+pole[n]
+for i >> [0..n]: >> pole[i]
+rekurz(0,n,n,pole)
+for i >> [0..n]: << pole[i]
