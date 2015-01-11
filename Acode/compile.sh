@@ -1,2 +1,2 @@
-
-java Compiler < $1.ac > $2.ll
+#!/bin/bash
+java Compiler < $1 > $2

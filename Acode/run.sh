@@ -1,1 +1,2 @@
-lli -load=./library.so $1.ll
+#!/bin/bash
+lli -load=./library.so $1
