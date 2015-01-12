@@ -1,3 +1,6 @@
 [submodule "alla"]
 	path = alla
 	url = git@bitbucket.org:paly627/alla.git
+[submodule "flow"]
+	path = flow
+	url = git@github.com:piton4k/compilers-flow.git
