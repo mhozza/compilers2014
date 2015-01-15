@@ -1,0 +1,73 @@
+variable:
+
+int[] array; //declares an array
+
+function:
+
+void mergesort(int begin, int end)
+{
+  if (begin >= end)
+  {
+    return;
+  }
+  int mid = (begin + end) / 2;
+
+  mergesort(begin, mid);
+  mergesort(mid + 1, end);
+
+  int left = begin;
+  int right = mid + 1;
+
+  // One extra check: can we SKIP the merge?
+  if (array.get(mid) <= array.get(right))
+  {
+    return;
+  }
+
+  int tmp;
+  int i;
+
+  while ((left <= mid) & (right <= end))
+  {
+    // Select from left:  no change, just advance left
+    if (array.get(left) <= array.get(right))
+    {
+      left++;
+    }
+    else
+    {
+      // Select from right:  rotate [left..right] and correct
+      tmp = array.get(right);
+      i = 0;
+      while (i < (right - left))
+      {
+        array.set(right - i, array.get(right - i - 1));
+        i++;
+      }
+      array.set(left, tmp);
+      // EVERYTHING has moved up by one
+      left++; mid++; right++;
+    }
+  }
+  // Whatever remains in [right..end] is in place
+}
+
+main:
+
+int n;
+-> n;
+array.resize(n); //initializes the array to hold n values of 0
+
+int x;
+for (int i = 0; i < n; i++)
+{
+  -> x; //read works similarly as the "std::cin >> x" in c++
+  array.set(i, x); 
+}
+
+mergesort(0, n - 1);
+
+for (int i = 0; i < n; i++)
+{
+  <- array.get(i);
+}

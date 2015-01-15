@@ -1,0 +1,82 @@
+variable:
+
+int[] roots;
+
+function:
+
+int findset(int v)
+{
+  if (roots.get(v) != v)
+  {
+    roots.set(v, findset(roots.get(v)));
+  }
+  return roots.get(v);
+}
+
+void union(int u, int v)
+{
+  roots.set(u, findset(v));
+}
+
+main:
+
+int n;
+-> n;
+int m;
+-> m;
+
+roots.resize(n);
+
+for (int i = 0; i < n; i++)
+{
+  roots.set(i, i);
+}
+
+int u;
+int v;
+
+int fs_u;
+int fs_v;
+int swap;
+
+for (int i = 0; i < m; i++)
+{
+  -> u;
+  -> v;
+
+  if ((u < 0) | (u >= n) | (v < 0) | (v >= n))
+  {
+    <- "NO";
+    return 0;
+  }
+
+  fs_u = findset(u);
+  fs_v = findset(v);
+
+  if (fs_u != fs_v)
+  {
+    if (fs_u < fs_v)
+    {
+      swap = fs_u;
+      fs_u = fs_v;
+      fs_v = swap;
+    }
+
+    union(fs_u, fs_v);
+  }
+}
+
+if (n > 0)
+{
+  int first_root = findset(0);
+  for (int i = 1; i < n; i++)
+  {
+    if (first_root != findset(i))
+    {
+      <- "NO";
+      return 0;
+    }
+  }
+}
+
+<- "YES";
