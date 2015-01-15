@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
+#define MAXL 256
 
 int printBoolean(int a) {
 	if (a == 1) {
@@ -80,4 +82,18 @@ int readInt() {
   int a;
   scanf("%d",&a);
   return a;
+}
+
+char readChar() {
+  char a;
+  scanf("%c",&a);
+  return a;
+}
+
+char input[1024];
+
+char* readString()
+{
+    char* result = fgets(input, 1024, stdin);
+    return result;
 }

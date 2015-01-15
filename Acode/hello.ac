@@ -1,0 +1,4 @@
+extern def void print(int i);
+extern def int read();
+
+double a := 4;

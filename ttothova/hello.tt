@@ -1,0 +1,4 @@
+int j = 5
+for i in (1, 10) do i+3 {
+    printInt(i)
+}

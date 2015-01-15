@@ -1,2 +1,18 @@
 furt slovo hello = "Hello World!"
 ciskaj hello
+
+bar ZámenaManželiek(skutočné numeralio A, skutočné numeralio B)
+    A = A + B
+    B = A - B
+    A = A - B
+
+meňak skutočné numeralio X = 0.1
+meňak skutočné numeralio Y = 600.5
+paľ do baru ZámenaManželiek(X, Y)
+
+ciskaj X
+ciskaj Y
+meňak neskutočné numeralio Z = 1 + 4
+ciskaj Z
+ciskaj (4 + 7)
+

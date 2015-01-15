@@ -1,0 +1,28 @@
+class Sort {
+	int N;
+	int i;
+	int j;
+	int pom;
+	int[10000000] pole;
+
+	N = readInt();
+
+	for (i = 0; i < N; i = i + 1) {
+		pole[i] = readInt();
+	}
+
+	for (i = 0; i < N - 1; i = i + 1) {
+		for (j = i + 1; j < N; j = j + 1) {
+			if (pole[i] > pole[j]) 	{ 
+				pom = pole[i];
+				pole[i] = pole[j];
+				pole[j] = pom; 
+			}
+		} 
+			
+	}
+	for (i = 0; i < N; i = i + 1) {
+		print(pole[i]);
+	}
+}
+

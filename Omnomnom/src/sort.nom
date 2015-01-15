@@ -1,0 +1,62 @@
+{i}_merge({i}_left, {i}_right)
+	{i}_result;
+	@((left->l() > 0) | (right->l() > 0))
+		?((left->l() > 0) & (right->l() > 0))
+			?(left->g(0) <= right->g(0))
+				result->a(left->g(0));
+				left->r(0);
+			.
+			!
+				result->a(right->g(0));
+				right->r(0);
+			.
+		.
+		!?(left->l() > 0)
+			result->a(left->g(0));
+			left->r(0);
+		.
+		!?(right->l() > 0)
+			result->a(right->g(0));
+			right->r(0);
+		.
+	.
+	ggwp result;
+.
+
+{i}_mergesort({i}_m)
+	{i}_left;
+	{i}_right;
+	?(m->l() <= 1)
+		ggwp m;
+	.
+	! 
+		i_middle = m->l() / 2;
+		#(i_it = 0, it < middle, it++)
+			left->a(m->g(it));
+		.
+		#(i_it = middle, it < m->l(), it++)
+			right->a(m->g(it));
+		.	
+		left = mergesort(left);
+		right = mergesort(right);
+		ggwp merge(left, right);
+	.
+	ggwp m;
+.
+	
+i_n;
+{i}_arr;
+>> n;
+
+#(i_it = 0, it < n, it++)	 
+	i_x;
+	>> x;
+	arr->a(x);
+.
+	
+{i}_res = mergesort(arr);
+
+#(i_it = 0, it < res->l(), it++)	 
+	<< res->g(it);
+.
+.

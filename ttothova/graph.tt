@@ -45,7 +45,7 @@ for i in (0,n) {
 		cele = false
 }
 if cele {
-	printString("ANO")
+	printString("YES")
 } else {
-	printString("NIE")
+	printString("NO")
 }

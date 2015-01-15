@@ -1,4 +1,4 @@
-// Generated from anakonda.g4 by ANTLR 4.1
+// Generated from anakonda.g4 by ANTLR 4.4
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class anakondaParser extends Parser {
+	static { RuntimeMetaData.checkVersion("4.4", RuntimeMetaData.VERSION); }
+
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
@@ -23,8 +25,8 @@ public class anakondaParser extends Parser {
 		IF=43, ELIF=44, ELSE=45, AND=46, OR=47, NOT=48, INT=49, IN=50, CISLO=51, 
 		VARNAME=52, CHAR=53, STRING=54, COMMENT=55, WHITESPACE=56, NEWLINE=57;
 	public static final String[] tokenNames = {
-		"<INVALID>", "'def'", "'bool'", "','", "'string'", "':'", "'='", "'~'", 
-		"'char'", "'print'", "'read'", "'{'", "'}'", "'('", "')'", "'['", "']'", 
+		"<INVALID>", "'def'", "'string'", "'char'", "':'", "','", "'='", "'~'", 
+		"'bool'", "'print'", "'read'", "'{'", "'}'", "'('", "')'", "'['", "']'", 
 		"';'", "'break'", "'continue'", "'return'", "'void'", "BOOL", "'++'", 
 		"'--'", "'+'", "'-'", "'*'", "'/'", "'%'", "'+='", "'-='", "'*='", "'/='", 
 		"'%='", "'>'", "'<'", "'<='", "'>='", "'=='", "'!='", "'for'", "'while'", 
@@ -58,6 +60,9 @@ public class anakondaParser extends Parser {
 	public String[] getRuleNames() { return ruleNames; }
 
 	@Override
+	public String getSerializedATN() { return _serializedATN; }
+
+	@Override
 	public ATN getATN() { return _ATN; }
 
 	public anakondaParser(TokenStream input) {
@@ -65,21 +70,21 @@ public class anakondaParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class InitContext extends ParserRuleContext {
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
+		public Extern_func_defContext extern_func_def(int i) {
+			return getRuleContext(Extern_func_defContext.class,i);
 		}
 		public List<TerminalNode> SEMICOLON() { return getTokens(anakondaParser.SEMICOLON); }
 		public TerminalNode SEMICOLON(int i) {
 			return getToken(anakondaParser.SEMICOLON, i);
 		}
-		public List<Extern_func_defContext> extern_func_def() {
-			return getRuleContexts(Extern_func_defContext.class);
-		}
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
 		}
-		public Extern_func_defContext extern_func_def(int i) {
-			return getRuleContext(Extern_func_defContext.class,i);
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public List<Extern_func_defContext> extern_func_def() {
+			return getRuleContexts(Extern_func_defContext.class);
 		}
 		public InitContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -111,7 +116,7 @@ public class anakondaParser extends Parser {
 			setState(63);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,0,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
@@ -127,7 +132,7 @@ public class anakondaParser extends Parser {
 			setState(69);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 1) | (1L << 2) | (1L << 4) | (1L << 8) | (1L << PRINT) | (1L << READ) | (1L << LCURLY) | (1L << LROUND) | (1L << LSQUARE) | (1L << BREAK) | (1L << CONTINUE) | (1L << RET) | (1L << VOID) | (1L << BOOL) | (1L << ADD) | (1L << SUBTRACT) | (1L << FOR) | (1L << WHILE) | (1L << IF) | (1L << NOT) | (1L << INT) | (1L << CISLO) | (1L << VARNAME) | (1L << CHAR) | (1L << STRING))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__7) | (1L << T__6) | (1L << T__5) | (1L << T__0) | (1L << PRINT) | (1L << READ) | (1L << LCURLY) | (1L << LROUND) | (1L << LSQUARE) | (1L << BREAK) | (1L << CONTINUE) | (1L << RET) | (1L << VOID) | (1L << BOOL) | (1L << ADD) | (1L << SUBTRACT) | (1L << FOR) | (1L << WHILE) | (1L << IF) | (1L << NOT) | (1L << INT) | (1L << CISLO) | (1L << VARNAME) | (1L << CHAR) | (1L << STRING))) != 0)) {
 				{
 				{
 				setState(66); statement();
@@ -151,14 +156,14 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class BlockContext extends ParserRuleContext {
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
+		public TerminalNode RCURLY() { return getToken(anakondaParser.RCURLY, 0); }
 		public TerminalNode LCURLY() { return getToken(anakondaParser.LCURLY, 0); }
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
 		}
-		public TerminalNode RCURLY() { return getToken(anakondaParser.RCURLY, 0); }
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
 		public BlockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -198,7 +203,7 @@ public class anakondaParser extends Parser {
 				setState(76); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 1) | (1L << 2) | (1L << 4) | (1L << 8) | (1L << PRINT) | (1L << READ) | (1L << LCURLY) | (1L << LROUND) | (1L << LSQUARE) | (1L << BREAK) | (1L << CONTINUE) | (1L << RET) | (1L << VOID) | (1L << BOOL) | (1L << ADD) | (1L << SUBTRACT) | (1L << FOR) | (1L << WHILE) | (1L << IF) | (1L << NOT) | (1L << INT) | (1L << CISLO) | (1L << VARNAME) | (1L << CHAR) | (1L << STRING))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__7) | (1L << T__6) | (1L << T__5) | (1L << T__0) | (1L << PRINT) | (1L << READ) | (1L << LCURLY) | (1L << LROUND) | (1L << LSQUARE) | (1L << BREAK) | (1L << CONTINUE) | (1L << RET) | (1L << VOID) | (1L << BOOL) | (1L << ADD) | (1L << SUBTRACT) | (1L << FOR) | (1L << WHILE) | (1L << IF) | (1L << NOT) | (1L << INT) | (1L << CISLO) | (1L << VARNAME) | (1L << CHAR) | (1L << STRING))) != 0) );
 			setState(78); match(RCURLY);
 			}
 		}
@@ -214,10 +219,10 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class StatementContext extends ParserRuleContext {
+		public TerminalNode SEMICOLON() { return getToken(anakondaParser.SEMICOLON, 0); }
 		public Block_statementContext block_statement() {
 			return getRuleContext(Block_statementContext.class,0);
 		}
-		public TerminalNode SEMICOLON() { return getToken(anakondaParser.SEMICOLON, 0); }
 		public Oneline_statementContext oneline_statement() {
 			return getRuleContext(Oneline_statementContext.class,0);
 		}
@@ -246,9 +251,9 @@ public class anakondaParser extends Parser {
 		try {
 			setState(84);
 			switch (_input.LA(1)) {
-			case 2:
-			case 4:
-			case 8:
+			case T__6:
+			case T__5:
+			case T__0:
 			case PRINT:
 			case READ:
 			case LROUND:
@@ -272,7 +277,7 @@ public class anakondaParser extends Parser {
 				setState(81); match(SEMICOLON);
 				}
 				break;
-			case 1:
+			case T__7:
 			case LCURLY:
 			case FOR:
 			case WHILE:
@@ -298,26 +303,26 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class Oneline_statementContext extends ParserRuleContext {
-		public PrintContext print() {
-			return getRuleContext(PrintContext.class,0);
-		}
-		public AssignContext assign() {
-			return getRuleContext(AssignContext.class,0);
+		public RetContext ret() {
+			return getRuleContext(RetContext.class,0);
 		}
 		public TerminalNode BREAK() { return getToken(anakondaParser.BREAK, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
 		public Define_varContext define_var() {
 			return getRuleContext(Define_varContext.class,0);
+		}
+		public TerminalNode CONTINUE() { return getToken(anakondaParser.CONTINUE, 0); }
+		public AssignContext assign() {
+			return getRuleContext(AssignContext.class,0);
 		}
 		public ReadContext read() {
 			return getRuleContext(ReadContext.class,0);
 		}
-		public RetContext ret() {
-			return getRuleContext(RetContext.class,0);
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode CONTINUE() { return getToken(anakondaParser.CONTINUE, 0); }
+		public PrintContext print() {
+			return getRuleContext(PrintContext.class,0);
+		}
 		public Oneline_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -349,49 +354,42 @@ public class anakondaParser extends Parser {
 				setState(86); assign();
 				}
 				break;
-
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(87); define_var();
 				}
 				break;
-
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
 				setState(88); expression(0);
 				}
 				break;
-
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(89); ret();
 				}
 				break;
-
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(90); print();
 				}
 				break;
-
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(91); read();
 				}
 				break;
-
 			case 7:
 				enterOuterAlt(_localctx, 7);
 				{
 				setState(92); match(BREAK);
 				}
 				break;
-
 			case 8:
 				enterOuterAlt(_localctx, 8);
 				{
@@ -415,17 +413,17 @@ public class anakondaParser extends Parser {
 		public IfblockContext ifblock() {
 			return getRuleContext(IfblockContext.class,0);
 		}
+		public Define_funContext define_fun() {
+			return getRuleContext(Define_funContext.class,0);
+		}
+		public BlockContext block() {
+			return getRuleContext(BlockContext.class,0);
+		}
 		public ForcycleContext forcycle() {
 			return getRuleContext(ForcycleContext.class,0);
 		}
 		public WhilecycleContext whilecycle() {
 			return getRuleContext(WhilecycleContext.class,0);
-		}
-		public BlockContext block() {
-			return getRuleContext(BlockContext.class,0);
-		}
-		public Define_funContext define_fun() {
-			return getRuleContext(Define_funContext.class,0);
 		}
 		public Block_statementContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -470,7 +468,7 @@ public class anakondaParser extends Parser {
 				setState(98); ifblock();
 				}
 				break;
-			case 1:
+			case T__7:
 				enterOuterAlt(_localctx, 4);
 				{
 				setState(99); define_fun();
@@ -498,42 +496,14 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class VarContext extends ParserRuleContext {
-		public int _p;
-		public VarContext(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
-		public VarContext(ParserRuleContext parent, int invokingState, int _p) {
+		public VarContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
-			this._p = _p;
 		}
 		@Override public int getRuleIndex() { return RULE_var; }
 	 
 		public VarContext() { }
 		public void copyFrom(VarContext ctx) {
 			super.copyFrom(ctx);
-			this._p = ctx._p;
-		}
-	}
-	public static class VarListContext extends VarContext {
-		public TerminalNode RSQUARE() { return getToken(anakondaParser.RSQUARE, 0); }
-		public TerminalNode LSQUARE() { return getToken(anakondaParser.LSQUARE, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public VarContext var() {
-			return getRuleContext(VarContext.class,0);
-		}
-		public VarListContext(VarContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterVarList(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitVarList(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitVarList(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class VarNameContext extends VarContext {
@@ -553,14 +523,42 @@ public class anakondaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class VarListContext extends VarContext {
+		public TerminalNode RSQUARE() { return getToken(anakondaParser.RSQUARE, 0); }
+		public TerminalNode LSQUARE() { return getToken(anakondaParser.LSQUARE, 0); }
+		public VarContext var() {
+			return getRuleContext(VarContext.class,0);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public VarListContext(VarContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterVarList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitVarList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitVarList(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 
-	public final VarContext var(int _p) throws RecognitionException {
+	public final VarContext var() throws RecognitionException {
+		return var(0);
+	}
+
+	private VarContext var(int _p) throws RecognitionException {
 		ParserRuleContext _parentctx = _ctx;
 		int _parentState = getState();
-		VarContext _localctx = new VarContext(_ctx, _parentState, _p);
+		VarContext _localctx = new VarContext(_ctx, _parentState);
 		VarContext _prevctx = _localctx;
 		int _startState = 10;
-		enterRecursionRule(_localctx, RULE_var);
+		enterRecursionRule(_localctx, 10, RULE_var, _p);
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
@@ -576,16 +574,16 @@ public class anakondaParser extends Parser {
 			setState(113);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
 					{
-					_localctx = new VarListContext(new VarContext(_parentctx, _parentState, _p));
+					_localctx = new VarListContext(new VarContext(_parentctx, _parentState));
 					pushNewRecursionContext(_localctx, _startState, RULE_var);
 					setState(106);
-					if (!(1 >= _localctx._p)) throw new FailedPredicateException(this, "1 >= $_p");
+					if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
 					setState(107); match(LSQUARE);
 					setState(108); expression(0);
 					setState(109); match(RSQUARE);
@@ -620,25 +618,6 @@ public class anakondaParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
-	public static class ValListContext extends ValueContext {
-		public ListContext list() {
-			return getRuleContext(ListContext.class,0);
-		}
-		public ValListContext(ValueContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterValList(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitValList(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValList(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class ValRangeContext extends ValueContext {
 		public RangeContext range() {
 			return getRuleContext(RangeContext.class,0);
@@ -658,23 +637,6 @@ public class anakondaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ValVoidContext extends ValueContext {
-		public TerminalNode VOID() { return getToken(anakondaParser.VOID, 0); }
-		public ValVoidContext(ValueContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterValVoid(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitValVoid(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValVoid(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class ValBoolContext extends ValueContext {
 		public TerminalNode BOOL() { return getToken(anakondaParser.BOOL, 0); }
 		public ValBoolContext(ValueContext ctx) { copyFrom(ctx); }
@@ -689,6 +651,76 @@ public class anakondaParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValBool(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ValIntContext extends ValueContext {
+		public TerminalNode CISLO() { return getToken(anakondaParser.CISLO, 0); }
+		public ValIntContext(ValueContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterValInt(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitValInt(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValInt(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ValCharContext extends ValueContext {
+		public TerminalNode CHAR() { return getToken(anakondaParser.CHAR, 0); }
+		public ValCharContext(ValueContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterValChar(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitValChar(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValChar(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ValStringContext extends ValueContext {
+		public TerminalNode STRING() { return getToken(anakondaParser.STRING, 0); }
+		public ValStringContext(ValueContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterValString(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitValString(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValString(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ValListContext extends ValueContext {
+		public ListContext list() {
+			return getRuleContext(ListContext.class,0);
+		}
+		public ValListContext(ValueContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterValList(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitValList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValList(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -711,54 +743,20 @@ public class anakondaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ValIntContext extends ValueContext {
-		public TerminalNode CISLO() { return getToken(anakondaParser.CISLO, 0); }
-		public ValIntContext(ValueContext ctx) { copyFrom(ctx); }
+	public static class ValVoidContext extends ValueContext {
+		public TerminalNode VOID() { return getToken(anakondaParser.VOID, 0); }
+		public ValVoidContext(ValueContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterValInt(this);
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterValVoid(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitValInt(this);
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitValVoid(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValInt(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ValStringContext extends ValueContext {
-		public TerminalNode STRING() { return getToken(anakondaParser.STRING, 0); }
-		public ValStringContext(ValueContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterValString(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitValString(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValString(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ValCharContext extends ValueContext {
-		public TerminalNode CHAR() { return getToken(anakondaParser.CHAR, 0); }
-		public ValCharContext(ValueContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterValChar(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitValChar(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValChar(this);
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValVoid(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -841,18 +839,14 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class TypeContext extends ParserRuleContext {
-		public int _p;
-		public TypeContext(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
-		public TypeContext(ParserRuleContext parent, int invokingState, int _p) {
+		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
-			this._p = _p;
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
 	 
 		public TypeContext() { }
 		public void copyFrom(TypeContext ctx) {
 			super.copyFrom(ctx);
-			this._p = ctx._p;
 		}
 	}
 	public static class PrimitiveTypeContext extends TypeContext {
@@ -893,13 +887,17 @@ public class anakondaParser extends Parser {
 		}
 	}
 
-	public final TypeContext type(int _p) throws RecognitionException {
+	public final TypeContext type() throws RecognitionException {
+		return type(0);
+	}
+
+	private TypeContext type(int _p) throws RecognitionException {
 		ParserRuleContext _parentctx = _ctx;
 		int _parentState = getState();
-		TypeContext _localctx = new TypeContext(_ctx, _parentState, _p);
+		TypeContext _localctx = new TypeContext(_ctx, _parentState);
 		TypeContext _prevctx = _localctx;
 		int _startState = 14;
-		enterRecursionRule(_localctx, RULE_type);
+		enterRecursionRule(_localctx, 14, RULE_type, _p);
 		int _la;
 		try {
 			int _alt;
@@ -912,7 +910,7 @@ public class anakondaParser extends Parser {
 
 			setState(127);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 2) | (1L << 4) | (1L << 8) | (1L << VOID) | (1L << INT))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__6) | (1L << T__5) | (1L << T__0) | (1L << VOID) | (1L << INT))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			consume();
@@ -921,16 +919,16 @@ public class anakondaParser extends Parser {
 			setState(134);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,8,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
 					{
-					_localctx = new TypeListContext(new TypeContext(_parentctx, _parentState, _p));
+					_localctx = new TypeListContext(new TypeContext(_parentctx, _parentState));
 					pushNewRecursionContext(_localctx, _startState, RULE_type);
 					setState(129);
-					if (!(2 >= _localctx._p)) throw new FailedPredicateException(this, "2 >= $_p");
+					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
 					setState(130); match(LSQUARE);
 					setState(131); match(RSQUARE);
 					}
@@ -954,11 +952,11 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class Normal_assignContext extends ParserRuleContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
 		public VarContext var() {
 			return getRuleContext(VarContext.class,0);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
 		public Normal_assignContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -986,7 +984,7 @@ public class anakondaParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(137); var(0);
-			setState(138); match(6);
+			setState(138); match(T__2);
 			setState(139); expression(0);
 			}
 		}
@@ -1003,17 +1001,17 @@ public class anakondaParser extends Parser {
 
 	public static class Combined_assignContext extends ParserRuleContext {
 		public Token op;
-		public TerminalNode MULASS() { return getToken(anakondaParser.MULASS, 0); }
-		public TerminalNode SUBASS() { return getToken(anakondaParser.SUBASS, 0); }
-		public TerminalNode DIVASS() { return getToken(anakondaParser.DIVASS, 0); }
-		public TerminalNode MODASS() { return getToken(anakondaParser.MODASS, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
 		public TerminalNode ADDASS() { return getToken(anakondaParser.ADDASS, 0); }
+		public TerminalNode SUBASS() { return getToken(anakondaParser.SUBASS, 0); }
 		public VarContext var() {
 			return getRuleContext(VarContext.class,0);
 		}
+		public TerminalNode MULASS() { return getToken(anakondaParser.MULASS, 0); }
+		public TerminalNode DIVASS() { return getToken(anakondaParser.DIVASS, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public TerminalNode MODASS() { return getToken(anakondaParser.MODASS, 0); }
 		public Combined_assignContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1063,11 +1061,11 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class AssignContext extends ParserRuleContext {
-		public Combined_assignContext combined_assign() {
-			return getRuleContext(Combined_assignContext.class,0);
-		}
 		public Normal_assignContext normal_assign() {
 			return getRuleContext(Normal_assignContext.class,0);
+		}
+		public Combined_assignContext combined_assign() {
+			return getRuleContext(Combined_assignContext.class,0);
 		}
 		public AssignContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1100,7 +1098,6 @@ public class anakondaParser extends Parser {
 				setState(145); normal_assign();
 				}
 				break;
-
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
@@ -1211,18 +1208,18 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class Define_funContext extends ParserRuleContext {
+		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
 		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
-		}
-		public BlockContext block() {
-			return getRuleContext(BlockContext.class,0);
 		}
 		public ArgumentsContext arguments() {
 			return getRuleContext(ArgumentsContext.class,0);
 		}
 		public TerminalNode VARNAME() { return getToken(anakondaParser.VARNAME, 0); }
-		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
+		public BlockContext block() {
+			return getRuleContext(BlockContext.class,0);
+		}
 		public Define_funContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1248,7 +1245,7 @@ public class anakondaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(155); match(1);
+			setState(155); match(T__7);
 			setState(156); type(0);
 			setState(157); match(VARNAME);
 			setState(158); match(LROUND);
@@ -1269,15 +1266,15 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class Extern_func_defContext extends ParserRuleContext {
-		public TypelistContext typelist() {
-			return getRuleContext(TypelistContext.class,0);
-		}
+		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
 		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
 		public TerminalNode VARNAME() { return getToken(anakondaParser.VARNAME, 0); }
-		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
+		public TypelistContext typelist() {
+			return getRuleContext(TypelistContext.class,0);
+		}
 		public Extern_func_defContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1304,7 +1301,7 @@ public class anakondaParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(163); type(0);
-			setState(164); match(7);
+			setState(164); match(T__1);
 			setState(165); match(VARNAME);
 			setState(166); match(LROUND);
 			setState(167); typelist();
@@ -1340,10 +1337,10 @@ public class anakondaParser extends Parser {
 		public List<TypeContext> type() {
 			return getRuleContexts(TypeContext.class);
 		}
-		public List<TerminalNode> VARNAME() { return getTokens(anakondaParser.VARNAME); }
 		public TerminalNode VARNAME(int i) {
 			return getToken(anakondaParser.VARNAME, i);
 		}
+		public List<TerminalNode> VARNAME() { return getTokens(anakondaParser.VARNAME); }
 		public ArgsContext(ArgumentsContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -1370,17 +1367,17 @@ public class anakondaParser extends Parser {
 			{
 			setState(181);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 2) | (1L << 4) | (1L << 8) | (1L << VOID) | (1L << INT))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__6) | (1L << T__5) | (1L << T__0) | (1L << VOID) | (1L << INT))) != 0)) {
 				{
 				setState(170); type(0);
 				setState(171); match(VARNAME);
 				setState(178);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==3) {
+				while (_la==T__3) {
 					{
 					{
-					setState(172); match(3);
+					setState(172); match(T__3);
 					setState(173); type(0);
 					setState(174); match(VARNAME);
 					}
@@ -1449,16 +1446,16 @@ public class anakondaParser extends Parser {
 			{
 			setState(191);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 2) | (1L << 4) | (1L << 8) | (1L << VOID) | (1L << INT))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__6) | (1L << T__5) | (1L << T__0) | (1L << VOID) | (1L << INT))) != 0)) {
 				{
 				setState(183); type(0);
 				setState(188);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==3) {
+				while (_la==T__3) {
 					{
 					{
-					setState(184); match(3);
+					setState(184); match(T__3);
 					setState(185); type(0);
 					}
 					}
@@ -1483,12 +1480,12 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class Call_funContext extends ParserRuleContext {
-		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
+		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
 		public ParametersContext parameters() {
 			return getRuleContext(ParametersContext.class,0);
 		}
+		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
 		public TerminalNode VARNAME() { return getToken(anakondaParser.VARNAME, 0); }
-		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
 		public Call_funContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1535,10 +1532,10 @@ public class anakondaParser extends Parser {
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
+		public TerminalNode VARNAME() { return getToken(anakondaParser.VARNAME, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode VARNAME() { return getToken(anakondaParser.VARNAME, 0); }
 		public Define_varContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1569,9 +1566,9 @@ public class anakondaParser extends Parser {
 			setState(199); match(VARNAME);
 			setState(202);
 			_la = _input.LA(1);
-			if (_la==6) {
+			if (_la==T__2) {
 				{
-				setState(200); match(6);
+				setState(200); match(T__2);
 				setState(201); expression(0);
 				}
 			}
@@ -1644,24 +1641,24 @@ public class anakondaParser extends Parser {
 
 	public static class ForcycleContext extends ParserRuleContext {
 		public List<TerminalNode> SEMICOLON() { return getTokens(anakondaParser.SEMICOLON); }
-		public TerminalNode SEMICOLON(int i) {
-			return getToken(anakondaParser.SEMICOLON, i);
+		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
+		public Define_varContext define_var() {
+			return getRuleContext(Define_varContext.class,0);
 		}
-		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
-		public TerminalNode FOR() { return getToken(anakondaParser.FOR, 0); }
 		public AssignContext assign() {
 			return getRuleContext(AssignContext.class,0);
+		}
+		public TerminalNode FOR() { return getToken(anakondaParser.FOR, 0); }
+		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
+		public TerminalNode SEMICOLON(int i) {
+			return getToken(anakondaParser.SEMICOLON, i);
 		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public Define_varContext define_var() {
-			return getRuleContext(Define_varContext.class,0);
-		}
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
-		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
 		public ForcycleContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1759,24 +1756,24 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class IfblockContext extends ParserRuleContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode IF() { return getToken(anakondaParser.IF, 0); }
+		public List<TerminalNode> ELIF() { return getTokens(anakondaParser.ELIF); }
 		public TerminalNode ELSE() { return getToken(anakondaParser.ELSE, 0); }
+		public TerminalNode IF() { return getToken(anakondaParser.IF, 0); }
 		public BlockContext block(int i) {
 			return getRuleContext(BlockContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
 		}
 		public TerminalNode ELIF(int i) {
 			return getToken(anakondaParser.ELIF, i);
 		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
 		public List<BlockContext> block() {
 			return getRuleContexts(BlockContext.class);
 		}
-		public List<TerminalNode> ELIF() { return getTokens(anakondaParser.ELIF); }
 		public IfblockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1940,10 +1937,10 @@ public class anakondaParser extends Parser {
 				setState(247);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==3) {
+				while (_la==T__3) {
 					{
 					{
-					setState(243); match(3);
+					setState(243); match(T__3);
 					setState(244); expression(0);
 					}
 					}
@@ -1968,14 +1965,14 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class RangeContext extends ParserRuleContext {
+		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
+		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
 		public RangeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2004,13 +2001,13 @@ public class anakondaParser extends Parser {
 			{
 			setState(252); match(LROUND);
 			setState(253); expression(0);
-			setState(254); match(5);
+			setState(254); match(T__4);
 			setState(255); expression(0);
 			setState(258);
 			_la = _input.LA(1);
-			if (_la==5) {
+			if (_la==T__4) {
 				{
-				setState(256); match(5);
+				setState(256); match(T__4);
 				setState(257); expression(0);
 				}
 			}
@@ -2075,9 +2072,9 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class ReadContext extends ParserRuleContext {
+		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
 		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
 		public TerminalNode READ() { return getToken(anakondaParser.READ, 0); }
-		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
 		public ReadContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2120,18 +2117,43 @@ public class anakondaParser extends Parser {
 	}
 
 	public static class ExpressionContext extends ParserRuleContext {
-		public int _p;
-		public ExpressionContext(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
-		public ExpressionContext(ParserRuleContext parent, int invokingState, int _p) {
+		public ExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
-			this._p = _p;
 		}
 		@Override public int getRuleIndex() { return RULE_expression; }
 	 
 		public ExpressionContext() { }
 		public void copyFrom(ExpressionContext ctx) {
 			super.copyFrom(ctx);
-			this._p = ctx._p;
+		}
+	}
+	public static class CompressionContext extends ExpressionContext {
+		public Token op;
+		public TerminalNode EQUAL() { return getToken(anakondaParser.EQUAL, 0); }
+		public TerminalNode GREATERTHAN() { return getToken(anakondaParser.GREATERTHAN, 0); }
+		public TerminalNode GREATEREQUAL() { return getToken(anakondaParser.GREATEREQUAL, 0); }
+		public TerminalNode LESSEQUAL() { return getToken(anakondaParser.LESSEQUAL, 0); }
+		public TerminalNode NOTEEQUAL() { return getToken(anakondaParser.NOTEEQUAL, 0); }
+		public TerminalNode LESSTHAN() { return getToken(anakondaParser.LESSTHAN, 0); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public CompressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterCompression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitCompression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitCompression(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ReadpressionContext extends ExpressionContext {
@@ -2153,56 +2175,9 @@ public class anakondaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class OrpressionContext extends ExpressionContext {
-		public Token op;
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode OR() { return getToken(anakondaParser.OR, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public OrpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterOrpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitOrpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitOrpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ListIndexContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode RSQUARE() { return getToken(anakondaParser.RSQUARE, 0); }
-		public TerminalNode LSQUARE() { return getToken(anakondaParser.LSQUARE, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public ListIndexContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterListIndex(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitListIndex(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitListIndex(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class MultipressionContext extends ExpressionContext {
 		public Token op;
+		public TerminalNode DIVIDE() { return getToken(anakondaParser.DIVIDE, 0); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
@@ -2211,7 +2186,6 @@ public class anakondaParser extends Parser {
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public TerminalNode DIVIDE() { return getToken(anakondaParser.DIVIDE, 0); }
 		public MultipressionContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
@@ -2227,22 +2201,109 @@ public class anakondaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class DecpressionContext extends ExpressionContext {
-		public DecrementContext decrement() {
-			return getRuleContext(DecrementContext.class,0);
+	public static class IncpressionContext extends ExpressionContext {
+		public IncrementContext increment() {
+			return getRuleContext(IncrementContext.class,0);
 		}
-		public DecpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public IncpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterDecpression(this);
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterIncpression(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitDecpression(this);
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitIncpression(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitDecpression(this);
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitIncpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class CallFunContext extends ExpressionContext {
+		public Call_funContext call_fun() {
+			return getRuleContext(Call_funContext.class,0);
+		}
+		public CallFunContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterCallFun(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitCallFun(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitCallFun(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AddpressionContext extends ExpressionContext {
+		public Token op;
+		public TerminalNode SUBTRACT() { return getToken(anakondaParser.SUBTRACT, 0); }
+		public TerminalNode ADD() { return getToken(anakondaParser.ADD, 0); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public AddpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterAddpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitAddpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitAddpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class UnaryContext extends ExpressionContext {
+		public Token op;
+		public TerminalNode SUBTRACT() { return getToken(anakondaParser.SUBTRACT, 0); }
+		public TerminalNode ADD() { return getToken(anakondaParser.ADD, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public UnaryContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterUnary(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitUnary(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitUnary(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class NotpressionContext extends ExpressionContext {
+		public Token op;
+		public TerminalNode NOT() { return getToken(anakondaParser.NOT, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public NotpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterNotpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitNotpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitNotpression(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2262,103 +2323,6 @@ public class anakondaParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitValpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class UnaryContext extends ExpressionContext {
-		public Token op;
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode SUBTRACT() { return getToken(anakondaParser.SUBTRACT, 0); }
-		public TerminalNode ADD() { return getToken(anakondaParser.ADD, 0); }
-		public UnaryContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterUnary(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitUnary(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitUnary(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class AddpressionContext extends ExpressionContext {
-		public Token op;
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public TerminalNode SUBTRACT() { return getToken(anakondaParser.SUBTRACT, 0); }
-		public TerminalNode ADD() { return getToken(anakondaParser.ADD, 0); }
-		public AddpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterAddpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitAddpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitAddpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class CompressionContext extends ExpressionContext {
-		public Token op;
-		public TerminalNode LESSTHAN() { return getToken(anakondaParser.LESSTHAN, 0); }
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode GREATEREQUAL() { return getToken(anakondaParser.GREATEREQUAL, 0); }
-		public TerminalNode GREATERTHAN() { return getToken(anakondaParser.GREATERTHAN, 0); }
-		public TerminalNode NOTEEQUAL() { return getToken(anakondaParser.NOTEEQUAL, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public TerminalNode EQUAL() { return getToken(anakondaParser.EQUAL, 0); }
-		public TerminalNode LESSEQUAL() { return getToken(anakondaParser.LESSEQUAL, 0); }
-		public CompressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterCompression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitCompression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitCompression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class PrecedenceContext extends ExpressionContext {
-		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
-		public PrecedenceContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterPrecedence(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitPrecedence(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitPrecedence(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -2386,73 +2350,106 @@ public class anakondaParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class NotpressionContext extends ExpressionContext {
+	public static class ListIndexContext extends ExpressionContext {
+		public TerminalNode RSQUARE() { return getToken(anakondaParser.RSQUARE, 0); }
+		public TerminalNode LSQUARE() { return getToken(anakondaParser.LSQUARE, 0); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public ListIndexContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterListIndex(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitListIndex(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitListIndex(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class OrpressionContext extends ExpressionContext {
 		public Token op;
-		public TerminalNode NOT() { return getToken(anakondaParser.NOT, 0); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode OR() { return getToken(anakondaParser.OR, 0); }
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public OrpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterOrpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitOrpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitOrpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class DecpressionContext extends ExpressionContext {
+		public DecrementContext decrement() {
+			return getRuleContext(DecrementContext.class,0);
+		}
+		public DecpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterDecpression(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitDecpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitDecpression(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class PrecedenceContext extends ExpressionContext {
+		public TerminalNode LROUND() { return getToken(anakondaParser.LROUND, 0); }
+		public TerminalNode RROUND() { return getToken(anakondaParser.RROUND, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public NotpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
+		public PrecedenceContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterNotpression(this);
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterPrecedence(this);
 		}
 		@Override
 		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitNotpression(this);
+			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitPrecedence(this);
 		}
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitNotpression(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class CallFunContext extends ExpressionContext {
-		public Call_funContext call_fun() {
-			return getRuleContext(Call_funContext.class,0);
-		}
-		public CallFunContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterCallFun(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitCallFun(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitCallFun(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class IncpressionContext extends ExpressionContext {
-		public IncrementContext increment() {
-			return getRuleContext(IncrementContext.class,0);
-		}
-		public IncpressionContext(ExpressionContext ctx) { copyFrom(ctx); }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).enterIncpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof anakondaListener ) ((anakondaListener)listener).exitIncpression(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitIncpression(this);
+			if ( visitor instanceof anakondaVisitor ) return ((anakondaVisitor<? extends T>)visitor).visitPrecedence(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final ExpressionContext expression(int _p) throws RecognitionException {
+	public final ExpressionContext expression() throws RecognitionException {
+		return expression(0);
+	}
+
+	private ExpressionContext expression(int _p) throws RecognitionException {
 		ParserRuleContext _parentctx = _ctx;
 		int _parentState = getState();
-		ExpressionContext _localctx = new ExpressionContext(_ctx, _parentState, _p);
+		ExpressionContext _localctx = new ExpressionContext(_ctx, _parentState);
 		ExpressionContext _prevctx = _localctx;
 		int _startState = 56;
-		enterRecursionRule(_localctx, RULE_expression);
+		enterRecursionRule(_localctx, 56, RULE_expression, _p);
 		int _la;
 		try {
 			int _alt;
@@ -2476,7 +2473,6 @@ public class anakondaParser extends Parser {
 				setState(271); expression(8);
 				}
 				break;
-
 			case 2:
 				{
 				_localctx = new NotpressionContext(_localctx);
@@ -2486,7 +2482,6 @@ public class anakondaParser extends Parser {
 				setState(273); expression(4);
 				}
 				break;
-
 			case 3:
 				{
 				_localctx = new PrecedenceContext(_localctx);
@@ -2497,7 +2492,6 @@ public class anakondaParser extends Parser {
 				setState(276); match(RROUND);
 				}
 				break;
-
 			case 4:
 				{
 				_localctx = new IncpressionContext(_localctx);
@@ -2506,7 +2500,6 @@ public class anakondaParser extends Parser {
 				setState(278); increment();
 				}
 				break;
-
 			case 5:
 				{
 				_localctx = new ReadpressionContext(_localctx);
@@ -2515,7 +2508,6 @@ public class anakondaParser extends Parser {
 				setState(279); read();
 				}
 				break;
-
 			case 6:
 				{
 				_localctx = new DecpressionContext(_localctx);
@@ -2524,7 +2516,6 @@ public class anakondaParser extends Parser {
 				setState(280); decrement();
 				}
 				break;
-
 			case 7:
 				{
 				_localctx = new CallFunContext(_localctx);
@@ -2533,7 +2524,6 @@ public class anakondaParser extends Parser {
 				setState(281); call_fun();
 				}
 				break;
-
 			case 8:
 				{
 				_localctx = new ValpressionContext(_localctx);
@@ -2547,7 +2537,7 @@ public class anakondaParser extends Parser {
 			setState(307);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,23,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
@@ -2556,10 +2546,10 @@ public class anakondaParser extends Parser {
 					switch ( getInterpreter().adaptivePredict(_input,22,_ctx) ) {
 					case 1:
 						{
-						_localctx = new MultipressionContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new MultipressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(285);
-						if (!(7 >= _localctx._p)) throw new FailedPredicateException(this, "7 >= $_p");
+						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
 						setState(286);
 						((MultipressionContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
@@ -2570,13 +2560,12 @@ public class anakondaParser extends Parser {
 						setState(287); expression(8);
 						}
 						break;
-
 					case 2:
 						{
-						_localctx = new AddpressionContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new AddpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(288);
-						if (!(6 >= _localctx._p)) throw new FailedPredicateException(this, "6 >= $_p");
+						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
 						setState(289);
 						((AddpressionContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
@@ -2587,13 +2576,12 @@ public class anakondaParser extends Parser {
 						setState(290); expression(7);
 						}
 						break;
-
 					case 3:
 						{
-						_localctx = new CompressionContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new CompressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(291);
-						if (!(5 >= _localctx._p)) throw new FailedPredicateException(this, "5 >= $_p");
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 						setState(292);
 						((CompressionContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
@@ -2604,35 +2592,32 @@ public class anakondaParser extends Parser {
 						setState(293); expression(6);
 						}
 						break;
-
 					case 4:
 						{
-						_localctx = new AndpressionContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new AndpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(294);
-						if (!(3 >= _localctx._p)) throw new FailedPredicateException(this, "3 >= $_p");
+						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 						setState(295); ((AndpressionContext)_localctx).op = match(AND);
 						setState(296); expression(4);
 						}
 						break;
-
 					case 5:
 						{
-						_localctx = new OrpressionContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new OrpressionContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(297);
-						if (!(2 >= _localctx._p)) throw new FailedPredicateException(this, "2 >= $_p");
+						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
 						setState(298); ((OrpressionContext)_localctx).op = match(OR);
 						setState(299); expression(3);
 						}
 						break;
-
 					case 6:
 						{
-						_localctx = new ListIndexContext(new ExpressionContext(_parentctx, _parentState, _p));
+						_localctx = new ListIndexContext(new ExpressionContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(300);
-						if (!(9 >= _localctx._p)) throw new FailedPredicateException(this, "9 >= $_p");
+						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
 						setState(301); match(LSQUARE);
 						setState(302); expression(0);
 						setState(303); match(RSQUARE);
@@ -2661,44 +2646,37 @@ public class anakondaParser extends Parser {
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
 		case 5: return var_sempred((VarContext)_localctx, predIndex);
-
 		case 7: return type_sempred((TypeContext)_localctx, predIndex);
-
 		case 28: return expression_sempred((ExpressionContext)_localctx, predIndex);
 		}
 		return true;
 	}
 	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 2: return 7 >= _localctx._p;
-
-		case 3: return 6 >= _localctx._p;
-
-		case 4: return 5 >= _localctx._p;
-
-		case 5: return 3 >= _localctx._p;
-
-		case 6: return 2 >= _localctx._p;
-
-		case 7: return 9 >= _localctx._p;
+		case 2: return precpred(_ctx, 7);
+		case 3: return precpred(_ctx, 6);
+		case 4: return precpred(_ctx, 5);
+		case 5: return precpred(_ctx, 3);
+		case 6: return precpred(_ctx, 2);
+		case 7: return precpred(_ctx, 9);
 		}
 		return true;
 	}
 	private boolean var_sempred(VarContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return 1 >= _localctx._p;
+		case 0: return precpred(_ctx, 1);
 		}
 		return true;
 	}
 	private boolean type_sempred(TypeContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 1: return 2 >= _localctx._p;
+		case 1: return precpred(_ctx, 2);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3;\u0139\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3;\u0139\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -2721,91 +2699,91 @@ public class anakondaParser extends Parser {
 		"\3\33\3\34\3\34\3\34\3\35\3\35\3\35\3\35\3\36\3\36\3\36\3\36\3\36\3\36"+
 		"\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\36\5\36\u011e\n\36\3\36\3\36\3\36"+
 		"\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\36\3\36"+
-		"\3\36\3\36\3\36\7\36\u0134\n\36\f\36\16\36\u0137\13\36\3\36\2\37\2\4\6"+
-		"\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:\2\7\7\2\4\4\6"+
-		"\6\n\n\27\27\63\63\3\2 $\3\2\33\34\3\2\35\37\3\2%*\u014c\2A\3\2\2\2\4"+
-		"J\3\2\2\2\6V\3\2\2\2\b`\3\2\2\2\ng\3\2\2\2\fi\3\2\2\2\16~\3\2\2\2\20\u0080"+
-		"\3\2\2\2\22\u008b\3\2\2\2\24\u008f\3\2\2\2\26\u0095\3\2\2\2\30\u0097\3"+
-		"\2\2\2\32\u009a\3\2\2\2\34\u009d\3\2\2\2\36\u00a5\3\2\2\2 \u00b7\3\2\2"+
-		"\2\"\u00c1\3\2\2\2$\u00c3\3\2\2\2&\u00c8\3\2\2\2(\u00ce\3\2\2\2*\u00d2"+
-		"\3\2\2\2,\u00dc\3\2\2\2.\u00e0\3\2\2\2\60\u00f0\3\2\2\2\62\u00fc\3\2\2"+
-		"\2\64\u00fe\3\2\2\2\66\u0108\3\2\2\28\u010b\3\2\2\2:\u011d\3\2\2\2<=\5"+
-		"\36\20\2=>\7\23\2\2>@\3\2\2\2?<\3\2\2\2@C\3\2\2\2A?\3\2\2\2AB\3\2\2\2"+
-		"BG\3\2\2\2CA\3\2\2\2DF\5\6\4\2ED\3\2\2\2FI\3\2\2\2GE\3\2\2\2GH\3\2\2\2"+
-		"H\3\3\2\2\2IG\3\2\2\2JL\7\r\2\2KM\5\6\4\2LK\3\2\2\2MN\3\2\2\2NL\3\2\2"+
-		"\2NO\3\2\2\2OP\3\2\2\2PQ\7\16\2\2Q\5\3\2\2\2RS\5\b\5\2ST\7\23\2\2TW\3"+
-		"\2\2\2UW\5\n\6\2VR\3\2\2\2VU\3\2\2\2W\7\3\2\2\2Xa\5\26\f\2Ya\5&\24\2Z"+
-		"a\5:\36\2[a\5(\25\2\\a\5\66\34\2]a\58\35\2^a\7\24\2\2_a\7\25\2\2`X\3\2"+
-		"\2\2`Y\3\2\2\2`Z\3\2\2\2`[\3\2\2\2`\\\3\2\2\2`]\3\2\2\2`^\3\2\2\2`_\3"+
-		"\2\2\2a\t\3\2\2\2bh\5*\26\2ch\5,\27\2dh\5.\30\2eh\5\34\17\2fh\5\4\3\2"+
-		"gb\3\2\2\2gc\3\2\2\2gd\3\2\2\2ge\3\2\2\2gf\3\2\2\2h\13\3\2\2\2ij\b\7\1"+
-		"\2jk\7\66\2\2ks\3\2\2\2lm\6\7\2\3mn\7\21\2\2no\5:\36\2op\7\22\2\2pr\3"+
-		"\2\2\2ql\3\2\2\2ru\3\2\2\2sq\3\2\2\2st\3\2\2\2t\r\3\2\2\2us\3\2\2\2v\177"+
-		"\5\f\7\2w\177\7\27\2\2x\177\7\30\2\2y\177\7\65\2\2z\177\7\67\2\2{\177"+
-		"\78\2\2|\177\5\60\31\2}\177\5\64\33\2~v\3\2\2\2~w\3\2\2\2~x\3\2\2\2~y"+
-		"\3\2\2\2~z\3\2\2\2~{\3\2\2\2~|\3\2\2\2~}\3\2\2\2\177\17\3\2\2\2\u0080"+
-		"\u0081\b\t\1\2\u0081\u0082\t\2\2\2\u0082\u0088\3\2\2\2\u0083\u0084\6\t"+
-		"\3\3\u0084\u0085\7\21\2\2\u0085\u0087\7\22\2\2\u0086\u0083\3\2\2\2\u0087"+
-		"\u008a\3\2\2\2\u0088\u0086\3\2\2\2\u0088\u0089\3\2\2\2\u0089\21\3\2\2"+
-		"\2\u008a\u0088\3\2\2\2\u008b\u008c\5\f\7\2\u008c\u008d\7\b\2\2\u008d\u008e"+
-		"\5:\36\2\u008e\23\3\2\2\2\u008f\u0090\5\f\7\2\u0090\u0091\t\3\2\2\u0091"+
-		"\u0092\5:\36\2\u0092\25\3\2\2\2\u0093\u0096\5\22\n\2\u0094\u0096\5\24"+
-		"\13\2\u0095\u0093\3\2\2\2\u0095\u0094\3\2\2\2\u0096\27\3\2\2\2\u0097\u0098"+
-		"\5\f\7\2\u0098\u0099\7\31\2\2\u0099\31\3\2\2\2\u009a\u009b\5\f\7\2\u009b"+
-		"\u009c\7\32\2\2\u009c\33\3\2\2\2\u009d\u009e\7\3\2\2\u009e\u009f\5\20"+
-		"\t\2\u009f\u00a0\7\66\2\2\u00a0\u00a1\7\17\2\2\u00a1\u00a2\5 \21\2\u00a2"+
-		"\u00a3\7\20\2\2\u00a3\u00a4\5\4\3\2\u00a4\35\3\2\2\2\u00a5\u00a6\5\20"+
-		"\t\2\u00a6\u00a7\7\t\2\2\u00a7\u00a8\7\66\2\2\u00a8\u00a9\7\17\2\2\u00a9"+
-		"\u00aa\5\"\22\2\u00aa\u00ab\7\20\2\2\u00ab\37\3\2\2\2\u00ac\u00ad\5\20"+
-		"\t\2\u00ad\u00b4\7\66\2\2\u00ae\u00af\7\5\2\2\u00af\u00b0\5\20\t\2\u00b0"+
-		"\u00b1\7\66\2\2\u00b1\u00b3\3\2\2\2\u00b2\u00ae\3\2\2\2\u00b3\u00b6\3"+
-		"\2\2\2\u00b4\u00b2\3\2\2\2\u00b4\u00b5\3\2\2\2\u00b5\u00b8\3\2\2\2\u00b6"+
-		"\u00b4\3\2\2\2\u00b7\u00ac\3\2\2\2\u00b7\u00b8\3\2\2\2\u00b8!\3\2\2\2"+
-		"\u00b9\u00be\5\20\t\2\u00ba\u00bb\7\5\2\2\u00bb\u00bd\5\20\t\2\u00bc\u00ba"+
-		"\3\2\2\2\u00bd\u00c0\3\2\2\2\u00be\u00bc\3\2\2\2\u00be\u00bf\3\2\2\2\u00bf"+
-		"\u00c2\3\2\2\2\u00c0\u00be\3\2\2\2\u00c1\u00b9\3\2\2\2\u00c1\u00c2\3\2"+
-		"\2\2\u00c2#\3\2\2\2\u00c3\u00c4\7\66\2\2\u00c4\u00c5\7\17\2\2\u00c5\u00c6"+
-		"\5\62\32\2\u00c6\u00c7\7\20\2\2\u00c7%\3\2\2\2\u00c8\u00c9\5\20\t\2\u00c9"+
-		"\u00cc\7\66\2\2\u00ca\u00cb\7\b\2\2\u00cb\u00cd\5:\36\2\u00cc\u00ca\3"+
-		"\2\2\2\u00cc\u00cd\3\2\2\2\u00cd\'\3\2\2\2\u00ce\u00d0\7\26\2\2\u00cf"+
-		"\u00d1\5:\36\2\u00d0\u00cf\3\2\2\2\u00d0\u00d1\3\2\2\2\u00d1)\3\2\2\2"+
-		"\u00d2\u00d3\7+\2\2\u00d3\u00d4\7\17\2\2\u00d4\u00d5\5&\24\2\u00d5\u00d6"+
-		"\7\23\2\2\u00d6\u00d7\5:\36\2\u00d7\u00d8\7\23\2\2\u00d8\u00d9\5\26\f"+
-		"\2\u00d9\u00da\7\20\2\2\u00da\u00db\5\4\3\2\u00db+\3\2\2\2\u00dc\u00dd"+
-		"\7,\2\2\u00dd\u00de\5:\36\2\u00de\u00df\5\4\3\2\u00df-\3\2\2\2\u00e0\u00e1"+
-		"\7-\2\2\u00e1\u00e2\5:\36\2\u00e2\u00e9\5\4\3\2\u00e3\u00e4\7.\2\2\u00e4"+
-		"\u00e5\5:\36\2\u00e5\u00e6\5\4\3\2\u00e6\u00e8\3\2\2\2\u00e7\u00e3\3\2"+
-		"\2\2\u00e8\u00eb\3\2\2\2\u00e9\u00e7\3\2\2\2\u00e9\u00ea\3\2\2\2\u00ea"+
+		"\3\36\3\36\3\36\7\36\u0134\n\36\f\36\16\36\u0137\13\36\3\36\2\5\f\20:"+
+		"\37\2\4\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:\2\7"+
+		"\6\2\4\5\n\n\27\27\63\63\3\2 $\3\2\33\34\3\2\35\37\3\2%*\u014c\2A\3\2"+
+		"\2\2\4J\3\2\2\2\6V\3\2\2\2\b`\3\2\2\2\ng\3\2\2\2\fi\3\2\2\2\16~\3\2\2"+
+		"\2\20\u0080\3\2\2\2\22\u008b\3\2\2\2\24\u008f\3\2\2\2\26\u0095\3\2\2\2"+
+		"\30\u0097\3\2\2\2\32\u009a\3\2\2\2\34\u009d\3\2\2\2\36\u00a5\3\2\2\2 "+
+		"\u00b7\3\2\2\2\"\u00c1\3\2\2\2$\u00c3\3\2\2\2&\u00c8\3\2\2\2(\u00ce\3"+
+		"\2\2\2*\u00d2\3\2\2\2,\u00dc\3\2\2\2.\u00e0\3\2\2\2\60\u00f0\3\2\2\2\62"+
+		"\u00fc\3\2\2\2\64\u00fe\3\2\2\2\66\u0108\3\2\2\28\u010b\3\2\2\2:\u011d"+
+		"\3\2\2\2<=\5\36\20\2=>\7\23\2\2>@\3\2\2\2?<\3\2\2\2@C\3\2\2\2A?\3\2\2"+
+		"\2AB\3\2\2\2BG\3\2\2\2CA\3\2\2\2DF\5\6\4\2ED\3\2\2\2FI\3\2\2\2GE\3\2\2"+
+		"\2GH\3\2\2\2H\3\3\2\2\2IG\3\2\2\2JL\7\r\2\2KM\5\6\4\2LK\3\2\2\2MN\3\2"+
+		"\2\2NL\3\2\2\2NO\3\2\2\2OP\3\2\2\2PQ\7\16\2\2Q\5\3\2\2\2RS\5\b\5\2ST\7"+
+		"\23\2\2TW\3\2\2\2UW\5\n\6\2VR\3\2\2\2VU\3\2\2\2W\7\3\2\2\2Xa\5\26\f\2"+
+		"Ya\5&\24\2Za\5:\36\2[a\5(\25\2\\a\5\66\34\2]a\58\35\2^a\7\24\2\2_a\7\25"+
+		"\2\2`X\3\2\2\2`Y\3\2\2\2`Z\3\2\2\2`[\3\2\2\2`\\\3\2\2\2`]\3\2\2\2`^\3"+
+		"\2\2\2`_\3\2\2\2a\t\3\2\2\2bh\5*\26\2ch\5,\27\2dh\5.\30\2eh\5\34\17\2"+
+		"fh\5\4\3\2gb\3\2\2\2gc\3\2\2\2gd\3\2\2\2ge\3\2\2\2gf\3\2\2\2h\13\3\2\2"+
+		"\2ij\b\7\1\2jk\7\66\2\2ks\3\2\2\2lm\f\3\2\2mn\7\21\2\2no\5:\36\2op\7\22"+
+		"\2\2pr\3\2\2\2ql\3\2\2\2ru\3\2\2\2sq\3\2\2\2st\3\2\2\2t\r\3\2\2\2us\3"+
+		"\2\2\2v\177\5\f\7\2w\177\7\27\2\2x\177\7\30\2\2y\177\7\65\2\2z\177\7\67"+
+		"\2\2{\177\78\2\2|\177\5\60\31\2}\177\5\64\33\2~v\3\2\2\2~w\3\2\2\2~x\3"+
+		"\2\2\2~y\3\2\2\2~z\3\2\2\2~{\3\2\2\2~|\3\2\2\2~}\3\2\2\2\177\17\3\2\2"+
+		"\2\u0080\u0081\b\t\1\2\u0081\u0082\t\2\2\2\u0082\u0088\3\2\2\2\u0083\u0084"+
+		"\f\4\2\2\u0084\u0085\7\21\2\2\u0085\u0087\7\22\2\2\u0086\u0083\3\2\2\2"+
+		"\u0087\u008a\3\2\2\2\u0088\u0086\3\2\2\2\u0088\u0089\3\2\2\2\u0089\21"+
+		"\3\2\2\2\u008a\u0088\3\2\2\2\u008b\u008c\5\f\7\2\u008c\u008d\7\b\2\2\u008d"+
+		"\u008e\5:\36\2\u008e\23\3\2\2\2\u008f\u0090\5\f\7\2\u0090\u0091\t\3\2"+
+		"\2\u0091\u0092\5:\36\2\u0092\25\3\2\2\2\u0093\u0096\5\22\n\2\u0094\u0096"+
+		"\5\24\13\2\u0095\u0093\3\2\2\2\u0095\u0094\3\2\2\2\u0096\27\3\2\2\2\u0097"+
+		"\u0098\5\f\7\2\u0098\u0099\7\31\2\2\u0099\31\3\2\2\2\u009a\u009b\5\f\7"+
+		"\2\u009b\u009c\7\32\2\2\u009c\33\3\2\2\2\u009d\u009e\7\3\2\2\u009e\u009f"+
+		"\5\20\t\2\u009f\u00a0\7\66\2\2\u00a0\u00a1\7\17\2\2\u00a1\u00a2\5 \21"+
+		"\2\u00a2\u00a3\7\20\2\2\u00a3\u00a4\5\4\3\2\u00a4\35\3\2\2\2\u00a5\u00a6"+
+		"\5\20\t\2\u00a6\u00a7\7\t\2\2\u00a7\u00a8\7\66\2\2\u00a8\u00a9\7\17\2"+
+		"\2\u00a9\u00aa\5\"\22\2\u00aa\u00ab\7\20\2\2\u00ab\37\3\2\2\2\u00ac\u00ad"+
+		"\5\20\t\2\u00ad\u00b4\7\66\2\2\u00ae\u00af\7\7\2\2\u00af\u00b0\5\20\t"+
+		"\2\u00b0\u00b1\7\66\2\2\u00b1\u00b3\3\2\2\2\u00b2\u00ae\3\2\2\2\u00b3"+
+		"\u00b6\3\2\2\2\u00b4\u00b2\3\2\2\2\u00b4\u00b5\3\2\2\2\u00b5\u00b8\3\2"+
+		"\2\2\u00b6\u00b4\3\2\2\2\u00b7\u00ac\3\2\2\2\u00b7\u00b8\3\2\2\2\u00b8"+
+		"!\3\2\2\2\u00b9\u00be\5\20\t\2\u00ba\u00bb\7\7\2\2\u00bb\u00bd\5\20\t"+
+		"\2\u00bc\u00ba\3\2\2\2\u00bd\u00c0\3\2\2\2\u00be\u00bc\3\2\2\2\u00be\u00bf"+
+		"\3\2\2\2\u00bf\u00c2\3\2\2\2\u00c0\u00be\3\2\2\2\u00c1\u00b9\3\2\2\2\u00c1"+
+		"\u00c2\3\2\2\2\u00c2#\3\2\2\2\u00c3\u00c4\7\66\2\2\u00c4\u00c5\7\17\2"+
+		"\2\u00c5\u00c6\5\62\32\2\u00c6\u00c7\7\20\2\2\u00c7%\3\2\2\2\u00c8\u00c9"+
+		"\5\20\t\2\u00c9\u00cc\7\66\2\2\u00ca\u00cb\7\b\2\2\u00cb\u00cd\5:\36\2"+
+		"\u00cc\u00ca\3\2\2\2\u00cc\u00cd\3\2\2\2\u00cd\'\3\2\2\2\u00ce\u00d0\7"+
+		"\26\2\2\u00cf\u00d1\5:\36\2\u00d0\u00cf\3\2\2\2\u00d0\u00d1\3\2\2\2\u00d1"+
+		")\3\2\2\2\u00d2\u00d3\7+\2\2\u00d3\u00d4\7\17\2\2\u00d4\u00d5\5&\24\2"+
+		"\u00d5\u00d6\7\23\2\2\u00d6\u00d7\5:\36\2\u00d7\u00d8\7\23\2\2\u00d8\u00d9"+
+		"\5\26\f\2\u00d9\u00da\7\20\2\2\u00da\u00db\5\4\3\2\u00db+\3\2\2\2\u00dc"+
+		"\u00dd\7,\2\2\u00dd\u00de\5:\36\2\u00de\u00df\5\4\3\2\u00df-\3\2\2\2\u00e0"+
+		"\u00e1\7-\2\2\u00e1\u00e2\5:\36\2\u00e2\u00e9\5\4\3\2\u00e3\u00e4\7.\2"+
+		"\2\u00e4\u00e5\5:\36\2\u00e5\u00e6\5\4\3\2\u00e6\u00e8\3\2\2\2\u00e7\u00e3"+
+		"\3\2\2\2\u00e8\u00eb\3\2\2\2\u00e9\u00e7\3\2\2\2\u00e9\u00ea\3\2\2\2\u00ea"+
 		"\u00ee\3\2\2\2\u00eb\u00e9\3\2\2\2\u00ec\u00ed\7/\2\2\u00ed\u00ef\5\4"+
 		"\3\2\u00ee\u00ec\3\2\2\2\u00ee\u00ef\3\2\2\2\u00ef/\3\2\2\2\u00f0\u00f1"+
 		"\7\21\2\2\u00f1\u00f2\5\62\32\2\u00f2\u00f3\7\22\2\2\u00f3\61\3\2\2\2"+
-		"\u00f4\u00f9\5:\36\2\u00f5\u00f6\7\5\2\2\u00f6\u00f8\5:\36\2\u00f7\u00f5"+
+		"\u00f4\u00f9\5:\36\2\u00f5\u00f6\7\7\2\2\u00f6\u00f8\5:\36\2\u00f7\u00f5"+
 		"\3\2\2\2\u00f8\u00fb\3\2\2\2\u00f9\u00f7\3\2\2\2\u00f9\u00fa\3\2\2\2\u00fa"+
 		"\u00fd\3\2\2\2\u00fb\u00f9\3\2\2\2\u00fc\u00f4\3\2\2\2\u00fc\u00fd\3\2"+
 		"\2\2\u00fd\63\3\2\2\2\u00fe\u00ff\7\17\2\2\u00ff\u0100\5:\36\2\u0100\u0101"+
-		"\7\7\2\2\u0101\u0104\5:\36\2\u0102\u0103\7\7\2\2\u0103\u0105\5:\36\2\u0104"+
+		"\7\6\2\2\u0101\u0104\5:\36\2\u0102\u0103\7\6\2\2\u0103\u0105\5:\36\2\u0104"+
 		"\u0102\3\2\2\2\u0104\u0105\3\2\2\2\u0105\u0106\3\2\2\2\u0106\u0107\7\20"+
 		"\2\2\u0107\65\3\2\2\2\u0108\u0109\7\13\2\2\u0109\u010a\5:\36\2\u010a\67"+
 		"\3\2\2\2\u010b\u010c\7\f\2\2\u010c\u010d\7\17\2\2\u010d\u010e\7\20\2\2"+
 		"\u010e9\3\2\2\2\u010f\u0110\b\36\1\2\u0110\u0111\t\4\2\2\u0111\u011e\5"+
-		":\36\2\u0112\u0113\7\62\2\2\u0113\u011e\5:\36\2\u0114\u0115\7\17\2\2\u0115"+
+		":\36\n\u0112\u0113\7\62\2\2\u0113\u011e\5:\36\6\u0114\u0115\7\17\2\2\u0115"+
 		"\u0116\5:\36\2\u0116\u0117\7\20\2\2\u0117\u011e\3\2\2\2\u0118\u011e\5"+
 		"\30\r\2\u0119\u011e\58\35\2\u011a\u011e\5\32\16\2\u011b\u011e\5$\23\2"+
 		"\u011c\u011e\5\16\b\2\u011d\u010f\3\2\2\2\u011d\u0112\3\2\2\2\u011d\u0114"+
 		"\3\2\2\2\u011d\u0118\3\2\2\2\u011d\u0119\3\2\2\2\u011d\u011a\3\2\2\2\u011d"+
-		"\u011b\3\2\2\2\u011d\u011c\3\2\2\2\u011e\u0135\3\2\2\2\u011f\u0120\6\36"+
-		"\4\3\u0120\u0121\t\5\2\2\u0121\u0134\5:\36\2\u0122\u0123\6\36\5\3\u0123"+
-		"\u0124\t\4\2\2\u0124\u0134\5:\36\2\u0125\u0126\6\36\6\3\u0126\u0127\t"+
-		"\6\2\2\u0127\u0134\5:\36\2\u0128\u0129\6\36\7\3\u0129\u012a\7\60\2\2\u012a"+
-		"\u0134\5:\36\2\u012b\u012c\6\36\b\3\u012c\u012d\7\61\2\2\u012d\u0134\5"+
-		":\36\2\u012e\u012f\6\36\t\3\u012f\u0130\7\21\2\2\u0130\u0131\5:\36\2\u0131"+
+		"\u011b\3\2\2\2\u011d\u011c\3\2\2\2\u011e\u0135\3\2\2\2\u011f\u0120\f\t"+
+		"\2\2\u0120\u0121\t\5\2\2\u0121\u0134\5:\36\n\u0122\u0123\f\b\2\2\u0123"+
+		"\u0124\t\4\2\2\u0124\u0134\5:\36\t\u0125\u0126\f\7\2\2\u0126\u0127\t\6"+
+		"\2\2\u0127\u0134\5:\36\b\u0128\u0129\f\5\2\2\u0129\u012a\7\60\2\2\u012a"+
+		"\u0134\5:\36\6\u012b\u012c\f\4\2\2\u012c\u012d\7\61\2\2\u012d\u0134\5"+
+		":\36\5\u012e\u012f\f\13\2\2\u012f\u0130\7\21\2\2\u0130\u0131\5:\36\2\u0131"+
 		"\u0132\7\22\2\2\u0132\u0134\3\2\2\2\u0133\u011f\3\2\2\2\u0133\u0122\3"+
 		"\2\2\2\u0133\u0125\3\2\2\2\u0133\u0128\3\2\2\2\u0133\u012b\3\2\2\2\u0133"+
 		"\u012e\3\2\2\2\u0134\u0137\3\2\2\2\u0135\u0133\3\2\2\2\u0135\u0136\3\2"+
 		"\2\2\u0136;\3\2\2\2\u0137\u0135\3\2\2\2\32AGNV`gs~\u0088\u0095\u00b4\u00b7"+
 		"\u00be\u00c1\u00cc\u00d0\u00e9\u00ee\u00f9\u00fc\u0104\u011d\u0133\u0135";
 	public static final ATN _ATN =
-		ATNSimulator.deserialize(_serializedATN.toCharArray());
+		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
 		_decisionToDFA = new DFA[_ATN.getNumberOfDecisions()];
 		for (int i = 0; i < _ATN.getNumberOfDecisions(); i++) {

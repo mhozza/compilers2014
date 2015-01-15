@@ -1,11 +1,13 @@
 public class CodeFragment {
         private String code;
         private String register;
+	private String size_register;
         private int type;
 	private int length;
 
         public CodeFragment() {
                 this.code = "";
+		this.size_register = "";
                 this.register = null;
 		this.length = 0;
         }
@@ -34,6 +36,9 @@ public class CodeFragment {
                 return this.length;
         }
 
+	public void setLength(int length) {
+                this.length = length;
+        }
 
         public void setType(int type) {
                 this.type = type;

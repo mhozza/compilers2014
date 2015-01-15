@@ -2,16 +2,16 @@ int n
 nacitaj n
 int i
 int[] sito = [1:100001]
-pre i v [2:n]
+pre i v [2:n+1]
 <
-    ak (0 == sito{i}) 
+    ak (0 == sito{i})
     <
         sito[i] = 0
     > inak
     <
         vypis i
         int j = 2
-        pokial (i*j << n)
+        pokial (i*j <= n)
         <
             sito[i*j] = 0
             j ++ 1

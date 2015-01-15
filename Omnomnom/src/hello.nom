@@ -1,0 +1,8 @@
+{i}_foo;
+#(i_it = 0, it<10, it++)
+  foo->a(it);
+.
+#(i_it = 0, it<10, it++)
+  << foo->g(it);
+.
+.

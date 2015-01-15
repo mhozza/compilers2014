@@ -1,3 +1,4 @@
-primes src/primes.siii
-graph src/graph.siii
-sort src/sort.siii
+primes primes.siii
+graph graph.siii
+sort sort.siii
+hello hello.siii

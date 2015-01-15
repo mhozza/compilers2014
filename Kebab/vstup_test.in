@@ -1,0 +1,154 @@
+class myClass {
+
+     int function ahojFunc(int a, boolean b, char c, double d) {
+     	int i = 10;
+	print(a);
+	print(b);
+	print(c);
+	print(d);
+	
+	return i;
+
+     }
+	//toto je koment
+
+	/* toto 
+	je 
+	tiez 
+	koment
+
+    string myString = "ahoj";
+    boolean a = true;
+    boolean b = false;		
+
+    if (b) {
+	print(a);
+    } else if (b > a) {
+        print(b);
+    } else {
+       print(myString);
+    }
+
+    boolean[10] booleanA;
+    byte[10] byteA;
+    short[10] shortA;
+    int[10] intA;
+    long[10] longA;
+    float[10] floatA;
+    double[10] doubleA;
+ */
+    int i; /*
+    for (i = 0; i < 10; i = i + 1;) {
+	booleanA[i] = true;
+	byteA[i] = 1;
+        shortA[i] = 12;
+        intA[i] = 123;
+        longA[i] = 1234;
+        floatA[i] = 10.0;
+        doubleA[i] = 11.11;
+	print(1);
+    }
+    
+    while (i >= 0) do {
+	print(booleanA[i]);
+	print(byteA[i]);
+        print(shortA[i]);
+        print(intA[i]);
+        print(longA[i]);
+        print(floatA[i]);
+        print(doubleA[i]);
+	i = i -1;
+    }
+
+    b = true;
+    do {
+      print(myString);
+	b = false;
+    } while (b)
+*/
+   // set<boolean> booleanSet;
+  //  set<byte> byteSet;
+    set<char> charSet;
+   // set<short> shortSet; 
+    //set<int> intSet;
+    //set<long> longSet;
+    //set<float> floatSet;
+    set<double> doubleSet;	
+   //
+
+ //   for (i = 0; i<10; i = i + 1;) {
+//	doubleSet.insert(1.1234);
+//	doubleSet.insertUnique(1.1234);
+//	doubleSet.remove(1.1234);
+	//print(doubleSet.size());
+   //   booleanSet.insert(true);
+   //   booleanSet.insert(false);
+   //   booleanSet.insert(false);
+   //   booleanSet.insertUnique(false);
+    //  booleanSet.insertUnique(false);
+    //  booleanSet.insertUnique(true);
+    //  booleanSet.insertUnique(true);
+   //  booleanSet.remove(false);
+    //  print(booleanSet.size());
+      //byteSet.insert(1);
+      //charSet.insert('a');
+      //shortSet.insert(3);
+   //    intSet.insertUnique(4);
+//intSet.remove(10);
+//	intSet.remove(10);
+//	charSet.insertUnique('a');
+//	charSet.insert('b');
+//	print(charSet.size());
+//	intSet.remove(10);
+//	intSet.remove(4);
+  //      intSet.insertUnique(4);
+//	intSet.remove(10);
+ //      print(intSet.size());
+       //boolean a;
+       //a = (intSet.contains(i));
+       //print(a);	
+      //longSet.insert(5);
+      //floatSet.insert(6.0);
+      //doubleSet.insert(1.2345);
+ //   }
+
+    /*
+    char[1024] charA;	
+    i = 0;
+    foreach(charSet as s) {
+       print(s);
+       charA[i] = s;
+       i = i + 1;	
+    }		
+
+	*/
+   
+    double a;
+    a = 15.6;
+/*
+    double b = 120.0;	
+    if (a > 10.0) {
+      print(a);
+    } else if (b == 10.0) {
+	print(b);
+    }	else {
+     print(111);
+    }
+  *//*
+    switch (a) {
+	case (10.0) : print(1); 
+	case (11.0) : print(2);
+        case (12.0) : print(3);
+	default : print(4); 
+    }*/	
+
+  int c = ahojFunc(10, false, 'c', 10.1);
+  for (i = 0; i < 10; i = i+1) {
+  char k = readChar(); 
+  if (k == 'a') {
+	print(1);
+  } else {
+	print(k);
+  }
+	}
+}

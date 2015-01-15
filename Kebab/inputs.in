@@ -1,3 +1,3 @@
-primes src/primes.cpp
-graph src/graph.cpp
-sort src/sort.cpp
+primes src/primes.keb
+graph src/graph.keb
+sort src/sort.keb

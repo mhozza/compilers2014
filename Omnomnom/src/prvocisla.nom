@@ -1,0 +1,18 @@
+i_n;
+>> n;
+
+{b}_sito;
+#(i_it = 0, it <= n, it++)
+	sito->a(true);.
+
+#(i_it = 2, it*it <= n, it++)
+	?(sito->g(it) == true)
+		#(i_j = it*it, j <= n, j = j + it)
+			sito->s(j, false);.
+	.
+.
+
+#(i_it = 2, it <= n, it++)
+	?(sito->g(it) == true)
+		<< it;.
+..

@@ -8,6 +8,10 @@ import argparse
 from collections import defaultdict
 
 
+BIG_FILE = '5.in'
+TEST_BIG = False
+
+
 class cd:
     """Context manager for changing the current working directory"""
     def __init__(self, newPath):
@@ -74,7 +78,7 @@ if __name__ == '__main__':
         path = 'test/' + program + '/in'
         tests = [
             f.strip()
-            for f in os.listdir(path)
+            for f in filter(lambda x: TEST_BIG or x != BIG_FILE, os.listdir(path))
             if os.path.isfile(os.path.join(path, f))
         ]
         # run tests
@@ -96,8 +100,8 @@ if __name__ == '__main__':
             )
             same = True
             try:
-                ret = sh.diff(tempfile, out_correct, _ok_code=range(0, 2))
-                if ret.exit_code == 1:
+                ret = sh.diff(tempfile, out_correct, _ok_code=range(0, 3))
+                if ret.exit_code >= 1:
                     print('Tvoj program dal zly vysledok v ulohe {} '
                           'na priklade {}:\n{}'.format(program, test, ret))
                     same = False

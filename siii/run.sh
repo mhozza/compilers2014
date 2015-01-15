@@ -1,4 +1,4 @@
+#!/bin/bash
 cd src
-lli -load=./library.so $1.ll
+lli -load=./library.so $1
 cd ..
-

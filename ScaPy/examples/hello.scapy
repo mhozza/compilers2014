@@ -1,1 +1,7 @@
 printString("Hello World!")
+
+val a = 1 + 4
+
+if (a == 47 or a>=42) {
+}
+

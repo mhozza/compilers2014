@@ -2,4 +2,4 @@ hello examples/hello.scapy
 primes examples/primes.scapy
 graph examples/graphs.scapy
 reverz examples/reverz.scapy
-sort examples/sort.scapy
+sort examples/sort2.scapy
