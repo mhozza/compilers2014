@@ -1,0 +1,3 @@
+primes input/primes.pa
+sort input/sort.pa
+graph input/graph.pa

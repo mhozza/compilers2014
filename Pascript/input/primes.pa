@@ -1,0 +1,48 @@
+main:
+
+int n;
+-> n;
+
+// using the Sieve of Eratosthenes
+if (n >= 2)
+{
+  int[] numbers;
+  
+  for (int i = 2; i <= n; i++)
+  {
+    numbers.insert(numbers.size(), i);
+  }
+  
+  int numSize = numbers.size();
+  bool primeStartIsUnderLimit = true;
+
+  for (int i = 0; (i < numSize) & primeStartIsUnderLimit; i++)
+  {
+    int p = numbers.get(i);
+    
+    if (p > 0)
+    {
+      int primeStart = (p * p) - 2;
+      if (primeStart < numSize)
+      {
+        for (int j = primeStart; j < numSize; j = j + p)
+        {
+          numbers.set(j, 0);
+        }
+      }
+      else
+      {
+        primeStartIsUnderLimit = false;
+      }
+    }
+  }
+  
+  for (int i = 0; i < numSize; i++)
+  {
+    int p = numbers.get(i);
+    if (p > 0)
+    {
+      <- p;
+    }
+  }
+}
